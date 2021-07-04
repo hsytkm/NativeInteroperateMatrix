@@ -1,14 +1,14 @@
 ﻿<Project>
   <PropertyGroup>
-    <LangVersion>9.0</LangVersion>
-    <Description>pixel matrix used for marshaling</Description>
+    <LangVersion>latest</LangVersion>
+    <Description>interoperate 2-dimensional array with natives</Description>
     <Version>0.1.0</Version>
     <Authors>myoga</Authors>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <PackageProjectUrl>https://github.com/hsytkm/PixelMatrix</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/hsytkm/PixelMatrix</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/hsytkm/NativeInteroperateMatrix</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/hsytkm/NativeInteroperateMatrix</RepositoryUrl>
     <NeutralLanguage>en-US</NeutralLanguage>
-    <PackageTags>Image</PackageTags>
+    <PackageTags>Interop, Marshalling, Unmanaged, </PackageTags>
     <Copyright>Copyright (c) 2021 myoga</Copyright>
     <RepositoryType>git</RepositoryType>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>

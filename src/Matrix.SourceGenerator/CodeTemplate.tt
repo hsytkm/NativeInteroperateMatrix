@@ -8,9 +8,6 @@
 // </auto-generated>
 #nullable enable
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 <# if (!string.IsNullOrEmpty(Namespace)) { #>
@@ -18,7 +15,7 @@ namespace <#= Namespace #>
 <# } #>
 {
     [StructLayout(LayoutKind.Sequential, Pack = 1, Size = 8 + (4 * 4))]
-    readonly partial struct <#= ClassName #> : IEquatable<<#= ClassName #>>, IMatrix<<#= ItemTypeName #>>
+    readonly partial struct <#= MatrixClassName #> : IMatrix<<#= ValueItemTypeName #>>, IEquatable<<#= MatrixClassName #>>
     {
         private readonly IntPtr _pointer;
         //private readonly int _allocSize;  // = rows * stride;
@@ -27,19 +24,19 @@ namespace <#= Namespace #>
         private readonly int _bytesPerItem;
         private readonly int _stride;
 
-        public <#= ClassName #>(int rows, int columns, int bytesPerItem, int stride, IntPtr intPtr)
+        public <#= MatrixClassName #>(IntPtr intPtr, int rows, int columns, int bytesPerItem, int stride)
         {
             if (IntPtr.Size != 8)
                 throw new NotSupportedException();
 
-            if (bytesPerItem != sizeof(<#= ItemTypeName #>))
+            if (bytesPerItem != Marshal.SizeOf<<#= ValueItemTypeName #>>())
                 throw new ArgumentException(nameof(bytesPerItem));
 
+            _pointer = intPtr;
             _rows = rows;
             _columns = columns;
             _bytesPerItem = bytesPerItem;
             _stride = stride;
-            _pointer = intPtr;
         }
 
         // IMatrix<T>
@@ -53,23 +50,64 @@ namespace <#= Namespace #>
         public int Height => _rows;
 
         // MatrixExtension
-        public int AllocatedSize => this.GetAllocatedSize<<#= ClassName #>, <#= ItemTypeName #>>();
-        public bool IsContinuous => this.IsContinuous<<#= ClassName #>, <#= ItemTypeName #>>();
-        public bool IsValid => this.IsValid<<#= ClassName #>, <#= ItemTypeName #>>();
+        public int AllocatedSize => _columns * _bytesPerItem * _rows;  // don't use stride
+        public bool IsContinuous => (_columns * _bytesPerItem) == _stride;
+        public bool IsValid
+        {
+            get
+            {
+                if (_pointer == IntPtr.Zero) return false;
+                if (_columns <= 0 || _rows <= 0) return false;
+                if (_stride < _columns * _bytesPerItem) return false;
+                if (AllocatedSize < _columns * _bytesPerItem * _rows) return false;
+                return true;    //valid
+            }
+        }
         public bool IsInvalid => !IsValid;
-        public Span<<#= ItemTypeName #>> GetRowSpan(int row) => this.GetRowSpan<<#= ClassName #>, <#= ItemTypeName #>>(row);
-        public ReadOnlySpan<<#= ItemTypeName #>> GetRoRowSpan(int row) => this.GetRowSpan<<#= ClassName #>, <#= ItemTypeName #>>(row);
+
+        public unsafe Span<<#= ValueItemTypeName #>> GetRowSpan(int row)
+        {
+            if (row < 0 || _rows - 1 < row)
+                throw new ArgumentException("invalid row");
+
+            var ptr = _pointer + (row * _stride);
+            return new Span<<#= ValueItemTypeName #>>(ptr.ToPointer(), _columns);
+        }
+        public ReadOnlySpan<<#= ValueItemTypeName #>> GetRoRowSpan(int row) => GetRowSpan(row);
 
         // IEquatable<T>
-        public bool Equals(<#= ClassName #> other) => this == other;
-        public override bool Equals(object? obj) => (obj is <#= ClassName #> other) && Equals(other);
+        public bool Equals(<#= MatrixClassName #> other) => this == other;
+        public override bool Equals(object? obj) => (obj is <#= MatrixClassName #> other) && Equals(other);
         public override int GetHashCode() => HashCode.Combine(_pointer, _rows, _columns, _bytesPerItem, _stride);
-
-        public static bool operator ==(in <#= ClassName #> left, in <#= ClassName #> right)
+        public static bool operator ==(in <#= MatrixClassName #> left, in <#= MatrixClassName #> right)
              => (left._pointer, left._rows, left._columns, left._bytesPerItem, left._stride)
                 == (right._pointer, right._rows, right._columns, right._bytesPerItem, right._stride);
+        public static bool operator !=(in <#= MatrixClassName #> left, in <#= MatrixClassName #> right) => !(left == right);
 
-        public static bool operator !=(in <#= ClassName #> left, in <#= ClassName #> right) => !(left == right);
+        public override string ToString() => $"Rows={_rows}, Cols={_columns}, Pointer=0x{_pointer:x16}";
 
+    }
+
+    public class <#= ContainerClassName #> : MatrixContainerBase<<#= MatrixClassName #>, <#= ValueItemTypeName #>>
+    {
+        public <#= ContainerClassName #>(int rows, int columns, bool initialize = true)
+            : base(rows, columns, initialize)
+        { }
+
+        public static <#= ContainerClassName #> Create(ValueArray2d<<#= ValueItemTypeName #>> array2d)
+        {
+            var container = new <#= ContainerClassName #>(array2d.Rows, array2d.Columns, false);
+            var matrix = container.Matrix;
+
+            for (var r = 0; r < matrix.Rows; r++)
+            {
+                var line = matrix.GetRowSpan(r);
+                for (var c = 0; c < line.Length; c++)
+                {
+                    line[c] = array2d[r, c];
+                }
+            }
+            return container;
+        }
     }
 }

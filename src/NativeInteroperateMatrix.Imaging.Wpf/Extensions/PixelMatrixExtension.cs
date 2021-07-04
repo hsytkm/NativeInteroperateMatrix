@@ -9,10 +9,10 @@ namespace NativeInteroperateMatrix.Imaging.Wpf.Extensions
         internal static double _dpiY = _dpiX;
 
         /// <summary>System.Windows.Media.Imaging.BitmapSource に変換します</summary>
-        public static System.Windows.Media.Imaging.BitmapSource ToBitmapSource(in this Pixel3Matrix pixel, bool isFreeze = true)
+        public static System.Windows.Media.Imaging.BitmapSource ToBitmapSource(in this Pixel3chMatrix pixel, bool isFreeze = true)
         {
             if (pixel.IsInvalid) throw new ArgumentException("Invalid ImagePixels");
-            if (pixel.BytesPerPixel != Pixel3Matrix.Channel) throw new NotSupportedException("Invalid BytesPerPixel");
+            if (pixel.BytesPerPixel != Pixel3ch.Size) throw new NotSupportedException("Invalid BytesPerPixel");
 
             var bitmapSource = System.Windows.Media.Imaging.BitmapSource.Create(
                 pixel.Columns, pixel.Rows, _dpiX, _dpiY,
@@ -24,7 +24,7 @@ namespace NativeInteroperateMatrix.Imaging.Wpf.Extensions
         }
 
         /// <summary>System.Windows.Media.Imaging.WriteableBitmap の画素値を更新します(遅いです)</summary>
-        public static void CopyTo(this System.Windows.Media.Imaging.WriteableBitmap writeableBitmap, in Pixel3Matrix pixel, bool isFreeze = false)
+        public static void CopyTo(this System.Windows.Media.Imaging.WriteableBitmap writeableBitmap, in Pixel3chMatrix pixel, bool isFreeze = false)
         {
             if (pixel.IsInvalid) throw new ArgumentException("Invalid Image");
 
@@ -42,10 +42,10 @@ namespace NativeInteroperateMatrix.Imaging.Wpf.Extensions
         }
 
         /// <summary>System.Windows.Media.Imaging.WriteableBitmap に変換します</summary>
-        public static System.Windows.Media.Imaging.WriteableBitmap ToWriteableBitmap(in this Pixel3Matrix pixel, bool isFreeze = false)
+        public static System.Windows.Media.Imaging.WriteableBitmap ToWriteableBitmap(in this Pixel3chMatrix pixel, bool isFreeze = false)
         {
             if (pixel.IsInvalid) throw new ArgumentException("Invalid ImagePixels");
-            if (pixel.BytesPerPixel != Pixel3Matrix.Channel) throw new NotSupportedException("Invalid BytesPerPixel");
+            if (pixel.BytesPerPixel != Pixel3ch.Size) throw new NotSupportedException("Invalid BytesPerPixel");
 
             var writeableBitmap = new System.Windows.Media.Imaging.WriteableBitmap(
                 pixel.Columns, pixel.Rows, _dpiX, _dpiY,

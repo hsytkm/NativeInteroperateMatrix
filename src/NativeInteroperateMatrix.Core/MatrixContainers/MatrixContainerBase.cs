@@ -1,5 +1,4 @@
-﻿using NativeInteroperateMatrix.Core.Imaging;
-using System;
+﻿using System;
 using System.Runtime.InteropServices;
 
 namespace NativeInteroperateMatrix.Core
@@ -26,20 +25,7 @@ namespace NativeInteroperateMatrix.Core
                 UnsafeHelper.FillZero(_allocatedMemoryPointer, _allocatedSize);
             }
 
-            Matrix = CreateMatrix(rows, columns, bytesPerData, stride, _allocatedMemoryPointer);
-        }
-
-        private static TMatrix CreateMatrix(int width, int height, int bytesPerData, int stride, IntPtr intPtr)
-        {
-            var t = typeof(TValue);
-
-            if (t == typeof(Pixel3ch))
-                return (TMatrix)(IMatrix<Pixel3ch>)new Pixel3Matrix(width, height, bytesPerData, stride, intPtr);
-
-            if (t == typeof(double))
-                return (TMatrix)(IMatrix<double>)new DoubleMatrix(width, height, bytesPerData, stride, intPtr);
-
-            throw new NotImplementedException();
+            Matrix = MatrixFactory.Create<TMatrix, TValue>(_allocatedMemoryPointer, rows, columns, bytesPerData, stride);
         }
 
         #region IDisposable

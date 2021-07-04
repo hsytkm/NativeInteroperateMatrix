@@ -9,8 +9,16 @@ namespace NativeInteroperateMatrix.Core
         int Rows { get; }
         int Columns { get; }
         int BytesPerItem { get; }
-        int BitsPerItem { get; }
         int Stride { get; }
+
+        int Width { get; }
+        int Height { get; }
+        int AllocatedSize { get; }
+        int BitsPerItem { get; }
+        public bool IsContinuous { get; }
+        public bool IsValid { get; }
+        public bool IsInvalid { get; }
+
         Span<TValue> GetRowSpan(int row);
         ReadOnlySpan<TValue> GetRoRowSpan(int row);
 

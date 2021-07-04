@@ -6,13 +6,17 @@ namespace NativeInteroperateMatrix.Core.Imaging
     [StructLayout(LayoutKind.Sequential, Pack = 1, Size = 3)]
     public readonly struct Pixel3ch : IEquatable<Pixel3ch>
     {
+        public const int Size = 3;
+
         public readonly byte Ch0;
         public readonly byte Ch1;
         public readonly byte Ch2;
 
         public Pixel3ch(byte ch0, byte ch1, byte ch2) => (Ch0, Ch1, Ch2) = (ch0, ch1, ch2);
         public Pixel3ch(byte level) : this(level, level, level) { }
-        public Pixel3ch(uint value) : this((byte)((value >> 16) & 0xff), (byte)((value >> 8) & 0xff), (byte)(value & 0xff)) { }
+        public Pixel3ch(uint value)
+            : this((byte)((value >> 16) & 0xff), (byte)((value >> 8) & 0xff), (byte)(value & 0xff))
+        { }
 
         public static readonly Pixel3ch White = new(0xff);
         public static readonly Pixel3ch Gray = new(0x80);

@@ -21,18 +21,18 @@ namespace NativeInteroperateMatrix.Imaging.Wpf.Extensions
             return (int)Math.Ceiling(bitmap.Format.BitsPerPixel / 8d);
         }
 
-        /// <summary>ToPixelMatrixContainer を作成して返します</summary>
-        public static PixelMatrixContainer ToPixelMatrixContainer(this BitmapSource bitmap)
+        /// <summary>ToPixel3chMatrixContainer を作成して返します</summary>
+        public static Pixel3chMatrixContainer ToPixel3chMatrixContainer(this BitmapSource bitmap)
         {
             if (bitmap.IsInvalid()) throw new ArgumentException("Invalid Image");
 
-            var container = new PixelMatrixContainer(bitmap.PixelWidth, bitmap.PixelHeight);
+            var container = new Pixel3chMatrixContainer(bitmap.PixelWidth, bitmap.PixelHeight);
             container.Matrix.CopyTo(bitmap);
             return container;
         }
 
         /// <summary>ImagePixels に画素値をコピーします</summary>
-        internal static void CopyTo(in this Pixel3Matrix pixel, BitmapSource bitmap)
+        internal static void CopyTo(in this Pixel3chMatrix pixel, BitmapSource bitmap)
         {
             if (bitmap.IsInvalid()) throw new ArgumentException("Invalid Bitmap");
             if (pixel.IsInvalid) throw new ArgumentException("Invalid Pixels");

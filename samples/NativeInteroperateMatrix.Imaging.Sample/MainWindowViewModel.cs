@@ -20,7 +20,7 @@ namespace NativeInteroperateMatrix.Imaging.Sample
             var bitmapImage = BitmapSourceExtension.FromFile(@"Asserts\image1.bmp");
             SourceImage = new ReactivePropertySlim<BitmapSource>(initialValue: bitmapImage);
 
-            using var pixelContainer = bitmapImage.ToPixelMatrixContainer();
+            using var pixelContainer = bitmapImage.ToPixel3chMatrixContainer();
             var fullPixelMatrix = pixelContainer.Matrix;
 
             // 元画像の画素値平均
@@ -49,7 +49,7 @@ namespace NativeInteroperateMatrix.Imaging.Sample
         }
 
         // 三角領域を単色で塗り(WritePixelのテスト)
-        static void FillTriangle(in Pixel3Matrix pixelMatrix)
+        static void FillTriangle(in Pixel3chMatrix pixelMatrix)
         {
             int baseX = 100, baseY = 200, height = 100;
             var color = new Pixel3ch(0, 0xff, 0);
@@ -62,7 +62,7 @@ namespace NativeInteroperateMatrix.Imaging.Sample
         }
 
         // 垂直方向で階調が変化するグレー塗り
-        static void FillGrayScaleVertical(in Pixel3Matrix pixelMatrix)
+        static void FillGrayScaleVertical(in Pixel3chMatrix pixelMatrix)
         {
             const int range = 256;
             var length = pixelMatrix.Rows / range;

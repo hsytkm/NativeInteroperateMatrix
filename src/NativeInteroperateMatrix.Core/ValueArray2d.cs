@@ -43,11 +43,14 @@ namespace NativeInteroperateMatrix.Core
         protected bool IsOutOfRangeHorizontal(int column) => column < 0 || Columns <= column;
 
         /// <summary>指定行の要素を全て列挙します</summary>
-        public ReadOnlySpan<T> GetRowRoSpan(int row)
+        public Span<T> GetRowSpan(int row)
         {
             if (IsOutOfRangeVertical(row)) throw new ArgumentOutOfRangeException(nameof(row));
             return _source.AsSpan(row * Columns, Columns);
         }
+
+        /// <summary>指定行の要素を全て列挙します</summary>
+        public ReadOnlySpan<T> GetRowRoSpan(int row) => GetRowSpan(row);
 
         public IEnumerator<T> GetEnumerator()
         {

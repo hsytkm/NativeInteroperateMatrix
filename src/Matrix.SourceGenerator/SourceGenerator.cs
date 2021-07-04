@@ -27,6 +27,9 @@ namespace Matrix.SourceGenerator
         {
             if (context.Compilation is not CSharpCompilation) return;
 
+            var attrCode = new MatrixGeneratorAttributeTemplate().TransformText();
+            context.AddSource(_attributeName + ".cs", attrCode);
+
             try
             {
                 if (context.SyntaxReceiver is not SyntaxReceiver receiver) return;
@@ -63,34 +66,15 @@ namespace Matrix.SourceGenerator
                 static bool IsReadOnlyStruct(StructDeclarationSyntax structDeclarationSyntax)
                     => structDeclarationSyntax.Modifiers.Any(m => m.IsKind(SyntaxKind.ReadOnlyKeyword));
 
-                // Self除いてるけど Ancestor だけ探すメソッドないの？
-                //static StructDeclarationSyntax? GetParentStructDeclarationSyntax(StructDeclarationSyntax structDeclarationSyntax)
-                //    => structDeclarationSyntax.FirstAncestorOrSelf<StructDeclarationSyntax>(x => x != structDeclarationSyntax);
-
                 if (syntaxNode is not StructDeclarationSyntax record) return;
 
-                //if (record.Identifier.Text != Consts.SourceValuesStruct) return;
                 if (!IsReadOnlyStruct(record)) return;
-
-                //var parent = GetParentStructDeclarationSyntax(record);
-                //if (parent is null) return;
-
-                //if (!parent.AttributeLists.SelectMany(x => x.Attributes).Any(x => x.Name.ToString() is nameof(MatrixGenerator) or _attributeName))
-                //    return;
-
-                //if (!IsReadOnlyStruct(parent)) return;
-                //if (!parent.ChildNodes().Any(n => n == record)) return;
-
-                //Targets.Add((parent, record));
-
-
 
                 var attr = record.AttributeLists.SelectMany(x => x.Attributes)
                     .FirstOrDefault(x => x.Name.ToString() is nameof(MatrixGenerator) or _attributeName);
                 if (attr is null) return;
 
                 Targets.Add(record);
-
             }
 
         }

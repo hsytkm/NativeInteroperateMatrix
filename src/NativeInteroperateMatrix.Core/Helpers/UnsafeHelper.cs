@@ -47,7 +47,7 @@ namespace NativeInteroperateMatrix.Core
         }
 
         /// <summary>構造体を byte[] に書き出します</summary>
-        public static unsafe void CopyStructToArray<T>(T srcData, in Span<byte> destArray)
+        public static unsafe void CopyStructToArray<T>(T srcData, Span<byte> destArray)
             where T : unmanaged
         {
             // unsafe is faster than Marshal.Copy and GCHandle.

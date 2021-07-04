@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net5.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<Title>NativeInteroperateMatrix.Core</Title>
+	</PropertyGroup>
+
+	<Import Project="../SharedProperties.csproj" />
+
+	<ItemGroup>
+	  <ProjectReference Include="..\Matrix.SourceGenerator\Matrix.SourceGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+	</ItemGroup>
+
+</Project>

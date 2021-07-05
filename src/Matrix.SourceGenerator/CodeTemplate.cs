@@ -74,8 +74,6 @@ namespace Matrix.SourceGenerator
         public int Stride => _stride;
         public int Width => _columns;
         public int Height => _rows;
-
-        // MatrixExtension
         public int AllocatedSize => _columns * _bytesPerItem * _rows;  // don't use stride
         public bool IsContinuous => (_columns * _bytesPerItem) == _stride;
         public bool IsValid
@@ -94,13 +92,40 @@ namespace Matrix.SourceGenerator
         public unsafe Span<");
             this.Write(this.ToStringHelper.ToStringWithCulture(ValueItemTypeName));
             this.Write("> GetRowSpan(int row)\r\n        {\r\n            if (row < 0 || _rows - 1 < row)\r\n  " +
-                    "              throw new ArgumentException(\"invalid row\");\r\n\r\n            var ptr" +
+                    "              throw new ArgumentException(\"Invalid row\");\r\n\r\n            var ptr" +
                     " = _pointer + (row * _stride);\r\n            return new Span<");
             this.Write(this.ToStringHelper.ToStringWithCulture(ValueItemTypeName));
             this.Write(">(ptr.ToPointer(), _columns);\r\n        }\r\n        public ReadOnlySpan<");
             this.Write(this.ToStringHelper.ToStringWithCulture(ValueItemTypeName));
-            this.Write("> GetRoRowSpan(int row) => GetRowSpan(row);\r\n\r\n        // IEquatable<T>\r\n        " +
-                    "public bool Equals(");
+            this.Write(@"> GetRoRowSpan(int row) => GetRowSpan(row);
+
+        public IntPtr GetIntPtr(int row, int column)
+        {
+            if (row < 0 || _rows - 1 < row || column < 0 || _columns - 1 < column)
+                throw new ArgumentException(""Out of range."");
+
+            return _pointer + (row * _stride) + (column * _bytesPerItem);
+        }
+                
+        public ");
+            this.Write(this.ToStringHelper.ToStringWithCulture(ValueItemTypeName));
+            this.Write(" ReadValue(int row, int column)\r\n        {\r\n            if (row < 0 || _rows - 1 " +
+                    "< row || column < 0 || _columns - 1 < column)\r\n                throw new Argumen" +
+                    "tException(\"Out of range.\");\r\n\r\n            return UnsafeHelper.ReadStructureFro" +
+                    "mPtr<");
+            this.Write(this.ToStringHelper.ToStringWithCulture(ValueItemTypeName));
+            this.Write(">(GetIntPtr(row, column));\r\n        }\r\n\r\n        public void WriteValue(in ");
+            this.Write(this.ToStringHelper.ToStringWithCulture(ValueItemTypeName));
+            this.Write(@" value, int row, int column)
+        {
+            if (row < 0 || _rows - 1 < row || column < 0 || _columns - 1 < column)
+                throw new ArgumentException(""Out of range."");
+
+            UnsafeHelper.WriteStructureToPtr(GetIntPtr(row, column), value);
+        }
+
+        // IEquatable<T>
+        public bool Equals(");
             this.Write(this.ToStringHelper.ToStringWithCulture(MatrixClassName));
             this.Write(" other) => this == other;\r\n        public override bool Equals(object? obj) => (o" +
                     "bj is ");

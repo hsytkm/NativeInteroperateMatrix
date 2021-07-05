@@ -12,26 +12,20 @@ namespace NativeInteroperateMatrix.Core
         {
             var t = typeof(TValue);
 
-            if (t == typeof(byte))
-                return (TMatrix)(IMatrix<byte>)new ByteMatrix(intPtr, width, height, bytesPerData, stride);
-
-            if (t == typeof(short))
-                return (TMatrix)(IMatrix<short>)new Int16Matrix(intPtr, width, height, bytesPerData, stride);
-
-            if (t == typeof(int))
-                return (TMatrix)(IMatrix<int>)new Int32Matrix(intPtr, width, height, bytesPerData, stride);
-
-            if (t == typeof(long))
-                return (TMatrix)(IMatrix<long>)new Int64Matrix(intPtr, width, height, bytesPerData, stride);
-
-            if (t == typeof(float))
-                return (TMatrix)(IMatrix<float>)new SingleMatrix(intPtr, width, height, bytesPerData, stride);
-
+            if (t == typeof(PixelBgr))
+                return (TMatrix)(IMatrix<PixelBgr>)new PixelBgrMatrix(intPtr, width, height, bytesPerData, stride);
             if (t == typeof(double))
                 return (TMatrix)(IMatrix<double>)new DoubleMatrix(intPtr, width, height, bytesPerData, stride);
-
-            if (t == typeof(Pixel3ch))
-                return (TMatrix)(IMatrix<Pixel3ch>)new Pixel3chMatrix(intPtr, width, height, bytesPerData, stride);
+            if (t == typeof(float))
+                return (TMatrix)(IMatrix<float>)new SingleMatrix(intPtr, width, height, bytesPerData, stride);
+            if (t == typeof(long))
+                return (TMatrix)(IMatrix<long>)new Int64Matrix(intPtr, width, height, bytesPerData, stride);
+            if (t == typeof(int))
+                return (TMatrix)(IMatrix<int>)new Int32Matrix(intPtr, width, height, bytesPerData, stride);
+            if (t == typeof(short))
+                return (TMatrix)(IMatrix<short>)new Int16Matrix(intPtr, width, height, bytesPerData, stride);
+            if (t == typeof(byte))
+                return (TMatrix)(IMatrix<byte>)new ByteMatrix(intPtr, width, height, bytesPerData, stride);
 
             throw new NotImplementedException();
         }

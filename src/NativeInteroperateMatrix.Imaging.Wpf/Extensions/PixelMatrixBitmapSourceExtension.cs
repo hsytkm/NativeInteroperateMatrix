@@ -21,18 +21,18 @@ namespace NativeInteroperateMatrix.Imaging.Wpf.Extensions
             return (int)Math.Ceiling(bitmap.Format.BitsPerPixel / 8d);
         }
 
-        /// <summary>ToPixel3chMatrixContainer を作成して返します</summary>
-        public static Pixel3chMatrixContainer ToPixel3chMatrixContainer(this BitmapSource bitmap)
+        /// <summary>ToPixelBgrMatrixContainer を作成して返します</summary>
+        public static PixelBgrMatrixContainer ToPixelBgrMatrixContainer(this BitmapSource bitmap)
         {
             if (bitmap.IsInvalid()) throw new ArgumentException("Invalid Image");
 
-            var container = new Pixel3chMatrixContainer(bitmap.PixelWidth, bitmap.PixelHeight);
+            var container = new PixelBgrMatrixContainer(bitmap.PixelWidth, bitmap.PixelHeight);
             container.Matrix.CopyTo(bitmap);
             return container;
         }
 
         /// <summary>ImagePixels に画素値をコピーします</summary>
-        internal static void CopyTo(in this Pixel3chMatrix pixel, BitmapSource bitmap)
+        internal static void CopyTo(in this PixelBgrMatrix pixel, BitmapSource bitmap)
         {
             if (bitmap.IsInvalid()) throw new ArgumentException("Invalid Bitmap");
             if (pixel.IsInvalid) throw new ArgumentException("Invalid Pixels");
@@ -62,10 +62,10 @@ namespace NativeInteroperateMatrix.Imaging.Wpf.Extensions
                             rect1Line.Y = y;
                             bitmap.CopyPixels(rect1Line, bufferArray, bufferSize, 0);
 
-                            var dest = (Pixel3ch*)(destHead + y * pixel.Stride);
+                            var dest = (PixelBgr*)(destHead + y * pixel.Stride);
                             for (var ptr = head; ptr < tail; ptr += bytesPerPixel)
                             {
-                                *(dest++) = *((Pixel3ch*)ptr);
+                                *(dest++) = *((PixelBgr*)ptr);
                             }
                         }
                     }

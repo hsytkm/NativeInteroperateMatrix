@@ -8,7 +8,7 @@
     <PackageProjectUrl>https://github.com/hsytkm/NativeInteroperateMatrix</PackageProjectUrl>
     <RepositoryUrl>https://github.com/hsytkm/NativeInteroperateMatrix</RepositoryUrl>
     <NeutralLanguage>en-US</NeutralLanguage>
-    <PackageTags>Interop, Marshalling, Unmanaged, </PackageTags>
+    <PackageTags>Interop, Marshalling, Unmanaged</PackageTags>
     <Copyright>Copyright (c) 2021 myoga</Copyright>
     <RepositoryType>git</RepositoryType>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>

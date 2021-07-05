@@ -54,12 +54,21 @@ namespace NativeInteroperateMatrix.Core
             // https://gist.github.com/hsytkm/55b9bdfaa3eae18fcc1b91449cf16998
 
             var size = Marshal.SizeOf<T>();
-            if (size > destArray.Length) throw new ArgumentOutOfRangeException();
+            if (size > destArray.Length)
+                throw new ArgumentOutOfRangeException();
 
             fixed (byte* p = destArray)
             {
                 *((T*)p) = srcData;
             }
+        }
+
+        /// <summary>構造体を IntPtr から読み出します</summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static unsafe T ReadStructureFromPtr<T>(IntPtr src)
+            where T : unmanaged
+        {
+            return *((T*)src);
         }
 
         /// <summary>構造体を IntPtr に書き出します</summary>

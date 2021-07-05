@@ -4,6 +4,7 @@ using Xunit;
 
 namespace NativeInteroperateMatrix.Core.Tests
 {
+#if false
     public class DoubleMatrixTest
     {
         // ジェネリクスをテストしたい
@@ -16,18 +17,28 @@ namespace NativeInteroperateMatrix.Core.Tests
             using var container = new DoubleMatrixContainer(rows, columns, initialize: true);
             var matrix = container.Matrix;
 
-            matrix.IsValid.IsTrue();
-            matrix.IsInvalid.IsFalse();
-            matrix.IsContinuous.IsTrue();
-
+            matrix.Pointer.IsNot(IntPtr.Zero);
             matrix.Rows.Is(rows);
             matrix.Columns.Is(columns);
+            matrix.BytesPerItem.Is(sizeof(double));
+            matrix.Stride.IsNot(0);         // tekito-
+
             matrix.Width.Is(matrix.Columns);
             matrix.Height.Is(matrix.Rows);
-            matrix.BytesPerItem.Is(sizeof(double));
+            matrix.AllocatedSize.IsNot(0);  // tekito-
             matrix.BitsPerItem.Is(matrix.BytesPerItem * 8);
 
-            GetSum(matrix).Is(0);
+            matrix.IsValid.IsTrue();
+            matrix.IsInvalid.IsFalse();
+            matrix.IsContinuous.IsTrue();   // must be true
+
+            // 値の読み書き
+            var value = 1.234;
+            (var row, var col) = (rows / 2, columns / 2);
+            GetSum(matrix).Is(0);           // initialized
+            matrix.WriteValue(value, row, col);
+            matrix.ReadValue(row, col).Is(value);
+            GetSum(matrix).Is(value);
 
             static double GetSum(IMatrix<double> matrix)
             {
@@ -45,4 +56,5 @@ namespace NativeInteroperateMatrix.Core.Tests
         }
 
     }
+#endif
 }

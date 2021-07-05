@@ -22,5 +22,14 @@ namespace NativeInteroperateMatrix.Core
         Span<TValue> GetRowSpan(int row);
         ReadOnlySpan<TValue> GetRoRowSpan(int row);
 
+        /// <summary>指定行列の IntPtr を取得します</summary>
+        IntPtr GetIntPtr(int row, int column);
+
+        /// <summary>指定行列の値を読み出します</summary>
+        TValue ReadValue(int row, int column);
+
+        /// <summary>指定行列の値を書き出します</summary>
+        void WriteValue(in TValue value, int row, int column);
+
     }
 }

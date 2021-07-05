@@ -20,7 +20,7 @@ namespace NativeInteroperateMatrix.Imaging.Sample
             var bitmapImage = BitmapSourceExtension.FromFile(@"Asserts\image1.bmp");
             SourceImage = new ReactivePropertySlim<BitmapSource>(initialValue: bitmapImage);
 
-            using var pixelContainer = bitmapImage.ToPixel3chMatrixContainer();
+            using var pixelContainer = bitmapImage.ToPixelBgrMatrixContainer();
             var fullPixelMatrix = pixelContainer.Matrix;
 
             // 元画像の画素値平均
@@ -32,11 +32,11 @@ namespace NativeInteroperateMatrix.Imaging.Sample
             FillTriangle(fullPixelMatrix);
 
             // 2. 四角形（塗りつぶしなし）を描画
-            fullPixelMatrix.DrawRectangle(Colors.Cyan.ToPixel3ch(), 200, 200, 100, 200);
+            fullPixelMatrix.DrawRectangle(Colors.Cyan.ToPixelBgr(), 200, 200, 100, 200);
 
             // 3. 上部を切り出して指定塗り
             var headerPixelMatrix = fullPixelMatrix.CutOutPixelMatrix(0, 0, fullPixelMatrix.Columns, 30);
-            headerPixelMatrix.FillAllPixels(Pixel3ch.Gray);
+            headerPixelMatrix.FillAllPixels(PixelBgrs.Gray);
             var headerChannelAverage2 = headerPixelMatrix.GetChannelsAverageOfEntire();
 
             // 4. 上部を除いた左部を切り出してグレスケ塗り
@@ -48,21 +48,21 @@ namespace NativeInteroperateMatrix.Imaging.Sample
             WriteableImage = new ReactivePropertySlim<WriteableBitmap>(initialValue: writableBitmap);
         }
 
-        // 三角領域を単色で塗り(WritePixelのテスト)
-        static void FillTriangle(in Pixel3chMatrix pixelMatrix)
+        // 三角領域を単色で塗り(WriteValueのテスト)
+        static void FillTriangle(in PixelBgrMatrix pixelMatrix)
         {
             int baseX = 100, baseY = 200, height = 100;
-            var color = new Pixel3ch(0, 0xff, 0);
+            var color = new PixelBgr(0, 0xff, 0);
 
             for (int y = 0; y < height; y++)
             {
                 for (int x = baseX; x < baseX + y; x++)
-                    pixelMatrix.WritePixel(color, x, baseY + y);    // ホントは FillRectangle() を使うべきだけど、WritePixel() のテストなので。
+                    pixelMatrix.WriteValue(color, x, baseY + y);    // ホントは FillRectangle() を使うべきだけど、WriteValue() のテストなので。
             }
         }
 
         // 垂直方向で階調が変化するグレー塗り
-        static void FillGrayScaleVertical(in Pixel3chMatrix pixelMatrix)
+        static void FillGrayScaleVertical(in PixelBgrMatrix pixelMatrix)
         {
             const int range = 256;
             var length = pixelMatrix.Rows / range;
@@ -71,13 +71,13 @@ namespace NativeInteroperateMatrix.Imaging.Sample
             {
                 for (int lv = 0; lv < range; ++lv)
                 {
-                    var color = new Pixel3ch((byte)(lv & 0xff));
+                    var color = new PixelBgr((byte)(lv & 0xff));
                     pixelMatrix.FillRectangle(color, 0, lv * length, pixelMatrix.Columns, length);
                 }
             }
 
             var filledHeight = length * range;
-            pixelMatrix.FillRectangle(Pixel3ch.Black, 0, filledHeight, pixelMatrix.Columns, pixelMatrix.Rows - filledHeight);
+            pixelMatrix.FillRectangle(PixelBgrs.Black, 0, filledHeight, pixelMatrix.Columns, pixelMatrix.Rows - filledHeight);
         }
 
     }

@@ -27,20 +27,20 @@ namespace NativeInteroperateMatrix.Imaging.Drawing.Extensions
             static int Ceiling(int value, int div) => (value + (div - 1)) / div;
         }
 
-        /// <summary>Pixel3chMatrixContainer を作成して返します</summary>
-        public static Pixel3chMatrixContainer ToPixel3chMatrixContainer(this Bitmap bitmap, bool isDisposeBitmap = false)
+        /// <summary>PixelBgrMatrixContainer を作成して返します</summary>
+        public static PixelBgrMatrixContainer ToPixelBgrMatrixContainer(this Bitmap bitmap, bool isDisposeBitmap = false)
         {
             if (bitmap.IsInvalid()) throw new ArgumentException("Invalid Image");
 
-            var container = new Pixel3chMatrixContainer(bitmap.Width, bitmap.Height);
+            var container = new PixelBgrMatrixContainer(bitmap.Width, bitmap.Height);
             var pixels = container.Matrix;
             CopyTo(bitmap, pixels, isDisposeBitmap);
 
             return container;
         }
 
-        /// <summary>Pixel3chMatrix に画素値をコピーします</summary>
-        public static void CopyTo(this Bitmap bitmap, in Pixel3chMatrix pixels, bool isDisposeBitmap = false)
+        /// <summary>PixelBgrMatrix に画素値をコピーします</summary>
+        public static void CopyTo(this Bitmap bitmap, in PixelBgrMatrix pixels, bool isDisposeBitmap = false)
         {
             if (bitmap.IsInvalid()) throw new ArgumentException("Invalid Bitmap");
             if (pixels.IsInvalid) throw new ArgumentException("Invalid Pixels");
@@ -86,7 +86,7 @@ namespace NativeInteroperateMatrix.Imaging.Drawing.Extensions
                         {
                             for (var x = 0; x < bitmap.Width; ++x)
                             {
-                                *(Pixel3ch*)(destPtr + x * destBytesPerPixel) = *(Pixel3ch*)(srcPtr + x * srcBytesPerPixel);
+                                *(PixelBgr*)(destPtr + x * destBytesPerPixel) = *(PixelBgr*)(srcPtr + x * srcBytesPerPixel);
                             }
                         }
                     }

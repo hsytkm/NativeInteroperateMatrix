@@ -8,7 +8,7 @@ using Matrix.SourceGenerator;
 namespace NativeInteroperateMatrix.Core.Imaging
 {
     [MatrixGenerator]   // SourceGenerator 内で Container も一緒に生成しちゃっています(手抜き)
-    public readonly partial struct Pixel3chMatrix
+    public readonly partial struct PixelBgrMatrix
     {
         public int BytesPerPixel => BytesPerItem;
         public int BitsPerPixel => BitsPerItem;
@@ -60,7 +60,7 @@ namespace NativeInteroperateMatrix.Core.Imaging
 
         #region FillAllPixels
         /// <summary>指定の画素値で画像全体を埋めます</summary>
-        public void FillAllPixels(in Pixel3ch pixels)
+        public void FillAllPixels(in PixelBgr pixels)
         {
             unsafe
             {
@@ -72,7 +72,7 @@ namespace NativeInteroperateMatrix.Core.Imaging
                 for (var line = (byte*)_pointer; line < pixelsTail; line += stride)
                 {
                     var lineTail = line + widthOffset;
-                    for (var p = (Pixel3ch*)line; p < lineTail; ++p)
+                    for (var p = (PixelBgr*)line; p < lineTail; ++p)
                     {
                         *p = pixels;
                     }
@@ -83,20 +83,20 @@ namespace NativeInteroperateMatrix.Core.Imaging
 
         #region FillRectangle
         /// <summary>指定領域の画素を塗りつぶします</summary>
-        public void FillRectangle(in Pixel3ch pixel, int x, int y, int width, int height)
+        public void FillRectangle(in PixelBgr pixel, int x, int y, int width, int height)
         {
             if (_columns < x + width) throw new ArgumentException("vertical direction");
             if (_rows < y + height) throw new ArgumentException("horizontal direction");
 
             unsafe
             {
-                var lineHeadPtr = (byte*)GetPixelPtr(x, y);
+                var lineHeadPtr = (byte*)GetIntPtr(x, y);
                 var lineTailPtr = lineHeadPtr + (height * _stride);
                 var widthOffset = width * _bytesPerItem;
 
                 for (var linePtr = lineHeadPtr; linePtr < lineTailPtr; linePtr += _stride)
                 {
-                    for (var p = (Pixel3ch*)linePtr; p < linePtr + widthOffset; p++)
+                    for (var p = (PixelBgr*)linePtr; p < linePtr + widthOffset; p++)
                         *p = pixel;
                 }
             }
@@ -105,7 +105,7 @@ namespace NativeInteroperateMatrix.Core.Imaging
 
         #region DrawRectangle
         /// <summary>指定枠を描画します</summary>
-        public void DrawRectangle(in Pixel3ch pixel, int x, int y, int width, int height)
+        public void DrawRectangle(in PixelBgr pixel, int x, int y, int width, int height)
         {
             if (_columns < x + width) throw new ArgumentException("vertical direction");
             if (_rows < y + height) throw new ArgumentException("horizontal direction");
@@ -115,61 +115,44 @@ namespace NativeInteroperateMatrix.Core.Imaging
                 var stride = _stride;
                 var bytesPerPixel = _bytesPerItem;
                 var widthOffset = (width - 1) * bytesPerPixel;
-                var rectHeadPtr = (byte*)GetPixelPtr(x, y);
+                var rectHeadPtr = (byte*)GetIntPtr(x, y);
 
                 // 上ライン
                 for (var ptr = rectHeadPtr; ptr < rectHeadPtr + widthOffset; ptr += bytesPerPixel)
-                    *((Pixel3ch*)ptr) = pixel;
+                    *((PixelBgr*)ptr) = pixel;
 
                 // 下ライン
                 var bottomHeadPtr = rectHeadPtr + ((height - 1) * stride);
                 for (var ptr = bottomHeadPtr; ptr < bottomHeadPtr + widthOffset; ptr += bytesPerPixel)
-                    *((Pixel3ch*)ptr) = pixel;
+                    *((PixelBgr*)ptr) = pixel;
 
                 // 左ライン
                 var leftTailPtr = rectHeadPtr + (height * stride);
                 for (var ptr = rectHeadPtr; ptr < leftTailPtr; ptr += stride)
-                    *((Pixel3ch*)ptr) = pixel;
+                    *((PixelBgr*)ptr) = pixel;
 
                 // 右ライン
                 var rightHeadPtr = rectHeadPtr + widthOffset;
                 var rightTailPtr = rightHeadPtr + (height * stride);
                 for (var ptr = rightHeadPtr; ptr < rightTailPtr; ptr += stride)
-                    *((Pixel3ch*)ptr) = pixel;
+                    *((PixelBgr*)ptr) = pixel;
             }
-        }
-        #endregion
-
-        #region WritePixel
-        /// <summary>指定画素の IntPtr を取得します</summary>
-        public IntPtr GetPixelPtr(int x, int y)
-        {
-            if (x > _columns - 1 || y > _rows - 1) throw new ArgumentException("Out of image.");
-            return _pointer + (y * _stride) + (x * _bytesPerItem);
-        }
-
-        /// <summary>指定位置の画素を更新します</summary>
-        public void WritePixel(in Pixel3ch pixels, int x, int y)
-        {
-            if (x > _columns - 1 || y > _rows - 1) return;
-            var ptr = GetPixelPtr(x, y);
-            UnsafeHelper.WriteStructureToPtr(ptr, pixels);
         }
         #endregion
 
         #region CutOut
         /// <summary>画像の一部を切り出した子画像を取得します</summary>
-        public Pixel3chMatrix CutOutPixelMatrix(int x, int y, int width, int height)
+        public PixelBgrMatrix CutOutPixelMatrix(int x, int y, int width, int height)
         {
             if (_columns < x + width) throw new ArgumentException("vertical direction");
             if (_rows < y + height) throw new ArgumentException("horizontal direction");
-            return new Pixel3chMatrix(GetPixelPtr(x, y), width, height, _bytesPerItem, _stride);
+            return new PixelBgrMatrix(GetIntPtr(x, y), width, height, _bytesPerItem, _stride);
         }
         #endregion
 
         #region CopyTo
         /// <summary>画素値をコピーします</summary>
-        public void CopyTo(in Pixel3chMatrix destPixels)
+        public void CopyTo(in PixelBgrMatrix destPixels)
         {
             if (_columns != destPixels._columns || _rows != destPixels._rows) throw new ArgumentException("size is different.");
             if (_pointer == destPixels._pointer) throw new ArgumentException("same pointer.");
@@ -177,7 +160,7 @@ namespace NativeInteroperateMatrix.Core.Imaging
             CopyToInternal(this, destPixels);
 
             // 画素値のコピー（サイズチェックなし）
-            static void CopyToInternal(in Pixel3chMatrix srcPixels, in Pixel3chMatrix destPixels)
+            static void CopyToInternal(in PixelBgrMatrix srcPixels, in PixelBgrMatrix destPixels)
             {
                 // メモリが連続していれば memcopy
                 if (srcPixels.IsContinuous && destPixels.IsContinuous)
@@ -201,7 +184,7 @@ namespace NativeInteroperateMatrix.Core.Imaging
 
                         for (int x = 0; x < width * bytesPerPixel; x += bytesPerPixel)
                         {
-                            *(Pixel3ch*)(dst + x) = *(Pixel3ch*)(src + x);
+                            *(PixelBgr*)(dst + x) = *(PixelBgr*)(src + x);
                         }
                     }
                 }
@@ -209,9 +192,9 @@ namespace NativeInteroperateMatrix.Core.Imaging
         }
 
         /// <summary>画素値を拡大コピーします</summary>
-        public void CopyToWithScaleUp(in Pixel3chMatrix destination)
+        public void CopyToWithScaleUp(in PixelBgrMatrix destination)
         {
-            if (_bytesPerItem != 3 || destination._bytesPerItem != 3)
+            if (_bytesPerItem != PixelBgr.Size || destination._bytesPerItem != PixelBgr.Size)
                 throw new ArgumentException("bytes/pixel error.");
 
             if (destination._columns % _columns != 0 || destination._rows % _rows != 0)
@@ -226,7 +209,7 @@ namespace NativeInteroperateMatrix.Core.Imaging
 
             ScaleUp(this, destination, magnification);
 
-            static unsafe void ScaleUp(in Pixel3chMatrix source, in Pixel3chMatrix destination, int magnification)
+            static unsafe void ScaleUp(in PixelBgrMatrix source, in PixelBgrMatrix destination, int magnification)
             {
                 var bytesPerPixel = source._bytesPerItem;
                 var srcPixelHead = (byte*)source._pointer;
@@ -244,13 +227,13 @@ namespace NativeInteroperateMatrix.Core.Imaging
 
                     for (int x = 0; x < srcWidth * bytesPerPixel; x += bytesPerPixel)
                     {
-                        var pixel = (Pixel3ch*)(src + x);
+                        var pixel = (PixelBgr*)(src + x);
                         var dest1 = dest0 + (x * magnification);
 
                         for (byte* dest2 = dest1; dest2 < dest1 + (destStride * magnification); dest2 += destStride)
                         {
                             for (byte* dest3 = dest2; dest3 < dest2 + (bytesPerPixel * magnification); dest3 += bytesPerPixel)
-                                *((Pixel3ch*)dest3) = *pixel;
+                                *((PixelBgr*)dest3) = *pixel;
                         }
                     }
                 }
@@ -293,7 +276,7 @@ namespace NativeInteroperateMatrix.Core.Imaging
             return ms;
 
             // Bitmapのバイナリ配列を取得します
-            static byte[] GetBitmapBinary(in Pixel3chMatrix pixel)
+            static byte[] GetBitmapBinary(in PixelBgrMatrix pixel)
             {
                 var height = pixel._rows;
                 var srcStride = pixel._stride;

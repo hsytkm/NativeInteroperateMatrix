@@ -48,8 +48,6 @@ namespace <#= Namespace #>
         public int Stride => _stride;
         public int Width => _columns;
         public int Height => _rows;
-
-        // MatrixExtension
         public int AllocatedSize => _columns * _bytesPerItem * _rows;  // don't use stride
         public bool IsContinuous => (_columns * _bytesPerItem) == _stride;
         public bool IsValid
@@ -68,12 +66,36 @@ namespace <#= Namespace #>
         public unsafe Span<<#= ValueItemTypeName #>> GetRowSpan(int row)
         {
             if (row < 0 || _rows - 1 < row)
-                throw new ArgumentException("invalid row");
+                throw new ArgumentException("Invalid row");
 
             var ptr = _pointer + (row * _stride);
             return new Span<<#= ValueItemTypeName #>>(ptr.ToPointer(), _columns);
         }
         public ReadOnlySpan<<#= ValueItemTypeName #>> GetRoRowSpan(int row) => GetRowSpan(row);
+
+        public IntPtr GetIntPtr(int row, int column)
+        {
+            if (row < 0 || _rows - 1 < row || column < 0 || _columns - 1 < column)
+                throw new ArgumentException("Out of range.");
+
+            return _pointer + (row * _stride) + (column * _bytesPerItem);
+        }
+                
+        public <#= ValueItemTypeName #> ReadValue(int row, int column)
+        {
+            if (row < 0 || _rows - 1 < row || column < 0 || _columns - 1 < column)
+                throw new ArgumentException("Out of range.");
+
+            return UnsafeHelper.ReadStructureFromPtr<<#= ValueItemTypeName #>>(GetIntPtr(row, column));
+        }
+
+        public void WriteValue(in <#= ValueItemTypeName #> value, int row, int column)
+        {
+            if (row < 0 || _rows - 1 < row || column < 0 || _columns - 1 < column)
+                throw new ArgumentException("Out of range.");
+
+            UnsafeHelper.WriteStructureToPtr(GetIntPtr(row, column), value);
+        }
 
         // IEquatable<T>
         public bool Equals(<#= MatrixClassName #> other) => this == other;

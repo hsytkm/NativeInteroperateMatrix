@@ -28,7 +28,7 @@ namespace NativeInteroperateMatrix.Core.Imaging
             G = channels[1];
             R = channels[2];
         }
-        public ColorBgr(in Pixel3ch pixels) : this((double)pixels.Ch0, pixels.Ch1, pixels.Ch2) { }
+        public ColorBgr(in PixelBgr pixels) : this((double)pixels.Ch0, pixels.Ch1, pixels.Ch2) { }
 
         private static double ToLuminanceY(double b, double g, double r) => 0.299 * r + 0.587 * g + 0.114 * b;
 

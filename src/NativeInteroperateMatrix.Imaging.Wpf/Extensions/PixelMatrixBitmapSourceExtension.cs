@@ -26,7 +26,7 @@ namespace NativeInteroperateMatrix.Imaging.Wpf.Extensions
         {
             if (bitmap.IsInvalid()) throw new ArgumentException("Invalid Image");
 
-            var container = new PixelBgrMatrixContainer(bitmap.PixelWidth, bitmap.PixelHeight);
+            var container = new PixelBgrMatrixContainer(rows: bitmap.PixelHeight, columns: bitmap.PixelWidth, false);
             container.Matrix.CopyTo(bitmap);
             return container;
         }

@@ -2,24 +2,16 @@
 
 namespace NativeInteroperateMatrix.Core.Imaging
 {
-    public class ColorBgr : IFormattable
+    public record ColorBgr : IFormattable
     {
         public double B { get; }
         public double G { get; }
         public double R { get; }
-        public double Y
-        {
-            get
-            {
-                if (double.IsNaN(_y))
-                    _y = ToLuminanceY(B, G, R);
-                return _y;
-            }
-        }
-        private double _y = double.NaN;
+        public double Y { get; }
 
-        public ColorBgr(double b, double g, double r) => (B, G, R) = (b, g, r);
+        public ColorBgr(double b, double g, double r) => (B, G, R, Y) = (b, g, r, ToLuminanceY(b, g, r));
         public ColorBgr(byte b, byte g, byte r) : this((double)b, g, r) { }
+        public ColorBgr(in PixelBgr pixels) : this((double)pixels.Ch0, pixels.Ch1, pixels.Ch2) { }
         public ColorBgr(ReadOnlySpan<double> channels)
         {
             if (channels.Length != 3) throw new ArgumentException("channels length is invalid.");
@@ -27,8 +19,8 @@ namespace NativeInteroperateMatrix.Core.Imaging
             B = channels[0];
             G = channels[1];
             R = channels[2];
+            Y = ToLuminanceY(B, G, R);
         }
-        public ColorBgr(in PixelBgr pixels) : this((double)pixels.Ch0, pixels.Ch1, pixels.Ch2) { }
 
         private static double ToLuminanceY(double b, double g, double r) => 0.299 * r + 0.587 * g + 0.114 * b;
 

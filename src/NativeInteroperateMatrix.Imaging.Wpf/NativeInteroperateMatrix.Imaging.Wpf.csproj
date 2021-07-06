@@ -1,17 +1,17 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-	<PropertyGroup>
-		<TargetFrameworks>net5.0-windows</TargetFrameworks>
-		<UseWPF>true</UseWPF>
-		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-		<Nullable>enable</Nullable>
-		<Title>NativeInteroperateMatrix.Imaging.Wpf</Title>
-	</PropertyGroup>
+    <PropertyGroup>
+        <TargetFrameworks>net5.0-windows</TargetFrameworks>
+        <UseWPF>true</UseWPF>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+        <Nullable>enable</Nullable>
+        <Title>NativeInteroperateMatrix.Imaging.Wpf</Title>
+    </PropertyGroup>
 
-	<Import Project="../SharedProperties.csproj" />
+    <Import Project="../SharedProperties.csproj" />
 
-	<ItemGroup>
-		<ProjectReference Include="..\NativeInteroperateMatrix.Core\NativeInteroperateMatrix.Core.csproj" />
-	</ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\NativeInteroperateMatrix.Core\NativeInteroperateMatrix.Core.csproj" />
+    </ItemGroup>
 
 </Project>

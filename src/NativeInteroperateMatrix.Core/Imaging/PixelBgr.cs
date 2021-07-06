@@ -34,5 +34,9 @@ namespace NativeInteroperateMatrix.Core.Imaging
         public static readonly PixelBgr White = new(0xff);
         public static readonly PixelBgr Gray = new(0x80);
         public static readonly PixelBgr Black = new(0x00);
+        public static readonly PixelBgr Red = new(0x00, 0x00, 0xff);
+        public static readonly PixelBgr Green = new(0x00, 0xff, 0x00);
+        public static readonly PixelBgr Blue = new(0xff, 0x00, 0x00);
+
     }
 }

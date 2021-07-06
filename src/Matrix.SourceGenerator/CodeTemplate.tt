@@ -8,6 +8,7 @@
 // </auto-generated>
 #nullable enable
 using System;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
 <# if (!string.IsNullOrEmpty(Namespace)) { #>
@@ -73,7 +74,7 @@ namespace <#= Namespace #>
         }
         public ReadOnlySpan<<#= ValueItemTypeName #>> GetRoRowSpan(int row) => GetRowSpan(row);
 
-        public IntPtr GetIntPtr(int row, int column)
+        private IntPtr GetIntPtr(int row, int column)
         {
             if (row < 0 || _rows - 1 < row || column < 0 || _columns - 1 < column)
                 throw new ArgumentException("Out of range.");
@@ -116,20 +117,31 @@ namespace <#= Namespace #>
             : base(rows, columns, initialize)
         { }
 
-        public static <#= ContainerClassName #> Create(ValueArray2d<<#= ValueItemTypeName #>> array2d)
+        public <#= ContainerClassName #>(int rows, int columns, IReadOnlyCollection<<#= ValueItemTypeName #>> items)
+            : base(rows, columns, false)
         {
-            var container = new <#= ContainerClassName #>(array2d.Rows, array2d.Columns, false);
-            var matrix = container.Matrix;
+            if (rows * columns != items.Count)
+                throw new ArgumentException("Collection is short.", nameof(items));
 
-            for (var r = 0; r < matrix.Rows; r++)
+            var row = 0;
+            var column = 0;
+            Span<<#= ValueItemTypeName #>> span = Matrix.GetRowSpan(row);
+
+            foreach (var item in items)
             {
-                var line = matrix.GetRowSpan(r);
-                for (var c = 0; c < line.Length; c++)
+                if (column >= columns)
                 {
-                    line[c] = array2d[r, c];
+                    column = 0;
+                    row++;
+                    span = Matrix.GetRowSpan(row);
                 }
+                span[column++] = item;
             }
-            return container;
+        }
+
+        protected override <#= MatrixClassName #> CreateMatrix(IntPtr intPtr, int width, int height, int bytesPerData, int stride)
+        {
+            return new <#= MatrixClassName #>(intPtr, width, height, bytesPerData, stride);
         }
     }
 }

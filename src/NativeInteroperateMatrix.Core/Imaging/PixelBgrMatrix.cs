@@ -60,7 +60,7 @@ namespace NativeInteroperateMatrix.Core.Imaging
 
         #region FillAllPixels
         /// <summary>指定の画素値で画像全体を埋めます</summary>
-        public void FillAllPixels(in PixelBgr pixels)
+        public void FillAllPixels(in PixelBgr pixel)
         {
             unsafe
             {
@@ -69,12 +69,12 @@ namespace NativeInteroperateMatrix.Core.Imaging
                 var pixelsTail = pixelsHead + _rows * stride;
                 var widthOffset = _columns * _bytesPerItem;
 
-                for (var line = (byte*)_pointer; line < pixelsTail; line += stride)
+                for (var line = pixelsHead; line < pixelsTail; line += stride)
                 {
                     var lineTail = line + widthOffset;
                     for (var p = (PixelBgr*)line; p < lineTail; ++p)
                     {
-                        *p = pixels;
+                        *p = pixel;
                     }
                 }
             }
@@ -90,7 +90,7 @@ namespace NativeInteroperateMatrix.Core.Imaging
 
             unsafe
             {
-                var lineHeadPtr = (byte*)GetIntPtr(x, y);
+                var lineHeadPtr = (byte*)GetIntPtr(y, x);
                 var lineTailPtr = lineHeadPtr + (height * _stride);
                 var widthOffset = width * _bytesPerItem;
 
@@ -115,7 +115,7 @@ namespace NativeInteroperateMatrix.Core.Imaging
                 var stride = _stride;
                 var bytesPerPixel = _bytesPerItem;
                 var widthOffset = (width - 1) * bytesPerPixel;
-                var rectHeadPtr = (byte*)GetIntPtr(x, y);
+                var rectHeadPtr = (byte*)GetIntPtr(y, x);
 
                 // 上ライン
                 for (var ptr = rectHeadPtr; ptr < rectHeadPtr + widthOffset; ptr += bytesPerPixel)
@@ -146,7 +146,7 @@ namespace NativeInteroperateMatrix.Core.Imaging
         {
             if (_columns < x + width) throw new ArgumentException("vertical direction");
             if (_rows < y + height) throw new ArgumentException("horizontal direction");
-            return new PixelBgrMatrix(GetIntPtr(x, y), width, height, _bytesPerItem, _stride);
+            return new PixelBgrMatrix(GetIntPtr(y, x), height, width, _bytesPerItem, _stride);
         }
         #endregion
 
@@ -255,8 +255,6 @@ namespace NativeInteroperateMatrix.Core.Imaging
         /// <summary>画像をbmpファイルに保存します</summary>
         public async Task ToBmpFileAsync(string savePath, CancellationToken token = default)
         {
-            await Task.Yield();
-
             using var ms = ToBitmapMemoryStream(savePath);
             using var fs = new FileStream(savePath, FileMode.Create);
             fs.Seek(0, SeekOrigin.Begin);

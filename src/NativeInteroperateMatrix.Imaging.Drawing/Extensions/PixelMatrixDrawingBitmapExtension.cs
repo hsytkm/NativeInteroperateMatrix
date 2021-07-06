@@ -32,7 +32,7 @@ namespace NativeInteroperateMatrix.Imaging.Drawing.Extensions
         {
             if (bitmap.IsInvalid()) throw new ArgumentException("Invalid Image");
 
-            var container = new PixelBgrMatrixContainer(bitmap.Width, bitmap.Height);
+            var container = new PixelBgrMatrixContainer(rows: bitmap.Height, columns: bitmap.Width, false);
             var pixels = container.Matrix;
             CopyTo(bitmap, pixels, isDisposeBitmap);
 

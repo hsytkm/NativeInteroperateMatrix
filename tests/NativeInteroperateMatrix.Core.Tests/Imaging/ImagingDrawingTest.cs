@@ -1,0 +1,29 @@
+﻿using NativeInteroperateMatrix.Imaging.Drawing.Extensions;
+using System;
+using System.Drawing;
+using System.IO;
+using System.Threading.Tasks;
+using Xunit;
+
+namespace NativeInteroperateMatrix.Core.Tests.Imaging.Drawing
+{
+    public class ImagingDrawingTest
+    {
+        private const string _tempPath = "_temp.bmp";
+
+        [Theory]
+        [ClassData(typeof(ImagePathTestData))]
+        public async Task ToContainer(string sourcePath)
+        {
+            using var drawing = new Bitmap(sourcePath);
+            using var container = drawing.ToPixelBgrMatrixContainer();
+
+            await container.Matrix.ToBmpFileAsync(_tempPath);
+            var isMatch = await FileComparator.IsMatchAsync(sourcePath, _tempPath);
+            isMatch.IsTrue();
+
+            File.Delete(_tempPath);
+        }
+
+    }
+}

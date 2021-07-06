@@ -25,8 +25,10 @@ namespace NativeInteroperateMatrix.Core
                 UnsafeHelper.FillZero(_allocatedMemoryPointer, _allocatedSize);
             }
 
-            Matrix = MatrixFactory.Create<TMatrix, TValue>(_allocatedMemoryPointer, rows, columns, bytesPerData, stride);
+            Matrix = CreateMatrix(_allocatedMemoryPointer, rows, columns, bytesPerData, stride);
         }
+
+        protected abstract TMatrix CreateMatrix(IntPtr intPtr, int width, int height, int bytesPerData, int stride);
 
         #region IDisposable
         private bool _disposedValue;

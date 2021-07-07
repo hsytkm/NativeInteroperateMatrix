@@ -1,7 +1,7 @@
-﻿using NativeInteroperateMatrix.Core.Imaging;
+﻿using Nima.Core.Imaging;
 using System;
 
-namespace NativeInteroperateMatrix.Core.Tests
+namespace Nima.Core.Tests
 {
     //internal static class MatrixContainerFactory
     //{

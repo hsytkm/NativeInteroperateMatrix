@@ -5,7 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Matrix.SourceGenerator;
 
-namespace NativeInteroperateMatrix.Core.Imaging
+namespace Nima.Core.Imaging
 {
     [MatrixGenerator]   // SourceGenerator 内で Container も一緒に生成しちゃっています(手抜き)
     public readonly partial struct PixelBgrMatrix

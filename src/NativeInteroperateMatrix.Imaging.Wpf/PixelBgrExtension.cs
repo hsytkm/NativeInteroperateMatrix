@@ -1,8 +1,8 @@
-﻿using NativeInteroperateMatrix.Core.Imaging;
+﻿using Nima.Core.Imaging;
 using System;
 using System.Windows.Media;
 
-namespace NativeInteroperateMatrix.Imaging.Wpf.Extensions
+namespace Nima.Imaging.Wpf
 {
     public static class PixelBgrExtension
     {

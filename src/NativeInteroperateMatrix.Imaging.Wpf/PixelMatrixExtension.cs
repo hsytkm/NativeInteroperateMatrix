@@ -1,7 +1,7 @@
-﻿using NativeInteroperateMatrix.Core.Imaging;
+﻿using Nima.Core.Imaging;
 using System;
 
-namespace NativeInteroperateMatrix.Imaging.Wpf.Extensions
+namespace Nima.Imaging.Wpf
 {
     public static class PixelMatrixExtension
     {

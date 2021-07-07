@@ -2,7 +2,7 @@
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-namespace NativeInteroperateMatrix.Core
+namespace Nima.Core
 {
     public static class UnsafeHelper
     {

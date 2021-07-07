@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-namespace NativeInteroperateMatrix.Core.Tests.Imaging
+namespace Nima.Core.Tests.Imaging
 {
     internal class ImagePathTestData : IEnumerable<object[]>
     {

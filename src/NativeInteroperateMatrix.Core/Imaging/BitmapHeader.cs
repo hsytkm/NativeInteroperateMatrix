@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-namespace NativeInteroperateMatrix.Core.Imaging
+namespace Nima.Core.Imaging
 {
     // http://www.umekkii.jp/data/computer/file_format/bitmap.cgi
     [StructLayout(LayoutKind.Sequential, Pack = 1)]

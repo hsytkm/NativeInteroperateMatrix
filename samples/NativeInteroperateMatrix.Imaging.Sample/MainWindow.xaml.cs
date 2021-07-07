@@ -13,7 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace NativeInteroperateMatrix.Imaging.Sample
+namespace Nima.Imaging.Sample
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml

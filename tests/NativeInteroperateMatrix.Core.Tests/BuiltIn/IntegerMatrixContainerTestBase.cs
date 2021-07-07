@@ -1,7 +1,7 @@
 ﻿using System;
 using Xunit;
 
-namespace NativeInteroperateMatrix.Core.Tests.BuiltIn
+namespace Nima.Core.Tests.BuiltIn
 {
     /// <summary>
     /// 空の Container インスタンス作成（整数専用）

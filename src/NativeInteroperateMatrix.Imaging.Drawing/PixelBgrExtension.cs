@@ -1,8 +1,8 @@
-﻿using NativeInteroperateMatrix.Core.Imaging;
+﻿using Nima.Core.Imaging;
 using System;
 using System.Drawing;
 
-namespace NativeInteroperateMatrix.Imaging.Drawing.Extensions
+namespace Nima.Imaging.Drawing
 {
     public static class PixelBgrExtension
     {

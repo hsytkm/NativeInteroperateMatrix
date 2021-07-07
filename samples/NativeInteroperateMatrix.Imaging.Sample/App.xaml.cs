@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 
-namespace NativeInteroperateMatrix.Imaging.Sample
+namespace Nima.Imaging.Sample
 {
     public partial class App : Application
     {

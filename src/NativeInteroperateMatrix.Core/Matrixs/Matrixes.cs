@@ -1,7 +1,7 @@
 ﻿using System;
 using Matrix.SourceGenerator;
 
-namespace NativeInteroperateMatrix.Core
+namespace Nima.Core
 {
     // SourceGenerator 内で Matrix の Container も一緒に生成しています(手抜き)
     [MatrixGenerator]

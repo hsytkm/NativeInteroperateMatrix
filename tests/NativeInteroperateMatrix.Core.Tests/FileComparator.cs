@@ -3,7 +3,7 @@ using System.IO;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
 
-namespace NativeInteroperateMatrix.Core.Tests
+namespace Nima.Core.Tests
 {
     static class FileComparator
     {
@@ -16,7 +16,7 @@ namespace NativeInteroperateMatrix.Core.Tests
         {
             // see https://mseeeen.msen.jp/compute-hash-string-of-files/
             using var hashProvider = new SHA1CryptoServiceProvider();
-            using var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+            using var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read);
             var bs = await hashProvider.ComputeHashAsync(fs);
             return BitConverter.ToString(bs).ToLowerInvariant().Replace("-", "");
         }

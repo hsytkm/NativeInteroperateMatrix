@@ -2,7 +2,6 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
-
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 
@@ -24,8 +23,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\NativeInteroperateMatrix.Core\NativeInteroperateMatrix.Core.csproj" />
-    <ProjectReference Include="..\..\src\NativeInteroperateMatrix.Imaging.Drawing\NativeInteroperateMatrix.Imaging.Drawing.csproj" />
+      <ProjectReference Include="..\..\src\NativeInteroperateMatrix.Core\NativeInteroperateMatrix.Core.csproj" />
+      <ProjectReference Include="..\..\src\NativeInteroperateMatrix.Imaging.Drawing\NativeInteroperateMatrix.Imaging.Drawing.csproj" />
   </ItemGroup>
 
   <ItemGroup>

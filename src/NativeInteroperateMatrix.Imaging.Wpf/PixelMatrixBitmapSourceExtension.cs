@@ -1,10 +1,10 @@
-﻿using NativeInteroperateMatrix.Core.Imaging;
+﻿using Nima.Core.Imaging;
 using System;
 using System.Buffers;
 using System.Windows;
 using System.Windows.Media.Imaging;
 
-namespace NativeInteroperateMatrix.Imaging.Wpf.Extensions
+namespace Nima.Imaging.Wpf
 {
     public static class PixelMatrixBitmapSourceExtension
     {

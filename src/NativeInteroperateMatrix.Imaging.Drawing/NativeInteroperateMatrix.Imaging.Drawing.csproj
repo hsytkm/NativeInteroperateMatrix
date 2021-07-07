@@ -4,7 +4,9 @@
         <TargetFrameworks>net5.0</TargetFrameworks>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
         <Nullable>enable</Nullable>
-        <Title>NativeInteroperateMatrix.Imaging.Drawing</Title>
+        <Title>Nima.Imaging.Drawing</Title>
+        <AssemblyName>Nima.Imaging.Drawing</AssemblyName>
+        <RootNamespace>Nima.Imaging.Drawing</RootNamespace>
     </PropertyGroup>
 
     <Import Project="../SharedProperties.csproj" />

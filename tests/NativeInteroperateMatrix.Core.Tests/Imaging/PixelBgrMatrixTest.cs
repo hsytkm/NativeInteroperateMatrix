@@ -1,8 +1,8 @@
-﻿using NativeInteroperateMatrix.Core.Imaging;
+﻿using Nima.Core.Imaging;
 using System;
 using Xunit;
 
-namespace NativeInteroperateMatrix.Core.Tests.Imaging.Drawing
+namespace Nima.Core.Tests.Imaging.Drawing
 {
     public class PixelBgrMatrixTest
     {

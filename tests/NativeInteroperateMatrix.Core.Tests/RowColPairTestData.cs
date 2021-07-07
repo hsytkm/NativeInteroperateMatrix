@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-namespace NativeInteroperateMatrix.Core.Tests
+namespace Nima.Core.Tests
 {
     internal class RowColPairTestData : IEnumerable<object[]>
     {

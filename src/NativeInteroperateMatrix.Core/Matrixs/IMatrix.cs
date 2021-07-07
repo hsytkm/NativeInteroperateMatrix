@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace NativeInteroperateMatrix.Core
+namespace Nima.Core
 {
     public interface IMatrix<TValue>
         where TValue : struct

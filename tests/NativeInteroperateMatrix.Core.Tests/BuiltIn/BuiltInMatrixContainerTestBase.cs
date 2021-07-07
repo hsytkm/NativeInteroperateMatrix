@@ -2,7 +2,7 @@ using System;
 using System.Runtime.InteropServices;
 using Xunit;
 
-namespace NativeInteroperateMatrix.Core.Tests.BuiltIn
+namespace Nima.Core.Tests.BuiltIn
 {
     /// <summary>
     /// 空の Container インスタンス作成（整数/小数共通部）

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-namespace NativeInteroperateMatrix.Core
+namespace Nima.Core
 {
     public abstract class MatrixContainerBase<TMatrix, TValue> : IMatrixContainer<TMatrix, TValue>, IDisposable
         where TMatrix : struct, IMatrix<TValue>

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace NativeInteroperateMatrix.Core.Imaging
+namespace Nima.Core.Imaging
 {
     public record ColorBgr : IFormattable
     {

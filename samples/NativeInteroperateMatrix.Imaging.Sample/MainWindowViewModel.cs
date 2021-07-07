@@ -1,6 +1,6 @@
-﻿using NativeInteroperateMatrix.Core.Imaging;
-using NativeInteroperateMatrix.Imaging.Sample.Extensions;
-using NativeInteroperateMatrix.Imaging.Wpf.Extensions;
+﻿using Nima.Core.Imaging;
+using Nima.Imaging.Sample.Extensions;
+using Nima.Imaging.Wpf;
 using Prism.Mvvm;
 using Reactive.Bindings;
 using System;
@@ -8,7 +8,7 @@ using System.Diagnostics;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
-namespace NativeInteroperateMatrix.Imaging.Sample
+namespace Nima.Imaging.Sample
 {
     class MainWindowViewModel : BindableBase
     {

@@ -1,11 +1,11 @@
-﻿using NativeInteroperateMatrix.Imaging.Drawing.Extensions;
+﻿using Nima.Imaging.Drawing;
 using System;
 using System.Drawing;
 using System.IO;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace NativeInteroperateMatrix.Core.Tests.Imaging.Drawing
+namespace Nima.Core.Tests.Imaging.Drawing
 {
     public class ImagingDrawingTest
     {

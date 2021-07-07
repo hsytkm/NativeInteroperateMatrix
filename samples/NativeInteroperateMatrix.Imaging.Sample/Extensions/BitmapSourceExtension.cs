@@ -2,7 +2,7 @@
 using System.IO;
 using System.Windows.Media.Imaging;
 
-namespace NativeInteroperateMatrix.Imaging.Sample.Extensions
+namespace Nima.Imaging.Sample.Extensions
 {
     static class BitmapSourceExtension
     {

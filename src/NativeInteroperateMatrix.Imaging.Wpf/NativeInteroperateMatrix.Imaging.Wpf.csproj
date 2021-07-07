@@ -5,7 +5,9 @@
         <UseWPF>true</UseWPF>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
         <Nullable>enable</Nullable>
-        <Title>NativeInteroperateMatrix.Imaging.Wpf</Title>
+        <Title>Nima.Imaging.Wpf</Title>
+        <AssemblyName>Nima.Imaging.Wpf</AssemblyName>
+        <RootNamespace>Nima.Imaging.Wpf</RootNamespace>
     </PropertyGroup>
 
     <Import Project="../SharedProperties.csproj" />

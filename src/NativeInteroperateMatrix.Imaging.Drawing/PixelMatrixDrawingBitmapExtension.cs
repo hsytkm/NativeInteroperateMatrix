@@ -1,10 +1,10 @@
-﻿using NativeInteroperateMatrix.Core;
-using NativeInteroperateMatrix.Core.Imaging;
+﻿using Nima.Core;
+using Nima.Core.Imaging;
 using System;
 using System.Drawing;
 using System.Drawing.Imaging;
 
-namespace NativeInteroperateMatrix.Imaging.Drawing.Extensions
+namespace Nima.Imaging.Drawing
 {
     public static class PixelMatrixDrawingBitmapExtension
     {

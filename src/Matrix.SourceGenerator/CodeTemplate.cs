@@ -156,17 +156,11 @@ namespace Matrix.SourceGenerator
             this.Write("(int rows, int columns, bool initialize = true)\r\n            : base(rows, columns" +
                     ", initialize)\r\n        { }\r\n\r\n        public ");
             this.Write(this.ToStringHelper.ToStringWithCulture(ContainerClassName));
-            this.Write("(int rows, int columns, IReadOnlyCollection<");
+            this.Write("(int rows, int columns, IEnumerable<");
             this.Write(this.ToStringHelper.ToStringWithCulture(ValueItemTypeName));
-            this.Write(@"> items)
-            : base(rows, columns, false)
-        {
-            if (rows * columns != items.Count)
-                throw new ArgumentException(""Collection is short."", nameof(items));
-
-            var row = 0;
-            var column = 0;
-            Span<");
+            this.Write("> items)\r\n            : base(rows, columns, false)\r\n        {\r\n            var le" +
+                    "ngth = rows * columns;\r\n            var written = 0;\r\n            var row = 0;\r\n" +
+                    "            var column = 0;\r\n            Span<");
             this.Write(this.ToStringHelper.ToStringWithCulture(ValueItemTypeName));
             this.Write(@"> span = Matrix.GetRowSpan(row);
 
@@ -179,7 +173,13 @@ namespace Matrix.SourceGenerator
                     span = Matrix.GetRowSpan(row);
                 }
                 span[column++] = item;
+
+                if (++written > length)
+                    throw new ArgumentException(""items is large."", nameof(items));
             }
+
+            if (!(row == rows - 1 && column == columns))
+                throw new ArgumentException(""items is small."", nameof(items));
         }
 
         protected override ");

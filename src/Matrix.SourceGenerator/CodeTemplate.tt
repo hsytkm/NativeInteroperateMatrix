@@ -117,12 +117,11 @@ namespace <#= Namespace #>
             : base(rows, columns, initialize)
         { }
 
-        public <#= ContainerClassName #>(int rows, int columns, IReadOnlyCollection<<#= ValueItemTypeName #>> items)
+        public <#= ContainerClassName #>(int rows, int columns, IEnumerable<<#= ValueItemTypeName #>> items)
             : base(rows, columns, false)
         {
-            if (rows * columns != items.Count)
-                throw new ArgumentException("Collection is short.", nameof(items));
-
+            var length = rows * columns;
+            var written = 0;
             var row = 0;
             var column = 0;
             Span<<#= ValueItemTypeName #>> span = Matrix.GetRowSpan(row);
@@ -136,7 +135,13 @@ namespace <#= Namespace #>
                     span = Matrix.GetRowSpan(row);
                 }
                 span[column++] = item;
+
+                if (++written > length)
+                    throw new ArgumentException("items is large.", nameof(items));
             }
+
+            if (!(row == rows - 1 && column == columns))
+                throw new ArgumentException("items is small.", nameof(items));
         }
 
         protected override <#= MatrixClassName #> CreateMatrix(IntPtr intPtr, int width, int height, int bytesPerData, int stride)

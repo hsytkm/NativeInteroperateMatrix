@@ -20,7 +20,7 @@ namespace Nima.Core.Tests.BuiltIn
         [ClassData(typeof(RowColPairTestData))]
         public void Create(int rows, int columns)
         {
-            var container = CreateContainer(rows, columns, initialize: true);
+            using var container = CreateContainer(rows, columns, initialize: true);
             var matrix = container.Matrix;
 
             matrix.Pointer.IsNot(IntPtr.Zero);
@@ -37,8 +37,6 @@ namespace Nima.Core.Tests.BuiltIn
             matrix.IsContinuous.IsTrue();   // must be true
             matrix.IsValid.IsTrue();
             matrix.IsInvalid.IsFalse();
-
-            (container as IDisposable)?.Dispose();
         }
     }
 }

@@ -16,7 +16,7 @@ namespace Nima.Core.Tests.BuiltIn
         [ClassData(typeof(RowColPairTestData))]
         public void ReadWrite(int rows, int columns)
         {
-            var container = CreateContainer(rows, columns, initialize: true);
+            using var container = CreateContainer(rows, columns, initialize: true);
             var matrix = container.Matrix;
 
             GetSum(matrix).Is(0);
@@ -39,8 +39,6 @@ namespace Nima.Core.Tests.BuiltIn
 
             var expected = (double)(dynamic)writeValue * rc.Length;
             GetSum(matrix).Is(expected);
-
-            (container as IDisposable)?.Dispose();
         }
 
         private static double GetSum<T>(IMatrix<T> matrix) where T : struct

@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 
 namespace Nima.Core
 {
-    public abstract class MatrixContainerBase<TMatrix, TValue> : IMatrixContainer<TMatrix, TValue>, IDisposable
+    public abstract class MatrixContainerBase<TMatrix, TValue> : IMatrixContainer<TMatrix, TValue>
         where TMatrix : struct, IMatrix<TValue>
         where TValue : struct
     {

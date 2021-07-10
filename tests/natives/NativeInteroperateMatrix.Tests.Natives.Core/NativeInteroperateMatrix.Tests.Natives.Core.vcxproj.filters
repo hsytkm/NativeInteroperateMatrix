@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Systems">
+      <UniqueIdentifier>{bdc9f548-87fc-46b0-b5ed-7e019176ba81}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Matrix">
+      <UniqueIdentifier>{a115a8a9-a2d3-4633-8ac7-b9304646d39c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DllFacades">
+      <UniqueIdentifier>{a3f5ff2b-915a-456f-9369-4b1e8c1fa32f}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="framework.h">
+      <Filter>Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="pch.h">
+      <Filter>Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="MatrixBase.h">
+      <Filter>Matrix</Filter>
+    </ClInclude>
+    <ClInclude Include="Matrixes.h">
+      <Filter>Matrix</Filter>
+    </ClInclude>
+    <ClInclude Include="PixelBgr.h">
+      <Filter>Matrix</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="pch.cpp">
+      <Filter>Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="NativeFacadeCore.cpp">
+      <Filter>DllFacades</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

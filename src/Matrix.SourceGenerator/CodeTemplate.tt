@@ -111,7 +111,7 @@ namespace <#= Namespace #>
 
     }
 
-    public class <#= ContainerClassName #> : MatrixContainerBase<<#= MatrixClassName #>, <#= ValueItemTypeName #>>
+    public partial class <#= ContainerClassName #> : MatrixContainerBase<<#= MatrixClassName #>, <#= ValueItemTypeName #>>
     {
         public <#= ContainerClassName #>(int rows, int columns, bool initialize = true)
             : base(rows, columns, initialize)

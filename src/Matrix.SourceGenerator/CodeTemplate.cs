@@ -144,8 +144,8 @@ namespace Matrix.SourceGenerator
             this.Write(" left, in ");
             this.Write(this.ToStringHelper.ToStringWithCulture(MatrixClassName));
             this.Write(" right) => !(left == right);\r\n\r\n        public override string ToString() => $\"Ro" +
-                    "ws={_rows}, Cols={_columns}, Pointer=0x{_pointer:x16}\";\r\n\r\n    }\r\n\r\n    public c" +
-                    "lass ");
+                    "ws={_rows}, Cols={_columns}, Pointer=0x{_pointer:x16}\";\r\n\r\n    }\r\n\r\n    public p" +
+                    "artial class ");
             this.Write(this.ToStringHelper.ToStringWithCulture(ContainerClassName));
             this.Write(" : MatrixContainerBase<");
             this.Write(this.ToStringHelper.ToStringWithCulture(MatrixClassName));

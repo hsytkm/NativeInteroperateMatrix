@@ -1,6 +1,10 @@
 ﻿using System;
+using System.Buffers;
+using System.IO;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Nima.Core
 {
@@ -55,7 +59,7 @@ namespace Nima.Core
 
             var size = Marshal.SizeOf<T>();
             if (size > destArray.Length)
-                throw new ArgumentOutOfRangeException();
+                throw new ArgumentOutOfRangeException(nameof(destArray));
 
             fixed (byte* p = destArray)
             {
@@ -83,6 +87,55 @@ namespace Nima.Core
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static unsafe void FillZero(IntPtr intPtr, int size)
             => Unsafe.InitBlock(intPtr.ToPointer(), 0, (uint)size);
+
+        /// <summary>Stream の内容を構造体として読込んで返します</summary>
+        public static T ReadStruct<T>(Stream stream)
+            where T : struct
+        {
+            var headerSize = Marshal.SizeOf<T>();
+            Span<byte> span = stackalloc byte[headerSize];
+
+            stream.Position = 0;
+            stream.Read(span);
+
+            var data = default(T);
+            unsafe
+            {
+                fixed (byte* p = span)
+                {
+                    Unsafe.Copy(ref data, p);
+                }
+            }
+            return data;
+        }
+
+        /// <summary>Stream の内容を構造体として読込んで返します</summary>
+        public static async Task<T> ReadStructAsync<T>(Stream stream, CancellationToken cancellationToken = default)
+            where T : struct
+        {
+            var headerSize = Marshal.SizeOf<T>();
+            byte[] array = ArrayPool<byte>.Shared.Rent(headerSize);     // stackalloc cannot be used in Task.
+
+            try
+            {
+                stream.Position = 0;
+                await stream.ReadAsync(array, cancellationToken);
+
+                var data = default(T);
+                unsafe
+                {
+                    fixed (byte* p = array)
+                    {
+                        Unsafe.Copy(ref data, p);
+                    }
+                }
+                return data;
+            }
+            finally
+            {
+                ArrayPool<byte>.Shared.Return(array);
+            }
+        }
 
     }
 }

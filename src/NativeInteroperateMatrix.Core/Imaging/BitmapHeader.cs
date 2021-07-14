@@ -27,22 +27,22 @@ namespace Nima.Core.Imaging
         public readonly Int32 ClrUsed;
         public readonly Int32 CirImportant;
 
-        private const Int32 _pixelPerMeter = 3780;    // pixel/meter (96dpi / 2.54cm * 100m)
+        private const int _pixelPerMeter = 3780;    // pixel/meter (96dpi / 2.54cm * 100m)
+        private const int _fileHeaderSize = 14;
+        private const int _infoHeaderSize = 40;
+        private const int _totalHeaderSize = _fileHeaderSize + _infoHeaderSize;
 
         public BitmapHeader(int width, int height, int bitsPerPixel)
         {
-            var fileHeaderSize = 14;
-            var infoHeaderSize = 40;
-            var totalHeaderSize = fileHeaderSize + infoHeaderSize;
             var imageSize = GetImageSize(width, height, bitsPerPixel);
 
             FileType = 0x4d42;  // 'B','M'
-            FileSize = totalHeaderSize + imageSize;
+            FileSize = _totalHeaderSize + imageSize;
             Reserved1 = 0;
             Reserved2 = 0;
-            OffsetBytes = totalHeaderSize;
+            OffsetBytes = _totalHeaderSize;
 
-            InfoSize = infoHeaderSize;
+            InfoSize = _infoHeaderSize;
             Width = width;
             Height = height;
             Planes = 1;
@@ -54,16 +54,33 @@ namespace Nima.Core.Imaging
             ClrUsed = 0;
             CirImportant = 0;
         }
+        private static int BitsToBytes(int bits) => (int)Math.Ceiling(bits / 8d);
+        public int BytesPerPixel => BitsToBytes(BitCount);
 
+        /// <summary>Bytes per row</summary>
         public int ImageStride => GetImageStride(Width, BitCount);
 
         private static int GetImageStride(int width, int bitsPerPixel)
         {
-            var bytesPerPixel = (int)Math.Ceiling(bitsPerPixel / 8d);
+            var bytesPerPixel = BitsToBytes(bitsPerPixel);
             return (int)Math.Ceiling(width * bytesPerPixel / 4d) * 4;   // strideは4の倍数
         }
 
         private static int GetImageSize(int width, int height, int bitsPerPixel)
             => GetImageStride(width, bitsPerPixel) * height;
+
+        public bool CanRead
+        {
+            get
+            {
+                if (FileType != 0x4d42) return false;
+                if (OffsetBytes != _totalHeaderSize) return false;
+                if (InfoSize != _infoHeaderSize) return false;
+                if (BitCount != 8 * 3) return false;
+                if (FileSize != GetImageSize(Width, Height, BitCount) + _totalHeaderSize) return false;
+                return true;
+            }
+        }
+
     }
 }

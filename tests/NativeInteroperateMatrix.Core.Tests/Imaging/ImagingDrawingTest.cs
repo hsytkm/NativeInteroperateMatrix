@@ -10,6 +10,11 @@ namespace Nima.Core.Tests.Imaging.Drawing
     public class ImagingDrawingTest
     {
         private const string _tempPath = "_temp.bmp";
+        public ImagingDrawingTest()
+        {
+            if (File.Exists(_tempPath))
+                File.Delete(_tempPath);
+        }
 
         [Theory]
         [ClassData(typeof(ImagePathTestData))]

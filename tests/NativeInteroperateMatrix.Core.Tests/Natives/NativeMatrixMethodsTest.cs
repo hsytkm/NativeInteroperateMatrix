@@ -123,5 +123,43 @@ namespace NativeInteroperateMatrix.Core.Tests.Natives
             NativeMatrixMethods.Sum(container.Matrix).Is(0);
         }
 
+        [Theory]
+        [ClassData(typeof(RowColPairTestData))]
+        public void SumSingleMatrix(int rows, int columns)
+        {
+            var denom = 100f;
+            var max = GetMaxValue<int>(rows * columns);
+            var items = Enumerable.Range(0, rows * columns).Select(x => x % max).Select(x => x / denom).ToArray();
+            using var container = new SingleMatrixContainer(rows, columns, items);
+
+            var expected = items.Select(x => (double)x).Sum();
+            NativeMatrixMethods.Sum(container.Matrix).Is(expected);
+
+            NativeMatrixMethods.Clear(container.Matrix);
+            NativeMatrixMethods.Sum(container.Matrix).Is(0);
+        }
+
+        [Theory]
+        [ClassData(typeof(RowColPairTestData))]
+        public void SumDoubleMatrix(int rows, int columns)
+        {
+            var denom = 1000d;
+            var max = GetMaxValue<int>(rows * columns);
+            var items = Enumerable.Range(0, rows * columns).Select(x => x % max).Select(x => x / denom).ToArray();
+            using var container = new DoubleMatrixContainer(rows, columns, items);
+
+            var expected = items.Select(x => (double)x).Sum();
+            NativeMatrixMethods.Sum(container.Matrix).Is(expected);
+
+            NativeMatrixMethods.Clear(container.Matrix);
+            NativeMatrixMethods.Sum(container.Matrix).Is(0);
+        }
+
+        //[Theory]
+        //[ClassData(typeof(RowColPairTestData))]
+        //public void SumPixelBgrMatrix(int rows, int columns)
+        //{
+        //    //NotImplemented
+        //}
     }
 }

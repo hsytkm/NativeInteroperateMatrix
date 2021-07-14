@@ -7,7 +7,7 @@ namespace NimaNativeCore {
     struct MatrixBase
     {
         void* pointer_;
-        int rows_;          // _rows_=Height
+        int rows_;          // _rows=Height
         int columns_;       // _columns=Width
         int bytesPerData_;
         int stride_;
@@ -50,34 +50,6 @@ namespace NimaNativeCore {
             }
         }
 
-        long long get_sum_long() const
-        {
-            long long sum = 0;
-            int row_offset = rows_ * stride_;
-            auto head = (const unsigned char*)pointer_;
-
-            for (auto ptr_row = head; ptr_row < head + row_offset; ptr_row += stride_) {
-                for (auto ptr = (T*)ptr_row; ptr < (T*)ptr_row + columns_; ptr++) {
-                    sum += *ptr;
-                }
-            }
-            return sum;
-        }
-
-        double get_sum_double() const
-        {
-            double sum = 0d;
-            int row_offset = rows_ * stride_;
-            auto head = (const unsigned char*)pointer_;
-
-            for (auto ptr_row = head; ptr_row < head + row_offset; ptr_row += stride_) {
-                for (auto ptr = (T*)ptr_row; ptr < (T*)ptr_row + columns_; ptr++) {
-                    sum += *ptr;
-                }
-            }
-            return sum;
-        }
-
         int copy_to(MatrixBase& dest_matrix) const
         {
             if (pointer_ == dest_matrix.pointer_) return -1;
@@ -99,6 +71,36 @@ namespace NimaNativeCore {
             }
             return 0;
         }
+
+#if true    //for test
+        long long get_sum_int64() const
+        {
+            long long sum = 0;
+            int row_offset = rows_ * stride_;
+            auto head = (const unsigned char*)pointer_;
+
+            for (auto ptr_row = head; ptr_row < head + row_offset; ptr_row += stride_) {
+                for (auto ptr = (T*)ptr_row; ptr < (T*)ptr_row + columns_; ptr++) {
+                    sum += *ptr;
+                }
+            }
+            return sum;
+        }
+
+        double get_sum_double() const
+        {
+            double sum = .0;
+            int row_offset = rows_ * stride_;
+            auto head = (const unsigned char*)pointer_;
+
+            for (auto ptr_row = head; ptr_row < head + row_offset; ptr_row += stride_) {
+                for (auto ptr = (T*)ptr_row; ptr < (T*)ptr_row + columns_; ptr++) {
+                    sum += *ptr;
+                }
+            }
+            return sum;
+        }
+#endif
 
     };
 }

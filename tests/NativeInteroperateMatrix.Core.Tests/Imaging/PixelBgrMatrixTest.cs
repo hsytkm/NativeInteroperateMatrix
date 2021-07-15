@@ -44,8 +44,21 @@ namespace Nima.Core.Tests.Imaging.Drawing
         public async Task ReadWrite(string sourcePath)
         {
             using var container = PixelBgrMatrixContainer.Create(sourcePath);
+            container.Matrix.ToBmpFile(_tempPath);
 
+            var isMatch = await FileComparator.IsMatchAsync(sourcePath, _tempPath);
+            isMatch.IsTrue();
+
+            File.Delete(_tempPath);
+        }
+
+        [Theory]
+        [ClassData(typeof(ImagePathTestData))]
+        public async Task ReadWriteAsync(string sourcePath)
+        {
+            using var container = await PixelBgrMatrixContainer.CreateAsync(sourcePath);
             await container.Matrix.ToBmpFileAsync(_tempPath);
+
             var isMatch = await FileComparator.IsMatchAsync(sourcePath, _tempPath);
             isMatch.IsTrue();
 

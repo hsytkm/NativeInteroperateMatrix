@@ -22,6 +22,14 @@ namespace Nima.Core
             => MemCopyInternal(dest, src, length);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static unsafe void MemCopy(IntPtr dest, void* src, int length)
+            => MemCopyInternal(dest.ToPointer(), src, length);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static unsafe void MemCopy(void* dest, IntPtr src, int length)
+            => MemCopyInternal(dest, src.ToPointer(), length);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static unsafe void MemCopyInternal(void* dest, void* src, int length)
         {
             byte* destPtr = (byte*)dest;
@@ -72,6 +80,14 @@ namespace Nima.Core
         public static unsafe T ReadStructureFromPtr<T>(IntPtr src)
             where T : unmanaged
         {
+            return ReadStructureFromPtr<T>(src.ToPointer());
+        }
+
+        /// <summary>構造体を pointer から読み出します</summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static unsafe T ReadStructureFromPtr<T>(void* src)
+            where T : unmanaged
+        {
             return *((T*)src);
         }
 
@@ -80,20 +96,33 @@ namespace Nima.Core
         public static unsafe void WriteStructureToPtr<T>(IntPtr dest, in T data)
             where T : unmanaged
         {
+            WriteStructureToPtr(dest.ToPointer(), data);
+        }
+
+        /// <summary>構造体を pointer に書き出します</summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static unsafe void WriteStructureToPtr<T>(void* dest, in T data)
+            where T : unmanaged
+        {
             *((T*)dest) = data;
         }
 
         /// <summary>構造体を IntPtr に書き出します</summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static unsafe void FillZero(IntPtr intPtr, int size)
-            => Unsafe.InitBlock(intPtr.ToPointer(), 0, (uint)size);
+        public static unsafe void FillZero(IntPtr dest, int size)
+            => FillZero(dest.ToPointer(), size);
+
+        /// <summary>構造体を pointer に書き出します</summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static unsafe void FillZero(void* dest, int size)
+            => Unsafe.InitBlock(dest, 0, (uint)size);
 
         /// <summary>Stream の内容を構造体として読込んで返します</summary>
         public static T ReadStruct<T>(Stream stream)
             where T : struct
         {
-            var headerSize = Marshal.SizeOf<T>();
-            Span<byte> span = stackalloc byte[headerSize];
+            var size = Marshal.SizeOf<T>();
+            Span<byte> span = stackalloc byte[size];
 
             stream.Position = 0;
             stream.Read(span);
@@ -113,8 +142,8 @@ namespace Nima.Core
         public static async Task<T> ReadStructAsync<T>(Stream stream, CancellationToken cancellationToken = default)
             where T : struct
         {
-            var headerSize = Marshal.SizeOf<T>();
-            byte[] array = ArrayPool<byte>.Shared.Rent(headerSize);     // stackalloc cannot be used in Task.
+            var size = Marshal.SizeOf<T>();
+            byte[] array = ArrayPool<byte>.Shared.Rent(size);   // stackalloc cannot be used in Task.
 
             try
             {

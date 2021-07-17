@@ -1,48 +1,49 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-	<PropertyGroup>
-		<TargetFramework>net5.0</TargetFramework>
-		<IsPackable>false</IsPackable>
-		<Platforms>x64</Platforms>
-	</PropertyGroup>
+    <PropertyGroup>
+        <TargetFrameworks>netcoreapp3.1;net5.0</TargetFrameworks>
+        <LangVersion>latest</LangVersion>
+        <IsPackable>false</IsPackable>
+        <Platforms>x64</Platforms>
+    </PropertyGroup>
 
-	<ItemGroup>
-		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.10.0" />
-		<PackageReference Include="xunit" Version="2.4.1" />
-		<PackageReference Include="xunit.runner.visualstudio" Version="2.4.3">
-			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-			<PrivateAssets>all</PrivateAssets>
-		</PackageReference>
-		<PackageReference Include="coverlet.collector" Version="3.0.3">
-			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-			<PrivateAssets>all</PrivateAssets>
-		</PackageReference>
-	</ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.10.0" />
+        <PackageReference Include="xunit" Version="2.4.1" />
+        <PackageReference Include="xunit.runner.visualstudio" Version="2.4.3">
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+            <PrivateAssets>all</PrivateAssets>
+        </PackageReference>
+        <PackageReference Include="coverlet.collector" Version="3.0.3">
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+            <PrivateAssets>all</PrivateAssets>
+        </PackageReference>
+    </ItemGroup>
 
-	<ItemGroup>
-		<PackageReference Include="System.Drawing.Common" Version="5.0.2" />
-	</ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="System.Drawing.Common" Version="5.0.2" />
+    </ItemGroup>
 
-	<ItemGroup>
-		<ProjectReference Include="..\..\src\NativeInteroperateMatrix.Core\NativeInteroperateMatrix.Core.csproj" />
-		<ProjectReference Include="..\..\src\NativeInteroperateMatrix.Imaging.Drawing\NativeInteroperateMatrix.Imaging.Drawing.csproj" />
-	</ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\..\src\NativeInteroperateMatrix.Core\NativeInteroperateMatrix.Core.csproj" />
+        <ProjectReference Include="..\..\src\NativeInteroperateMatrix.Imaging.Drawing\NativeInteroperateMatrix.Imaging.Drawing.csproj" />
+    </ItemGroup>
 
-	<ItemGroup>
-		<Folder Include="Assets\" />
-	</ItemGroup>
+    <ItemGroup>
+        <Folder Include="Assets\" />
+    </ItemGroup>
 
-	<ItemGroup>
-		<None Update="Assets\image1.bmp">
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</None>
-		<None Update="Assets\image2.bmp">
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</None>
-	</ItemGroup>
+    <ItemGroup>
+        <None Update="Assets\image1.bmp">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="Assets\image2.bmp">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+    </ItemGroup>
 
-	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
-		<Exec Command="xcopy /D /Y $(SolutionDir)x64\$(ConfigurationName)\*.* $(TargetDir)" />
-	</Target>
+    <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+        <Exec Command="xcopy /D /Y $(SolutionDir)x64\$(ConfigurationName)\*.* $(TargetDir)" />
+    </Target>
 
 </Project>

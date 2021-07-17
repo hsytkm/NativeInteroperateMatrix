@@ -2,7 +2,7 @@
   <PropertyGroup>
     <LangVersion>latest</LangVersion>
     <Description>Interoperate 2-dimensional array with natives</Description>
-    <Version>1.0.0</Version>
+    <Version>1.0.1</Version>
     <Authors>myoga</Authors>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/hsytkm/NativeInteroperateMatrix</PackageProjectUrl>

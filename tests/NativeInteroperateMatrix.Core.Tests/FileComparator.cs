@@ -17,7 +17,12 @@ namespace Nima.Core.Tests
             // see https://mseeeen.msen.jp/compute-hash-string-of-files/
             using var hashProvider = new SHA1CryptoServiceProvider();
             using var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read);
+#if NET5_0_OR_GREATER
             var bs = await hashProvider.ComputeHashAsync(fs);
+#else
+            await Task.Yield();
+            var bs = hashProvider.ComputeHash(fs);
+#endif
             return BitConverter.ToString(bs).ToLowerInvariant().Replace("-", "");
         }
 

@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Runtime.InteropServices;
+using System.Runtime.CompilerServices;
 using Xunit;
 
 namespace Nima.Core.Tests.Common
@@ -13,8 +13,8 @@ namespace Nima.Core.Tests.Common
         public void X64()
         {
             // Nima は 64bit 想定です。 (StructLayout.Size = 8 にしています)
-            Marshal.SizeOf<IntPtr>().Is(8);
-            Marshal.SizeOf<nint>().Is(8);
+            Unsafe.SizeOf<IntPtr>().Is(8);
+            Unsafe.SizeOf<nint>().Is(8);
         }
 
     }

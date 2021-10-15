@@ -35,7 +35,7 @@ namespace Nima.Imaging.Wpf
         internal static void CopyTo(in this PixelBgrMatrix pixel, BitmapSource bitmap)
         {
             if (bitmap.IsInvalid()) throw new ArgumentException("Invalid Bitmap");
-            if (pixel.IsInvalid) throw new ArgumentException("Invalid Pixels");
+            if (!pixel.IsValid) throw new ArgumentException("Invalid Pixels");
             if (bitmap.PixelWidth != pixel.Columns) throw new ArgumentException("Different Width");
             if (bitmap.PixelHeight != pixel.Rows) throw new ArgumentException("Different Height");
 

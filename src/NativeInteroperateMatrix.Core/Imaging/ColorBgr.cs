@@ -2,7 +2,7 @@
 
 namespace Nima.Core.Imaging
 {
-    public record ColorBgr : IFormattable
+    public sealed record ColorBgr : IFormattable
     {
         public double B { get; }
         public double G { get; }

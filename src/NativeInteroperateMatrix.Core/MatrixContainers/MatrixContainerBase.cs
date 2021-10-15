@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 namespace Nima.Core
@@ -13,7 +14,7 @@ namespace Nima.Core
 
         public MatrixContainerBase(int rows, int columns, bool initialize = true)
         {
-            var bytesPerData = Marshal.SizeOf<TValue>();
+            var bytesPerData = Unsafe.SizeOf<TValue>();
             var stride = columns * bytesPerData;
 
             _allocatedSize = stride * rows;
@@ -22,7 +23,7 @@ namespace Nima.Core
 
             if (initialize)
             {
-                UnsafeHelper.FillZero(_allocatedMemoryPointer, _allocatedSize);
+                UnsafeUtils.FillZero(_allocatedMemoryPointer, _allocatedSize);
             }
 
             Matrix = CreateMatrix(_allocatedMemoryPointer, rows, columns, bytesPerData, stride);

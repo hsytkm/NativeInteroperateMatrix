@@ -33,7 +33,7 @@ namespace Nima.Core.Tests.BuiltIn
             var writeValue = WriteValue;
             foreach (var (row, col) in rc)
             {
-                matrix.WriteValue(writeValue, row, col);
+                matrix.WriteValue(row, col, writeValue);
                 matrix.ReadValue(row, col).Is(writeValue);
             }
 
@@ -46,7 +46,7 @@ namespace Nima.Core.Tests.BuiltIn
             long sum = 0;
             for (var row = 0; row < matrix.Rows; row++)
             {
-                var span = matrix.GetRoRowSpan(row);
+                ReadOnlySpan<T> span = matrix.AsSpan(row);
 
                 for (var i = 0; i < span.Length; i++)
                     sum += (dynamic)span[i];    // ジェネリクスを無理やり加算

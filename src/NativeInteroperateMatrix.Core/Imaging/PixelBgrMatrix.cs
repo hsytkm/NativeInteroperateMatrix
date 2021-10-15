@@ -17,7 +17,7 @@ namespace Nima.Core.Imaging
         /// <summary>指定領域における各チャンネルの画素平均値を取得します</summary>
         public ColorBgr GetChannelsAverage(int x, int y, int width, int height)
         {
-            if (IsInvalid) throw new ArgumentException("Invalid image.");
+            if (!IsValid) throw new ArgumentException("Invalid image.");
             if (width * height == 0) throw new ArgumentException("Area is zero.");
             if (_columns < x + width) throw new ArgumentException("Width over.");
             if (_rows < y + height) throw new ArgumentException("Height over.");
@@ -165,7 +165,7 @@ namespace Nima.Core.Imaging
                 // メモリが連続していれば memcopy
                 if (srcPixels.IsContinuous && destPixels.IsContinuous)
                 {
-                    UnsafeHelper.MemCopy(destPixels._pointer, srcPixels._pointer, srcPixels.AllocatedSize);
+                    UnsafeUtils.MemCopy(destPixels._pointer, srcPixels._pointer, srcPixels.AllocatedSize);
                     return;
                 }
 
@@ -265,7 +265,7 @@ namespace Nima.Core.Imaging
         /// <summary>画像をbmpファイルに保存します</summary>
         private MemoryStream ToBitmapMemoryStream(string savePath)
         {
-            if (IsInvalid) throw new ArgumentException("Invalid image.");
+            if (!IsValid) throw new ArgumentException("Invalid image.");
             if (File.Exists(savePath)) throw new SystemException("File is exists.");
 
             var bitmapBytes = GetBitmapBinary(this);
@@ -282,7 +282,7 @@ namespace Nima.Core.Imaging
                 var destBuffer = new byte[destHeader.FileSize];     // さずがにデカすぎるのでbyte[]
 
                 // bufferにheaderを書き込む
-                UnsafeHelper.CopyStructToArray(destHeader, destBuffer);
+                UnsafeUtils.CopyStructToArray(destHeader, destBuffer);
 
                 // 画素は左下から右上に向かって記録する
                 unsafe
@@ -298,7 +298,7 @@ namespace Nima.Core.Imaging
                         {
                             var src = srcHead + (height - 1 - y) * srcStride;
                             var dest = destHead + (y * destStride);
-                            UnsafeHelper.MemCopy(dest, src, srcStride);
+                            UnsafeUtils.MemCopy(dest, src, srcStride);
                         }
                     }
                 }

@@ -43,7 +43,7 @@ namespace Nima.Imaging.Drawing
         public static void CopyTo(this Bitmap bitmap, in PixelBgrMatrix pixels, bool isDisposeBitmap = false)
         {
             if (bitmap.IsInvalid()) throw new ArgumentException("Invalid Bitmap");
-            if (pixels.IsInvalid) throw new ArgumentException("Invalid Pixels");
+            if (!pixels.IsValid) throw new ArgumentException("Invalid Pixels");
             if (bitmap.Width != pixels.Columns) throw new ArgumentException("Different Width");
             if (bitmap.Height != pixels.Rows) throw new ArgumentException("Different Height");
 
@@ -75,7 +75,7 @@ namespace Nima.Imaging.Drawing
                              srcPtr < srcPtrTail;
                              srcPtr += srcStride, destPtr += destStride)
                         {
-                            UnsafeHelper.MemCopy(destPtr, srcPtr, columnLength);
+                            UnsafeUtils.MemCopy(destPtr, srcPtr, columnLength);
                         }
                     }
                     else

@@ -1,12 +1,12 @@
 ﻿using System;
 using System.IO;
-using System.Runtime.InteropServices;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace Nima.Core.Imaging
 {
-    public partial class PixelBgrMatrixContainer
+    public sealed partial class PixelBgrMatrixContainer
     {
         /// <summary>Bitmapファイルから PixelBgrMatrixContainer を生成します</summary>
         /// <param name="filePath">File path of Bitmap</param>
@@ -25,7 +25,7 @@ namespace Nima.Core.Imaging
         /// <returns></returns>
         public static PixelBgrMatrixContainer Create(Stream stream)
         {
-            var header = UnsafeHelper.ReadStruct<BitmapHeader>(stream);
+            var header = UnsafeUtils.ReadStruct<BitmapHeader>(stream);
             if (!header.CanRead)
                 throw new InvalidDataException("Invalid bitmap format.");
 
@@ -33,7 +33,7 @@ namespace Nima.Core.Imaging
             var cols = header.Width;
             var stride = header.ImageStride;
             var bytesPerPixel = header.BytesPerPixel;
-            var headerSize = Marshal.SizeOf<BitmapHeader>();
+            var headerSize = Unsafe.SizeOf<BitmapHeader>();
             var colLength = cols * bytesPerPixel;
 
             var container = new PixelBgrMatrixContainer(rows, cols, false);
@@ -49,7 +49,7 @@ namespace Nima.Core.Imaging
                 {
                     fixed (byte* srcPtr = array)
                     {
-                        UnsafeHelper.MemCopy(destPtr + (row * colLength), srcPtr, colLength);
+                        UnsafeUtils.MemCopy(destPtr + (row * colLength), srcPtr, colLength);
                     }
                 }
             }
@@ -73,7 +73,7 @@ namespace Nima.Core.Imaging
         /// <returns></returns>
         public static async Task<PixelBgrMatrixContainer> CreateAsync(Stream stream, CancellationToken cancellationToken = default)
         {
-            var header = await UnsafeHelper.ReadStructAsync<BitmapHeader>(stream, cancellationToken);
+            var header = await UnsafeUtils.ReadStructAsync<BitmapHeader>(stream, cancellationToken);
             if (!header.CanRead)
                 throw new InvalidDataException("Invalid bitmap format.");
 
@@ -81,7 +81,7 @@ namespace Nima.Core.Imaging
             var cols = header.Width;
             var stride = header.ImageStride;
             var bytesPerPixel = header.BytesPerPixel;
-            var headerSize = Marshal.SizeOf<BitmapHeader>();
+            var headerSize = Unsafe.SizeOf<BitmapHeader>();
             var colLength = cols * bytesPerPixel;
 
             var container = new PixelBgrMatrixContainer(rows, cols, false);
@@ -97,7 +97,7 @@ namespace Nima.Core.Imaging
                 {
                     fixed (byte* srcPtr = array)
                     {
-                        UnsafeHelper.MemCopy(destPtr + (row * colLength), srcPtr, colLength);
+                        UnsafeUtils.MemCopy(destPtr + (row * colLength), srcPtr, colLength);
                     }
                 }
             }

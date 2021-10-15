@@ -57,7 +57,7 @@ namespace Nima.Imaging.Sample
             for (int y = 0; y < height; y++)
             {
                 for (int x = baseX; x < baseX + y; x++)
-                    pixelMatrix.WriteValue(color, x, baseY + y);    // ホントは FillRectangle() を使うべきだけど、WriteValue() のテストなので。
+                    pixelMatrix.WriteValue(x, baseY + y, color);    // ホントは FillRectangle() を使うべきだけど、WriteValue() のテストなので。
             }
         }
 

@@ -1,5 +1,5 @@
 using System;
-using System.Runtime.InteropServices;
+using System.Runtime.CompilerServices;
 using Xunit;
 
 namespace Nima.Core.Tests.BuiltIn
@@ -26,7 +26,7 @@ namespace Nima.Core.Tests.BuiltIn
             matrix.Pointer.IsNot(IntPtr.Zero);
             matrix.Rows.Is(rows);
             matrix.Columns.Is(columns);
-            matrix.BytesPerItem.Is(Marshal.SizeOf<TValue>());
+            matrix.BytesPerItem.Is(Unsafe.SizeOf<TValue>());
             matrix.Stride.IsNot(0);         // tekito-
 
             matrix.Width.Is(matrix.Columns);
@@ -36,7 +36,6 @@ namespace Nima.Core.Tests.BuiltIn
 
             matrix.IsContinuous.IsTrue();   // must be true
             matrix.IsValid.IsTrue();
-            matrix.IsInvalid.IsFalse();
         }
     }
 }

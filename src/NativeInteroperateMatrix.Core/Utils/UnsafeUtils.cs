@@ -2,13 +2,12 @@
 using System.Buffers;
 using System.IO;
 using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace Nima.Core
 {
-    public static class UnsafeHelper
+    public static class UnsafeUtils
     {
         //[DllImport("kernel32.dll", EntryPoint = "RtlMoveMemory", SetLastError = false)]
         //private static extern void RtlMoveMemory(IntPtr dest, IntPtr src, [MarshalAs(UnmanagedType.U4)] int length);
@@ -65,7 +64,7 @@ namespace Nima.Core
             // unsafe is faster than Marshal.Copy and GCHandle.
             // https://gist.github.com/hsytkm/55b9bdfaa3eae18fcc1b91449cf16998
 
-            var size = Marshal.SizeOf<T>();
+            var size = Unsafe.SizeOf<T>();
             if (size > destArray.Length)
                 throw new ArgumentOutOfRangeException(nameof(destArray));
 
@@ -121,7 +120,7 @@ namespace Nima.Core
         public static T ReadStruct<T>(Stream stream)
             where T : struct
         {
-            var size = Marshal.SizeOf<T>();
+            var size = Unsafe.SizeOf<T>();
             Span<byte> span = stackalloc byte[size];
 
             stream.Position = 0;
@@ -142,7 +141,7 @@ namespace Nima.Core
         public static async Task<T> ReadStructAsync<T>(Stream stream, CancellationToken cancellationToken = default)
             where T : struct
         {
-            var size = Marshal.SizeOf<T>();
+            var size = Unsafe.SizeOf<T>();
             byte[] array = ArrayPool<byte>.Shared.Rent(size);   // stackalloc cannot be used in Task.
 
             try

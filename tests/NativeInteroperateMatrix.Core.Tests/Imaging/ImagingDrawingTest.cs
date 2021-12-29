@@ -20,14 +20,19 @@ namespace Nima.Core.Tests.Imaging.Drawing
         [ClassData(typeof(ImagePathTestData))]
         public async Task ToContainer(string sourcePath)
         {
-            using var drawing = new Bitmap(sourcePath);
-            using var container = drawing.ToPixelBgrMatrixContainer();
+            try
+            {
+                using var drawing = new Bitmap(sourcePath);
+                using var container = drawing.ToPixelBgrMatrixContainer();
 
-            await container.Matrix.ToBmpFileAsync(_tempPath);
-            var isMatch = await FileComparator.IsMatchAsync(sourcePath, _tempPath);
-            isMatch.IsTrue();
-
-            File.Delete(_tempPath);
+                await container.Matrix.ToBmpFileAsync(_tempPath);
+                var isMatch = await FileComparator.IsMatchAsync(sourcePath, _tempPath);
+                isMatch.IsTrue();
+            }
+            finally
+            {
+                File.Delete(_tempPath);
+            }
         }
 
     }

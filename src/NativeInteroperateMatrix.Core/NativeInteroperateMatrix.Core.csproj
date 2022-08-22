@@ -1,19 +1,19 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-    <PropertyGroup>
-        <TargetFrameworks>netcoreapp3.1;net5.0</TargetFrameworks>
-        <LangVersion>latest</LangVersion>
-        <Nullable>enable</Nullable>
-        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-        <Title>Nima.Core</Title>
-        <AssemblyName>Nima.Core</AssemblyName>
-        <RootNamespace>Nima.Core</RootNamespace>
-    </PropertyGroup>
+  <PropertyGroup>
+      <TargetFrameworks>netcoreapp3.1;net6.0</TargetFrameworks>
+      <LangVersion>latest</LangVersion>
+      <Nullable>enable</Nullable>
+      <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+      <Title>Nima.Core</Title>
+      <AssemblyName>Nima.Core</AssemblyName>
+      <RootNamespace>Nima.Core</RootNamespace>
+  </PropertyGroup>
 
-    <Import Project="../SharedProperties.csproj" />
+  <Import Project="../SharedProperties.csproj" />
 
-    <ItemGroup>
-      <ProjectReference Include="..\Matrix.SourceGenerator\Matrix.SourceGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
-    </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Matrix.SourceGenerator\Matrix.SourceGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+  </ItemGroup>
 
 </Project>

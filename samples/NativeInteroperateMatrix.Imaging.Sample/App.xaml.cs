@@ -1,8 +1,7 @@
 ﻿using System.Windows;
 
-namespace Nima.Imaging.Sample
+namespace Nima.Imaging.Sample;
+
+public partial class App : Application
 {
-    public partial class App : Application
-    {
-    }
 }

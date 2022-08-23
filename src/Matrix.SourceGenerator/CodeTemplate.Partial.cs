@@ -1,5 +1,4 @@
 ﻿using Microsoft.CodeAnalysis.CSharp.Syntax;
-using System;
 
 namespace Matrix.SourceGenerator
 {

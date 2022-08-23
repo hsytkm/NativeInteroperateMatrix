@@ -1,13 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-      <TargetFrameworks>netcoreapp3.1;net6.0</TargetFrameworks>
-      <LangVersion>latest</LangVersion>
-      <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-      <Nullable>enable</Nullable>
-      <Title>Nima.Imaging.Drawing</Title>
-      <AssemblyName>Nima.Imaging.Drawing</AssemblyName>
-      <RootNamespace>Nima.Imaging.Drawing</RootNamespace>
+    <TargetFrameworks>netcoreapp3.1;net6.0</TargetFrameworks>
+    <LangVersion>latest</LangVersion>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Nullable>enable</Nullable>
+    <Title>Nima.Imaging.Drawing</Title>
+    <AssemblyName>Nima.Imaging.Drawing</AssemblyName>
+    <RootNamespace>Nima.Imaging.Drawing</RootNamespace>
   </PropertyGroup>
 
   <Import Project="../SharedProperties.csproj" />

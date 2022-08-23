@@ -1,25 +1,24 @@
 ﻿using System;
 
-namespace Nima.Core
+namespace Nima.Core;
+
+public interface IMatrix<TValue> : INativeMemory<TValue>
+    where TValue : struct
 {
-    public interface IMatrix<TValue> : INativeMemory<TValue>
-        where TValue : struct
-    {
-        int Rows { get; }
-        int Columns { get; }
-        int Stride { get; }
+    int Rows { get; }
+    int Columns { get; }
+    int Stride { get; }
 
-        int Width => Columns;
-        int Height => Rows;
-        bool IsContinuous { get; }
+    int Width => Columns;
+    int Height => Rows;
+    bool IsContinuous { get; }
 
-        Span<TValue> AsSpan(int row);
+    Span<TValue> AsSpan(int row);
 
-        /// <summary>指定行列の値を読み出します</summary>
-        TValue ReadValue(int row, int column);
+    /// <summary>指定行列の値を読み出します</summary>
+    TValue ReadValue(int row, int column);
 
-        /// <summary>指定行列の値を書き出します</summary>
-        void WriteValue(int row, int column, in TValue value);
+    /// <summary>指定行列の値を書き出します</summary>
+    void WriteValue(int row, int column, in TValue value);
 
-    }
 }

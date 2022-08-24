@@ -7,12 +7,12 @@ namespace Nima.Core.Tests.Imaging.Drawing;
 
 public class PixelBgrMatrixTest
 {
-    private const string _tempPath = "_temp.bmp";
+    private const string TempPath = "_temp.bmp";
 
     public PixelBgrMatrixTest()
     {
-        if (File.Exists(_tempPath))
-            File.Delete(_tempPath);
+        if (File.Exists(TempPath))
+            File.Delete(TempPath);
     }
 
     [Theory]
@@ -33,7 +33,7 @@ public class PixelBgrMatrixTest
         using var container = new PixelBgrMatrixContainer(rows, columns, false);
         var matrix = container.Matrix;
 
-        var bgr = new PixelBgr(255, 0, 128);    // teketo-
+        var bgr = PixelBgr.FromBgr(255, 0, 128);    // teketo-
         matrix.FillAllPixels(bgr);
         matrix.GetChannelsAverageOfEntire().Is(new ColorBgr(bgr));
     }
@@ -43,12 +43,12 @@ public class PixelBgrMatrixTest
     public async Task ReadWrite(string sourcePath)
     {
         using var container = PixelBgrMatrixContainer.Create(sourcePath);
-        container.Matrix.ToBmpFile(_tempPath);
+        container.Matrix.ToBmpFile(TempPath);
 
-        var isMatch = await FileComparator.IsMatchAsync(sourcePath, _tempPath);
+        var isMatch = await FileComparator.IsMatchAsync(sourcePath, TempPath);
         isMatch.IsTrue();
 
-        File.Delete(_tempPath);
+        File.Delete(TempPath);
     }
 
     [Theory]
@@ -56,12 +56,12 @@ public class PixelBgrMatrixTest
     public async Task ReadWriteAsync(string sourcePath)
     {
         using var container = await PixelBgrMatrixContainer.CreateAsync(sourcePath);
-        await container.Matrix.ToBmpFileAsync(_tempPath);
+        await container.Matrix.ToBmpFileAsync(TempPath);
 
-        var isMatch = await FileComparator.IsMatchAsync(sourcePath, _tempPath);
+        var isMatch = await FileComparator.IsMatchAsync(sourcePath, TempPath);
         isMatch.IsTrue();
 
-        File.Delete(_tempPath);
+        File.Delete(TempPath);
     }
 
 }

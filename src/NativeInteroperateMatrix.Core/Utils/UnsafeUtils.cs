@@ -1,9 +1,5 @@
-﻿using System;
-using System.Buffers;
-using System.IO;
+﻿using System.Buffers;
 using System.Runtime.CompilerServices;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Nima.Core;
 
@@ -147,7 +143,7 @@ public static class UnsafeUtils
         try
         {
             stream.Position = 0;
-            await stream.ReadAsync(array, cancellationToken);
+            _ = await stream.ReadAsync(array, cancellationToken);
 
             var data = default(T);
             unsafe

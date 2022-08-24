@@ -143,7 +143,7 @@ public static class PixelMatrixDrawingBitmapExtension
                 {
                     for (var x = 0; x < bitmap.Width; ++x)
                     {
-                        *(PixelBgr*)(destPtr + x * destBytesPerPixel) = new PixelBgr(*(srcPtr + x));
+                        *(PixelBgr*)(destPtr + x * destBytesPerPixel) = PixelBgr.FromGray(*(srcPtr + x));
                     }
                 }
             }

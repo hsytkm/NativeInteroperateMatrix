@@ -51,7 +51,7 @@ class MainWindowViewModel : BindableBase
     static void FillTriangle(in PixelBgrMatrix pixelMatrix)
     {
         int baseX = 100, baseY = 200, height = 100;
-        var color = new PixelBgr(0, 0xff, 0);
+        var color = PixelBgr.FromBgr(0, 0xff, 0);
 
         for (int y = 0; y < height; y++)
         {
@@ -70,7 +70,7 @@ class MainWindowViewModel : BindableBase
         {
             for (int lv = 0; lv < range; ++lv)
             {
-                var color = new PixelBgr((byte)(lv & 0xff));
+                var color = PixelBgr.FromGray((byte)(lv & 0xff));
                 pixelMatrix.FillRectangle(color, 0, lv * length, pixelMatrix.Columns, length);
             }
         }

@@ -47,6 +47,7 @@ public static class PixelMatrixBitmapSourceExtension
         // 1行ずつメモリに読み出して処理する(ヒープ使用量の削減)
         var bufferSize = bitmap.PixelWidth * bytesPerPixel;
         var bufferArray = ArrayPool<byte>.Shared.Rent(bufferSize);
+        // ◆Sliceしていません。後で対応します。
         try
         {
             unsafe

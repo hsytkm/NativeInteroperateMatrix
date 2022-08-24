@@ -8,11 +8,11 @@ namespace Nima.Core.Tests.Imaging.Drawing;
 
 public class ImagingDrawingTest
 {
-    private const string _tempPath = "_temp.bmp";
+    private const string TempPath = "_temp.bmp";
     public ImagingDrawingTest()
     {
-        if (File.Exists(_tempPath))
-            File.Delete(_tempPath);
+        if (File.Exists(TempPath))
+            File.Delete(TempPath);
     }
 
     [Theory]
@@ -24,13 +24,13 @@ public class ImagingDrawingTest
             using var drawing = new Bitmap(sourcePath);
             using var container = drawing.ToPixelBgrMatrixContainer();
 
-            await container.Matrix.ToBmpFileAsync(_tempPath);
-            var isMatch = await FileComparator.IsMatchAsync(sourcePath, _tempPath);
+            await container.Matrix.ToBmpFileAsync(TempPath);
+            var isMatch = await FileComparator.IsMatchAsync(sourcePath, TempPath);
             isMatch.IsTrue();
         }
         finally
         {
-            File.Delete(_tempPath);
+            File.Delete(TempPath);
         }
     }
 

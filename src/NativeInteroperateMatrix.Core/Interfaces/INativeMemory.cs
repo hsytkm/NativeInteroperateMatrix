@@ -1,9 +1,7 @@
-﻿using System;
+﻿namespace Nima.Core;
 
-namespace Nima.Core;
-
-public interface INativeMemory<TValue>
-    where TValue : struct
+public interface INativeMemory<T>
+    where T : struct
 {
     IntPtr Pointer { get; }
     int AllocatedSize { get; }

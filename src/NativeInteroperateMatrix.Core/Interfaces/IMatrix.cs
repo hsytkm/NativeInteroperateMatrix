@@ -1,9 +1,7 @@
-﻿using System;
+﻿namespace Nima.Core;
 
-namespace Nima.Core;
-
-public interface IMatrix<TValue> : INativeMemory<TValue>
-    where TValue : struct
+public interface IMatrix<T> : INativeMemory<T>
+    where T : struct
 {
     int Rows { get; }
     int Columns { get; }
@@ -13,12 +11,12 @@ public interface IMatrix<TValue> : INativeMemory<TValue>
     int Height => Rows;
     bool IsContinuous { get; }
 
-    Span<TValue> AsSpan(int row);
+    Span<T> AsSpan(int row);
 
     /// <summary>指定行列の値を読み出します</summary>
-    TValue ReadValue(int row, int column);
+    T ReadValue(int row, int column);
 
     /// <summary>指定行列の値を書き出します</summary>
-    void WriteValue(int row, int column, in TValue value);
+    void WriteValue(int row, int column, in T value);
 
 }

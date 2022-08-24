@@ -1,16 +1,17 @@
-﻿using System.Windows.Media;
-using Nima.Core.Imaging;
+﻿using Nima.Core.Imaging;
 
 namespace Nima.Imaging.Wpf;
 
 public static class PixelBgrExtension
 {
     /// <summary>色を変換します</summary>
-    public static PixelBgr ToPixelBgr(this Color color) => new(color.B, color.G, color.R);
+    public static PixelBgr ToPixelBgr(this System.Windows.Media.Color color) =>
+        PixelBgr.FromBgr(color.B, color.G, color.R);
 }
 
 public static class MediaColorExtension
 {
     /// <summary>色を変換します</summary>
-    public static Color ToMediaColor(in this PixelBgr pixel) => new() { B = pixel.Ch0, G = pixel.Ch1, R = pixel.Ch2 };
+    public static System.Windows.Media.Color ToMediaColor(in this PixelBgr pixel) =>
+        System.Windows.Media.Color.FromRgb(pixel.Red, pixel.Green, pixel.Blue);
 }

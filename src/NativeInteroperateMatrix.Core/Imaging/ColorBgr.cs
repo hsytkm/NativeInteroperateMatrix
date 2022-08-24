@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Nima.Core.Imaging;
+﻿namespace Nima.Core.Imaging;
 
 public sealed record ColorBgr : IFormattable
 {
@@ -11,7 +9,7 @@ public sealed record ColorBgr : IFormattable
 
     public ColorBgr(double b, double g, double r) => (B, G, R, Y) = (b, g, r, ToLuminanceY(b, g, r));
     public ColorBgr(byte b, byte g, byte r) : this((double)b, g, r) { }
-    public ColorBgr(in PixelBgr pixels) : this((double)pixels.Ch0, pixels.Ch1, pixels.Ch2) { }
+    public ColorBgr(in PixelBgr pixels) : this((double)pixels.Blue, pixels.Green, pixels.Red) { }
     public ColorBgr(ReadOnlySpan<double> channels)
     {
         if (channels.Length != 3) throw new ArgumentException("channels length is invalid.");

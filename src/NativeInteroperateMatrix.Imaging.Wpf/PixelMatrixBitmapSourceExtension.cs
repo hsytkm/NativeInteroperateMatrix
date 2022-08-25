@@ -1,8 +1,6 @@
-﻿using System;
-using System.Buffers;
+﻿using System.Buffers;
 using System.Windows;
 using System.Windows.Media.Imaging;
-using Nima.Core.Imaging;
 
 namespace Nima.Imaging.Wpf;
 

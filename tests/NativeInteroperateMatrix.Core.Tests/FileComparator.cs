@@ -1,7 +1,4 @@
-﻿using System;
-using System.IO;
-using System.Security.Cryptography;
-using System.Threading.Tasks;
+﻿using System.Security.Cryptography;
 
 namespace Nima.Core.Tests;
 
@@ -15,7 +12,9 @@ static class FileComparator
     public static async Task<string> GetFileHashAsync(string filePath)
     {
         // see https://mseeeen.msen.jp/compute-hash-string-of-files/
+#pragma warning disable SYSLIB0021    //  'SHA1CryptoServiceProvider' は旧形式です
         using var hashProvider = new SHA1CryptoServiceProvider();
+#pragma warning restore SYSLIB0021
         using var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read);
 #if NET5_0_OR_GREATER
         var bs = await hashProvider.ComputeHashAsync(fs);

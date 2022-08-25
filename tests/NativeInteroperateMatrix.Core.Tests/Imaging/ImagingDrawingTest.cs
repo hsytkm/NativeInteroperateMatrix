@@ -1,6 +1,4 @@
 ﻿using System.Drawing;
-using System.IO;
-using System.Threading.Tasks;
 using Nima.Imaging.Drawing;
 using Xunit;
 
@@ -21,7 +19,9 @@ public class ImagingDrawingTest
     {
         try
         {
+#pragma warning disable CA1416    // 'Bitmap' は 'windows' でのみサポートされています
             using var drawing = new Bitmap(sourcePath);
+#pragma warning restore CA1416
             using var container = drawing.ToPixelBgrMatrixContainer();
 
             await container.Matrix.ToBmpFileAsync(TempPath);

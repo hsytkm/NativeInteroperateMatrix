@@ -1,8 +1,5 @@
-﻿using System;
-using System.Drawing;
+﻿using System.Drawing;
 using System.Drawing.Imaging;
-using Nima.Core;
-using Nima.Core.Imaging;
 
 namespace Nima.Imaging.Drawing;
 

@@ -1,12 +1,9 @@
-﻿using System;
-using Nima.Core.Imaging;
-
-namespace Nima.Imaging.Wpf;
+﻿namespace Nima.Imaging.Wpf;
 
 public static class PixelMatrixExtension
 {
-    internal static double _dpiX = 96.0;
-    internal static double _dpiY = _dpiX;
+    static readonly double _dpiX = 96.0;
+    static readonly double _dpiY = _dpiX;
 
     /// <summary>System.Windows.Media.Imaging.BitmapSource に変換します</summary>
     public static System.Windows.Media.Imaging.BitmapSource ToBitmapSource(in this PixelBgrMatrix pixel, bool isFreeze = true)

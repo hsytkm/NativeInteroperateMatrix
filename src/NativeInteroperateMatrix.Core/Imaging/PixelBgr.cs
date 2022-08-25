@@ -1,6 +1,6 @@
 ﻿using System.Runtime.InteropServices;
 
-namespace Nima.Core.Imaging;
+namespace Nima.Imaging;
 
 [StructLayout(LayoutKind.Sequential, Pack = 1, Size = 3)]
 public readonly record struct PixelBgr

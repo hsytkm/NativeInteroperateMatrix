@@ -6,6 +6,7 @@
     <UseWPF>true</UseWPF>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
     <Title>Nima.Imaging.Wpf</Title>
     <AssemblyName>Nima.Imaging.Wpf</AssemblyName>
     <RootNamespace>Nima.Imaging.Wpf</RootNamespace>

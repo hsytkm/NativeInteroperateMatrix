@@ -8,7 +8,7 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Title>Nima.Core</Title>
     <AssemblyName>Nima.Core</AssemblyName>
-    <RootNamespace>Nima.Core</RootNamespace>
+    <RootNamespace>Nima</RootNamespace>
     <NoWarn>IDE0049</NoWarn>
   </PropertyGroup>
 

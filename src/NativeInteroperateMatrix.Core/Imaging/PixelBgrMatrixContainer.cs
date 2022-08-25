@@ -1,6 +1,6 @@
 ﻿using System.Runtime.CompilerServices;
 
-namespace Nima.Core.Imaging;
+namespace Nima.Imaging;
 
 public sealed partial class PixelBgrMatrixContainer
 {
@@ -38,14 +38,14 @@ public sealed partial class PixelBgrMatrixContainer
 
         for (var row = 0; row < rows; row++)
         {
-            stream.Position = headerSize + ((rows - 1 - row) * stride);
+            stream.Position = headerSize + (rows - 1 - row) * stride;
             stream.Read(array);
 
             unsafe
             {
                 fixed (byte* srcPtr = array)
                 {
-                    UnsafeUtils.MemCopy(destPtr + (row * colLength), srcPtr, colLength);
+                    UnsafeUtils.MemCopy(destPtr + row * colLength, srcPtr, colLength);
                 }
             }
         }
@@ -86,14 +86,14 @@ public sealed partial class PixelBgrMatrixContainer
 
         for (var row = 0; row < rows; row++)
         {
-            stream.Position = headerSize + ((rows - 1 - row) * stride);
+            stream.Position = headerSize + (rows - 1 - row) * stride;
             await stream.ReadAsync(array, cancellationToken);
 
             unsafe
             {
                 fixed (byte* srcPtr = array)
                 {
-                    UnsafeUtils.MemCopy(destPtr + (row * colLength), srcPtr, colLength);
+                    UnsafeUtils.MemCopy(destPtr + row * colLength, srcPtr, colLength);
                 }
             }
         }

@@ -1,6 +1,4 @@
-﻿using System.IO;
-using System.Threading.Tasks;
-using Nima.Core.Imaging;
+﻿using Nima.Imaging;
 using Xunit;
 
 namespace Nima.Core.Tests.Imaging.Drawing;

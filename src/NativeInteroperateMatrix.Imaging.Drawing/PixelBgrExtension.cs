@@ -1,6 +1,4 @@
-﻿using Nima.Core.Imaging;
-
-namespace Nima.Imaging.Drawing;
+﻿namespace Nima.Imaging.Drawing;
 
 public static class PixelBgrExtension
 {

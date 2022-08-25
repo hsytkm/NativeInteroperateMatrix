@@ -1,4 +1,4 @@
-﻿namespace Nima.Core;
+﻿namespace Nima;
 
 public interface INativeMemory<T>
     where T : struct

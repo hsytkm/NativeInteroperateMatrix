@@ -1,6 +1,6 @@
 ﻿using Matrix.SourceGenerator;
 
-namespace Nima.Core;
+namespace Nima;
 
 // SourceGenerator 内で Matrix の Container も一緒に生成しています(手抜き)
 [MatrixGenerator]

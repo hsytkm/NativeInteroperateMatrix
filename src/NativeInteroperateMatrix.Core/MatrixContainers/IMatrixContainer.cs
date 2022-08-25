@@ -1,4 +1,4 @@
-﻿namespace Nima.Core;
+﻿namespace Nima;
 
 public interface IMatrixContainer<TMatrix, TValue> : IDisposable
     where TMatrix : struct, IMatrix<TValue>

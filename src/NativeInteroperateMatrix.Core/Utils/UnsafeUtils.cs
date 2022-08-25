@@ -1,7 +1,7 @@
 ﻿using System.Buffers;
 using System.Runtime.CompilerServices;
 
-namespace Nima.Core;
+namespace Nima;
 
 public static class UnsafeUtils
 {
@@ -27,8 +27,8 @@ public static class UnsafeUtils
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static unsafe void MemCopyInternal(void* dest, void* src, int length)
     {
-        byte* destPtr = (byte*)dest;
-        byte* srcPtr = (byte*)src;
+        var destPtr = (byte*)dest;
+        var srcPtr = (byte*)src;
         var tail = destPtr + length;
 
         while (destPtr + 7 < tail)
@@ -66,7 +66,7 @@ public static class UnsafeUtils
 
         fixed (byte* p = destArray)
         {
-            *((T*)p) = srcData;
+            *(T*)p = srcData;
         }
     }
 
@@ -83,7 +83,7 @@ public static class UnsafeUtils
     public static unsafe T ReadStructureFromPtr<T>(void* src)
         where T : unmanaged
     {
-        return *((T*)src);
+        return *(T*)src;
     }
 
     /// <summary>構造体を IntPtr に書き出します</summary>
@@ -99,7 +99,7 @@ public static class UnsafeUtils
     public static unsafe void WriteStructureToPtr<T>(void* dest, in T data)
         where T : unmanaged
     {
-        *((T*)dest) = data;
+        *(T*)dest = data;
     }
 
     /// <summary>構造体を IntPtr に書き出します</summary>
@@ -138,7 +138,7 @@ public static class UnsafeUtils
         where T : struct
     {
         var size = Unsafe.SizeOf<T>();
-        byte[] array = ArrayPool<byte>.Shared.Rent(size);   // stackalloc cannot be used in Task.
+        var array = ArrayPool<byte>.Shared.Rent(size);   // stackalloc cannot be used in Task.
 
         try
         {

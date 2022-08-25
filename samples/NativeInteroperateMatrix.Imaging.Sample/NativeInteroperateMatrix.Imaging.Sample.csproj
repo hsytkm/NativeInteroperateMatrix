@@ -1,16 +1,17 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-      <OutputType>WinExe</OutputType>
-      <TargetFrameworks>net6.0-windows</TargetFrameworks>
-      <LangVersion>latest</LangVersion>
-      <UseWPF>true</UseWPF>
-      <Nullable>enable</Nullable>
+    <OutputType>WinExe</OutputType>
+    <TargetFrameworks>net6.0-windows</TargetFrameworks>
+    <LangVersion>latest</LangVersion>
+    <UseWPF>true</UseWPF>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
   <ItemGroup>
-      <PackageReference Include="Prism.DryIoc" Version="8.1.97" />
-      <PackageReference Include="ReactiveProperty" Version="8.1.2" />
+    <PackageReference Include="Prism.DryIoc" Version="8.1.97" />
+    <PackageReference Include="ReactiveProperty" Version="8.1.2" />
   </ItemGroup>
 
   <ItemGroup>
@@ -22,9 +23,9 @@
   </ItemGroup>
 
   <ItemGroup>
-      <None Update="Asserts\image1.bmp">
-          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </None>
+    <None Update="Asserts\image1.bmp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   
 </Project>

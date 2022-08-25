@@ -1,4 +1,4 @@
-﻿namespace Nima.Core.Imaging;
+﻿namespace Nima.Imaging;
 
 public sealed record ColorBgr : IFormattable
 {

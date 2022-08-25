@@ -1,7 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using Nima.Core.Imaging;
 using Nima.Imaging.Sample.Extensions;
 using Nima.Imaging.Wpf;
 using Prism.Mvvm;

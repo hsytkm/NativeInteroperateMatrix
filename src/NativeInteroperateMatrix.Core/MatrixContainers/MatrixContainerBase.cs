@@ -1,7 +1,7 @@
 ﻿using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-namespace Nima.Core;
+namespace Nima;
 
 public abstract class MatrixContainerBase<TMatrix, TValue> : IMatrixContainer<TMatrix, TValue>
     where TMatrix : struct, IMatrix<TValue>
@@ -50,7 +50,7 @@ public abstract class MatrixContainerBase<TMatrix, TValue> : IMatrixContainer<TM
     protected abstract TMatrix CreateMatrix(IntPtr intPtr, int width, int height, int bytesPerData, int stride);
 
     #region IDisposable
-    private bool _disposedValue;
+    bool _disposedValue;
     protected virtual void Dispose(bool disposing)
     {
         if (_disposedValue) return;

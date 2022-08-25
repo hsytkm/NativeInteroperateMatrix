@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics;
 using Matrix.SourceGenerator;
 
-namespace Nima.Core.Imaging;
+namespace Nima.Imaging;
 
 [MatrixGenerator]   // SourceGenerator 内で Container も一緒に生成しちゃっています(手抜き)
 public readonly partial struct PixelBgrMatrix
@@ -24,13 +24,13 @@ public readonly partial struct PixelBgrMatrix
         unsafe
         {
             var stride = _stride;
-            var rowHead = (byte*)_pointer + (y * stride);
-            var rowTail = rowHead + (height * stride);
+            var rowHead = (byte*)_pointer + y * stride;
+            var rowTail = rowHead + height * stride;
             var columnLength = width * bytesPerPixel;
 
             for (byte* rowPtr = rowHead; rowPtr < rowTail; rowPtr += stride)
             {
-                for (byte* ptr = rowPtr; ptr < (rowPtr + columnLength); ptr += bytesPerPixel)
+                for (var ptr = rowPtr; ptr < rowPtr + columnLength; ptr += bytesPerPixel)
                 {
                     for (var c = 0; c < bytesPerPixel; ++c)
                     {
@@ -87,7 +87,7 @@ public readonly partial struct PixelBgrMatrix
         unsafe
         {
             var lineHeadPtr = (byte*)GetIntPtr(y, x);
-            var lineTailPtr = lineHeadPtr + (height * _stride);
+            var lineTailPtr = lineHeadPtr + height * _stride;
             var widthOffset = width * _bytesPerItem;
 
             for (var linePtr = lineHeadPtr; linePtr < lineTailPtr; linePtr += _stride)
@@ -115,23 +115,23 @@ public readonly partial struct PixelBgrMatrix
 
             // 上ライン
             for (var ptr = rectHeadPtr; ptr < rectHeadPtr + widthOffset; ptr += bytesPerPixel)
-                *((PixelBgr*)ptr) = pixel;
+                *(PixelBgr*)ptr = pixel;
 
             // 下ライン
-            var bottomHeadPtr = rectHeadPtr + ((height - 1) * stride);
+            var bottomHeadPtr = rectHeadPtr + (height - 1) * stride;
             for (var ptr = bottomHeadPtr; ptr < bottomHeadPtr + widthOffset; ptr += bytesPerPixel)
-                *((PixelBgr*)ptr) = pixel;
+                *(PixelBgr*)ptr = pixel;
 
             // 左ライン
-            var leftTailPtr = rectHeadPtr + (height * stride);
+            var leftTailPtr = rectHeadPtr + height * stride;
             for (var ptr = rectHeadPtr; ptr < leftTailPtr; ptr += stride)
-                *((PixelBgr*)ptr) = pixel;
+                *(PixelBgr*)ptr = pixel;
 
             // 右ライン
             var rightHeadPtr = rectHeadPtr + widthOffset;
-            var rightTailPtr = rightHeadPtr + (height * stride);
+            var rightTailPtr = rightHeadPtr + height * stride;
             for (var ptr = rightHeadPtr; ptr < rightTailPtr; ptr += stride)
-                *((PixelBgr*)ptr) = pixel;
+                *(PixelBgr*)ptr = pixel;
         }
     }
     #endregion
@@ -173,12 +173,12 @@ public readonly partial struct PixelBgrMatrix
                 var dstHeadPtr = (byte*)destPixels._pointer;
                 var dstStride = destPixels._stride;
 
-                for (int y = 0; y < height; y++)
+                for (var y = 0; y < height; y++)
                 {
-                    var src = srcHeadPtr + (y * srcStride);
-                    var dst = dstHeadPtr + (y * dstStride);
+                    var src = srcHeadPtr + y * srcStride;
+                    var dst = dstHeadPtr + y * dstStride;
 
-                    for (int x = 0; x < width * bytesPerPixel; x += bytesPerPixel)
+                    for (var x = 0; x < width * bytesPerPixel; x += bytesPerPixel)
                     {
                         *(PixelBgr*)(dst + x) = *(PixelBgr*)(src + x);
                     }
@@ -216,20 +216,20 @@ public readonly partial struct PixelBgrMatrix
             var destPixelHead = (byte*)destination._pointer;
             var destStride = destination._stride;
 
-            for (int y = 0; y < srcHeight; y++)
+            for (var y = 0; y < srcHeight; y++)
             {
-                var src = srcPixelHead + (srcStride * y);
-                var dest0 = destPixelHead + (destStride * y * magnification);
+                var src = srcPixelHead + srcStride * y;
+                var dest0 = destPixelHead + destStride * y * magnification;
 
-                for (int x = 0; x < srcWidth * bytesPerPixel; x += bytesPerPixel)
+                for (var x = 0; x < srcWidth * bytesPerPixel; x += bytesPerPixel)
                 {
                     var pixel = (PixelBgr*)(src + x);
-                    var dest1 = dest0 + (x * magnification);
+                    var dest1 = dest0 + x * magnification;
 
-                    for (byte* dest2 = dest1; dest2 < dest1 + (destStride * magnification); dest2 += destStride)
+                    for (byte* dest2 = dest1; dest2 < dest1 + destStride * magnification; dest2 += destStride)
                     {
-                        for (byte* dest3 = dest2; dest3 < dest2 + (bytesPerPixel * magnification); dest3 += bytesPerPixel)
-                            *((PixelBgr*)dest3) = *pixel;
+                        for (var dest3 = dest2; dest3 < dest2 + bytesPerPixel * magnification; dest3 += bytesPerPixel)
+                            *(PixelBgr*)dest3 = *pixel;
                     }
                 }
             }
@@ -293,7 +293,7 @@ public readonly partial struct PixelBgrMatrix
                     for (var y = 0; y < height; ++y)
                     {
                         var src = srcHead + (height - 1 - y) * srcStride;
-                        var dest = destHead + (y * destStride);
+                        var dest = destHead + y * destStride;
                         UnsafeUtils.MemCopy(dest, src, srcStride);
                     }
                 }

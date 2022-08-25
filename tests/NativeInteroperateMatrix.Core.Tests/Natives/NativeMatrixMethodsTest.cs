@@ -1,7 +1,5 @@
-﻿using System;
-using System.Linq;
-using System.Runtime.InteropServices;
-using Nima.Core;
+﻿using System.Runtime.InteropServices;
+using Nima;
 using Nima.Core.Tests;
 using Xunit;
 

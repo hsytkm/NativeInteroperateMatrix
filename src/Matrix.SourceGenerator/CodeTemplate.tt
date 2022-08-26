@@ -17,7 +17,7 @@ namespace <#= Namespace #>
 <# } #>
 {
     [StructLayout(LayoutKind.Sequential, Pack = 1, Size = 8 + (4 * 4))]
-    readonly partial struct <#= MatrixClassName #> : IMatrix<<#= ValueItemTypeName #>>, IEquatable<<#= MatrixClassName #>>
+    readonly partial record struct <#= MatrixClassName #> : IMatrix<<#= ValueItemTypeName #>>
     {
         private readonly IntPtr _pointer;
         //private readonly int _allocSize;  // = rows * stride;
@@ -94,15 +94,6 @@ namespace <#= Namespace #>
 
             UnsafeUtils.WriteStructureToPtr(GetIntPtr(row, column), value);
         }
-
-        // IEquatable<T>
-        public bool Equals(<#= MatrixClassName #> other) => this == other;
-        public override bool Equals(object? obj) => (obj is <#= MatrixClassName #> other) && Equals(other);
-        public override int GetHashCode() => HashCode.Combine(_pointer, _rows, _columns, _bytesPerItem, _stride);
-        public static bool operator ==(in <#= MatrixClassName #> left, in <#= MatrixClassName #> right)
-             => (left._pointer, left._rows, left._columns, left._bytesPerItem, left._stride)
-                == (right._pointer, right._rows, right._columns, right._bytesPerItem, right._stride);
-        public static bool operator !=(in <#= MatrixClassName #> left, in <#= MatrixClassName #> right) => !(left == right);
 
         public override string ToString() => $"Rows={_rows}, Cols={_columns}, Pointer=0x{_pointer:x16}";
     }

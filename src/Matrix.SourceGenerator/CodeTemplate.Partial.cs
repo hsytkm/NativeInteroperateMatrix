@@ -9,7 +9,7 @@ namespace Matrix.SourceGenerator
         private string ValueItemTypeName { get; }
         private string ContainerClassName { get; }
 
-        internal CodeTemplate(StructDeclarationSyntax declaration)
+        internal CodeTemplate(TypeDeclarationSyntax declaration)
         {
             MatrixClassName = declaration.GetGenericTypeName();     // DoubleMatrix
             ContainerClassName = MatrixClassName + "Container";     // DoubleMatrixContainer

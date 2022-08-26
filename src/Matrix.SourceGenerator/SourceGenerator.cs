@@ -59,22 +59,31 @@ namespace Matrix.SourceGenerator
 
         private sealed class SyntaxReceiver : ISyntaxReceiver
         {
-            internal List<StructDeclarationSyntax> Targets { get; } = new();
+            internal List<TypeDeclarationSyntax> Targets { get; } = new();
 
             public void OnVisitSyntaxNode(SyntaxNode syntaxNode)
             {
-                static bool IsReadOnlyStruct(StructDeclarationSyntax structDeclarationSyntax)
-                    => structDeclarationSyntax.Modifiers.Any(m => m.IsKind(SyntaxKind.ReadOnlyKeyword));
+                static bool HasReadOnlyKind(TypeDeclarationSyntax typeDeclarationSyntax)
+                    => typeDeclarationSyntax.Modifiers.Any(m => m.IsKind(SyntaxKind.ReadOnlyKeyword));
 
-                if (syntaxNode is not StructDeclarationSyntax record) return;
+                TypeDeclarationSyntax? typeDeclarationSyntax = syntaxNode switch
+                {
+                    StructDeclarationSyntax structDecl => structDecl,   // for struct
+                    RecordDeclarationSyntax recordDecl => recordDecl,   // for record struct
+                    _ => null
+                };
+                if (typeDeclarationSyntax is null)
+                    return;
 
-                if (!IsReadOnlyStruct(record)) return;
+                if (!HasReadOnlyKind(typeDeclarationSyntax))
+                    return;
 
-                var attr = record.AttributeLists.SelectMany(x => x.Attributes)
+                var attr = typeDeclarationSyntax.AttributeLists.SelectMany(x => x.Attributes)
                     .FirstOrDefault(x => x.Name.ToString() is nameof(MatrixGenerator) or _attributeName);
-                if (attr is null) return;
+                if (attr is null)
+                    return;
 
-                Targets.Add(record);
+                Targets.Add(typeDeclarationSyntax);
             }
 
         }

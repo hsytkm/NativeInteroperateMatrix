@@ -93,9 +93,14 @@ using System.Runtime.InteropServices;
 
         public unsafe Span<");
             this.Write(this.ToStringHelper.ToStringWithCulture(ValueItemTypeName));
-            this.Write("> AsSpan(int row)\r\n        {\r\n            if (row < 0 || _rows - 1 < row)\r\n      " +
-                    "          throw new ArgumentException(\"Invalid row\");\r\n\r\n            var ptr = _" +
-                    "pointer + (row * _stride);\r\n            return new Span<");
+            this.Write("> AsSpan()\r\n        {\r\n            var size = _rows * _stride;\r\n            retur" +
+                    "n new Span<");
+            this.Write(this.ToStringHelper.ToStringWithCulture(ValueItemTypeName));
+            this.Write(">(_pointer.ToPointer(), size);\r\n        }\r\n\r\n        public unsafe Span<");
+            this.Write(this.ToStringHelper.ToStringWithCulture(ValueItemTypeName));
+            this.Write("> AsRowSpan(int row)\r\n        {\r\n            if (row < 0 || _rows - 1 < row)\r\n   " +
+                    "             throw new ArgumentException(\"Invalid row\");\r\n\r\n            var ptr " +
+                    "= _pointer + (row * _stride);\r\n            return new Span<");
             this.Write(this.ToStringHelper.ToStringWithCulture(ValueItemTypeName));
             this.Write(@">(ptr.ToPointer(), _columns);
         }
@@ -149,7 +154,7 @@ using System.Runtime.InteropServices;
             var written = 0;
             var row = 0;
             var column = 0;
-            var span = Matrix.AsSpan(row);
+            var span = Matrix.AsRowSpan(row);
 
             foreach (var item in items)
             {
@@ -157,7 +162,7 @@ using System.Runtime.InteropServices;
                 {
                     column = 0;
                     row++;
-                    span = Matrix.AsSpan(row);
+                    span = Matrix.AsRowSpan(row);
                 }
                 span[column++] = item;
 

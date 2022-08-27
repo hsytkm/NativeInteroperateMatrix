@@ -1,7 +1,6 @@
 ﻿namespace Nima;
 
-public interface INativeMemory<T>
-    where T : struct
+public interface INativeMemory
 {
     IntPtr Pointer { get; }
     int AllocatedSize { get; }

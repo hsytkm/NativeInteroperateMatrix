@@ -45,7 +45,7 @@ public abstract class IntegerMatrixContainerTestBase<TContainer, TMatrix, TValue
         long sum = 0;
         for (var row = 0; row < matrix.Rows; row++)
         {
-            ReadOnlySpan<T> span = matrix.AsSpan(row);
+            ReadOnlySpan<T> span = matrix.AsRowSpan(row);
 
             for (var i = 0; i < span.Length; i++)
                 sum += (dynamic)span[i];    // ジェネリクスを無理やり加算

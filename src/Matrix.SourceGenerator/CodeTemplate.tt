@@ -62,7 +62,13 @@ namespace <#= Namespace #>
             }
         }
 
-        public unsafe Span<<#= ValueItemTypeName #>> AsSpan(int row)
+        public unsafe Span<<#= ValueItemTypeName #>> AsSpan()
+        {
+            var size = _rows * _stride;
+            return new Span<<#= ValueItemTypeName #>>(_pointer.ToPointer(), size);
+        }
+
+        public unsafe Span<<#= ValueItemTypeName #>> AsRowSpan(int row)
         {
             if (row < 0 || _rows - 1 < row)
                 throw new ArgumentException("Invalid row");
@@ -111,7 +117,7 @@ namespace <#= Namespace #>
             var written = 0;
             var row = 0;
             var column = 0;
-            var span = Matrix.AsSpan(row);
+            var span = Matrix.AsRowSpan(row);
 
             foreach (var item in items)
             {
@@ -119,7 +125,7 @@ namespace <#= Namespace #>
                 {
                     column = 0;
                     row++;
-                    span = Matrix.AsSpan(row);
+                    span = Matrix.AsRowSpan(row);
                 }
                 span[column++] = item;
 

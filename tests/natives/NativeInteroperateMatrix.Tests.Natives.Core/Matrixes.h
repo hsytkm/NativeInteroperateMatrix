@@ -5,7 +5,10 @@
 namespace NimaNativeCore {
 
     // 構造体に定義を追加しないこと
-    struct Int8Matrix : MatrixBase<unsigned char> { };  // byte in C#
+    struct ByteMatrix : MatrixBase<unsigned char> { };  // byte in C#
+
+    // 構造体に定義を追加しないこと
+    struct Int8Matrix : MatrixBase<char> { };           // sbyte in C#
 
     // 構造体に定義を追加しないこと
     struct Int16Matrix : MatrixBase<short> { };         // short in C#

@@ -10,6 +10,12 @@ internal static class NativeMatrixMethods
     private const string DllName = "NativeInteroperateMatrix.Tests.Natives.Core.dll";
 
     //
+    [DllImport(DllName, EntryPoint = "SumByteMatrix")]
+    public static extern long Sum(in ByteMatrix matrix);
+    [DllImport(DllName, EntryPoint = "ClearByteMatrix")]
+    public static extern void Clear(in ByteMatrix matrix);
+
+    //
     [DllImport(DllName, EntryPoint = "SumInt8Matrix")]
     public static extern long Sum(in Int8Matrix matrix);
     [DllImport(DllName, EntryPoint = "ClearInt8Matrix")]
@@ -66,7 +72,7 @@ public class NativeMatrixMethodsTest
     public void SumInt8Matrix(int rows, int columns)
     {
         var max = GetMaxValue<byte>(rows * columns);
-        var items = Enumerable.Range(0, rows * columns).Select(x => (byte)(x % max)).ToArray();
+        var items = Enumerable.Range(0, rows * columns).Select(x => (sbyte)(x % max)).ToArray();
         using var container = new Int8MatrixContainer(rows, columns, items);
 
         var expected = items.Select(x => (long)x).Sum();

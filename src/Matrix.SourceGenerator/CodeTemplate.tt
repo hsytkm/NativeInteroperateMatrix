@@ -17,7 +17,7 @@ namespace <#= Namespace #>
 <# } #>
 {
     [StructLayout(LayoutKind.Sequential, Pack = 1, Size = 8 + (4 * 4))]
-    readonly partial record struct <#= MatrixClassName #> : IMatrix<<#= ValueItemTypeName #>>
+    partial record struct <#= MatrixClassName #>
     {
         private readonly IntPtr _pointer;
         //private readonly int _allocSize;  // = rows * stride;

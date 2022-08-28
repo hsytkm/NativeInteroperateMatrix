@@ -3,6 +3,16 @@
 
 using namespace NimaNativeCore;
 
+// Byte
+DllExport long long SumByteMatrix(ByteMatrix* matrix)
+{
+    return matrix->get_sum_int64();
+}
+DllExport void ClearByteMatrix(ByteMatrix* matrix)
+{
+    matrix->fill_value(0);
+}
+
 // Int8
 DllExport long long SumInt8Matrix(Int8Matrix* matrix)
 {

@@ -19,7 +19,8 @@ namespace Matrix.SourceGenerator
         // DoubleMatrix -> double
         private static string GetBuiltInTypeName(string source) => source switch
         {
-            "Int8" => "byte",
+            "Byte" => "byte",
+            "Int8" => "sbyte",
             "Int16" => "short",
             "Int32" => "int",
             "Int64" => "long",

@@ -40,12 +40,10 @@ using System.Runtime.InteropServices;
             this.Write(this.ToStringHelper.ToStringWithCulture(Namespace));
             this.Write("\r\n");
  } 
-            this.Write("{\r\n    [StructLayout(LayoutKind.Sequential, Pack = 1, Size = 8 + (4 * 4))]\r\n    r" +
-                    "eadonly partial record struct ");
+            this.Write("{\r\n    [StructLayout(LayoutKind.Sequential, Pack = 1, Size = 8 + (4 * 4))]\r\n    p" +
+                    "artial record struct ");
             this.Write(this.ToStringHelper.ToStringWithCulture(MatrixClassName));
-            this.Write(" : IMatrix<");
-            this.Write(this.ToStringHelper.ToStringWithCulture(ValueItemTypeName));
-            this.Write(@">
+            this.Write(@"
     {
         private readonly IntPtr _pointer;
         //private readonly int _allocSize;  // = rows * stride;

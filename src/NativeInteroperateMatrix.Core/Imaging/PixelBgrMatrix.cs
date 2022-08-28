@@ -4,7 +4,7 @@ using Matrix.SourceGenerator;
 namespace Nima.Imaging;
 
 [MatrixGenerator]   // SourceGenerator 内で Container も一緒に生成しちゃっています(手抜き)
-public readonly partial record struct PixelBgrMatrix
+public readonly partial record struct PixelBgrMatrix : IMatrix<PixelBgr>
 {
     public int BytesPerPixel => BytesPerItem;
     public int BitsPerPixel => BitsPerItem;

@@ -54,11 +54,19 @@ public abstract class IntegerMatrixContainerTestBase<TContainer, TMatrix, TValue
     }
 }
 
-public class Int8MatrixContainerTest : IntegerMatrixContainerTestBase<Int8MatrixContainer, Int8Matrix, byte>
+public class ByteMatrixContainerTest : IntegerMatrixContainerTestBase<ByteMatrixContainer, ByteMatrix, byte>
 {
     protected override byte WriteValue { get; } = byte.MaxValue;
 
-    protected override IMatrixContainer<Int8Matrix, byte> CreateContainer(int rows, int columns, bool initialize)
+    protected override IMatrixContainer<ByteMatrix, byte> CreateContainer(int rows, int columns, bool initialize)
+         => new ByteMatrixContainer(rows, columns, initialize);
+}
+
+public class Int8MatrixContainerTest : IntegerMatrixContainerTestBase<Int8MatrixContainer, Int8Matrix, sbyte>
+{
+    protected override sbyte WriteValue { get; } = sbyte.MaxValue;
+
+    protected override IMatrixContainer<Int8Matrix, sbyte> CreateContainer(int rows, int columns, bool initialize)
          => new Int8MatrixContainer(rows, columns, initialize);
 }
 

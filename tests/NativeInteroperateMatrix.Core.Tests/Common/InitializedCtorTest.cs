@@ -24,7 +24,7 @@ public class InitializedCtorTest
     public void CtorItems(int rows, int columns)
     {
         var array = CreateByteArray(rows * columns);
-        using var container = new Int8MatrixContainer(rows, columns, array);
+        using var container = new ByteMatrixContainer(rows, columns, array);
         var matrix = container.Matrix;
 
         for (var r = 0; r < matrix.Rows; r++)
@@ -38,13 +38,13 @@ public class InitializedCtorTest
         Assert.Throws<ArgumentException>(() =>
         {
             var overArray = CreateByteArray(rows * columns + 1);
-            using var container = new Int8MatrixContainer(rows, columns, overArray);
+            using var container = new ByteMatrixContainer(rows, columns, overArray);
         });
 
         Assert.Throws<ArgumentException>(() =>
         {
             var shortArray = CreateByteArray(rows * columns - 1);
-            using var container = new Int8MatrixContainer(rows, columns, shortArray);
+            using var container = new ByteMatrixContainer(rows, columns, shortArray);
         });
     }
 

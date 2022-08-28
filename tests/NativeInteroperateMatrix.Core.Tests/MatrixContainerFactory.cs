@@ -21,8 +21,10 @@
 //            return (TContainer)(IMatrixContainer<Int32Matrix, int>)new Int32MatrixContainer(rows, columns, initialize);
 //        if (t == typeof(short))
 //            return (TContainer)(IMatrixContainer<Int16Matrix, short>)new Int16MatrixContainer(rows, columns, initialize);
-//        if (t == typeof(byte))
+//        if (t == typeof(sbyte))
 //            return (TContainer)(IMatrixContainer<Int8Matrix, byte>)new Int8MatrixContainer(rows, columns, initialize);
+//        if (t == typeof(byte))
+//            return (TContainer)(IMatrixContainer<ByteMatrix, byte>)new Int8MatrixContainer(rows, columns, initialize);
 
 //        throw new NotImplementedException();
 //    }

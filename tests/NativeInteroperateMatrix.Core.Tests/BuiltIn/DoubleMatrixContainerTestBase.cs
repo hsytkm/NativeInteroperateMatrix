@@ -5,11 +5,10 @@ namespace Nima.Core.Tests.BuiltIn;
 /// <summary>
 /// 空の Container インスタンス作成（小数専用）
 /// </summary>
-public abstract class DoubleMatrixContainerTestBase<TContainer, TMatrix, TValue>
-    : BuiltInMatrixContainerTestBase<TContainer, TMatrix, TValue>
-        where TContainer : class, IMatrixContainer<TMatrix, TValue>
-        where TMatrix : struct, IMatrix<TValue>
-        where TValue : struct
+public abstract class DoubleMatrixContainerTestBase<TContainer, TType>
+    : BuiltInMatrixContainerTestBase<TContainer, TType>
+        where TContainer : notnull, IMatrixContainer<TType>
+        where TType : struct
 {
     [Theory]
     [ClassData(typeof(RowColPairTestData))]
@@ -54,18 +53,18 @@ public abstract class DoubleMatrixContainerTestBase<TContainer, TMatrix, TValue>
     }
 }
 
-public class SingleMatrixContainerTest : DoubleMatrixContainerTestBase<SingleMatrixContainer, SingleMatrix, float>
+public class SingleMatrixContainerTest : DoubleMatrixContainerTestBase<SingleMatrixContainer, float>
 {
     protected override float WriteValue { get; } = float.MaxValue / 128f;  // overflow 対策
 
-    protected override IMatrixContainer<SingleMatrix, float> CreateContainer(int rows, int columns, bool initialize)
+    protected override IMatrixContainer<float> CreateContainer(int rows, int columns, bool initialize)
          => new SingleMatrixContainer(rows, columns, initialize);
 }
 
-public class DoubleMatrixContainerTest : DoubleMatrixContainerTestBase<DoubleMatrixContainer, DoubleMatrix, double>
+public class DoubleMatrixContainerTest : DoubleMatrixContainerTestBase<DoubleMatrixContainer, double>
 {
     protected override double WriteValue { get; } = double.MaxValue / 128d;  // overflow 対策
 
-    protected override IMatrixContainer<DoubleMatrix, double> CreateContainer(int rows, int columns, bool initialize)
+    protected override IMatrixContainer<double> CreateContainer(int rows, int columns, bool initialize)
          => new DoubleMatrixContainer(rows, columns, initialize);
 }

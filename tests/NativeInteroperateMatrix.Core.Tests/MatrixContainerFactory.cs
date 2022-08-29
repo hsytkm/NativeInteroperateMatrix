@@ -2,12 +2,12 @@
 
 //internal static class MatrixContainerFactory
 //{
-//    public static TContainer Create<TContainer, TMatrix, TValue>(int rows, int columns, bool initialize)
-//        where TContainer : class, IMatrixContainer<TMatrix, TValue>
-//        where TMatrix : struct, IMatrix<TValue>
-//        where TValue : struct
+//    public static TContainer Create<TContainer, TMatrix, TType>(int rows, int columns, bool initialize)
+//        where TContainer : class, IMatrixContainer<TMatrix, TType>
+//        where TMatrix : struct, IMatrix<TType>
+//        where TType : struct
 //    {
-//        var t = typeof(TValue);
+//        var t = typeof(TType);
 
 //        if (t == typeof(PixelBgr))
 //            return (TContainer)(IMatrixContainer<PixelBgrMatrix, PixelBgr>)new PixelBgrMatrixContainer(rows, columns, initialize);

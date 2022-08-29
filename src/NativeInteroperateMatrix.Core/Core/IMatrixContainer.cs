@@ -1,8 +1,7 @@
 ﻿namespace Nima;
 
-public interface IMatrixContainer<TMatrix, TValue> : IDisposable
-    where TMatrix : struct, IMatrix<TValue>
-    where TValue : struct
+public interface IMatrixContainer<T> : IDisposable
+    where T : struct
 {
-    TMatrix Matrix { get; }
+    IMatrix<T> Matrix { get; }
 }

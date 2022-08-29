@@ -16,8 +16,9 @@ using System.Runtime.InteropServices;
 namespace <#= Namespace #>
 <# } #>
 {
+    // Do not change the order of the struct because it is the same as C++
     [StructLayout(LayoutKind.Sequential, Pack = 1, Size = 8 + (4 * 4))]
-    partial record struct <#= MatrixClassName #>
+    partial record struct <#= MatrixClassName #>    //: IMatrix<<#= ValueItemTypeName #>>
     {
         private readonly IntPtr _pointer;
         //private readonly int _allocSize;  // = rows * stride;
@@ -28,7 +29,7 @@ namespace <#= Namespace #>
 
         public <#= MatrixClassName #>(IntPtr intPtr, int rows, int columns, int bytesPerItem, int stride)
         {
-            if (IntPtr.Size != 8)
+            if (IntPtr.Size != 8)   // must be x64
                 throw new NotSupportedException();
 
             if (bytesPerItem != Unsafe.SizeOf<<#= ValueItemTypeName #>>())
@@ -41,15 +42,11 @@ namespace <#= Namespace #>
             _stride = stride;
         }
 
-        // IMatrix<T>
+        // INativeMemory
         public IntPtr Pointer => _pointer;
-        public int Rows => _rows;
-        public int Columns => _columns;
+        public int AllocatedSize => _columns * _bytesPerItem * _rows;  // don't use stride
         public int BytesPerItem => _bytesPerItem;
         public int BitsPerItem => _bytesPerItem * 8;
-        public int Stride => _stride;
-        public int AllocatedSize => _columns * _bytesPerItem * _rows;  // don't use stride
-        public bool IsContinuous => (_columns * _bytesPerItem) == _stride;
         public bool IsValid
         {
             get
@@ -61,6 +58,15 @@ namespace <#= Namespace #>
                 return true;    //valid
             }
         }
+
+        // IMatrix
+        public int Rows => _rows;
+        public int Columns => _columns;
+        public int Stride => _stride;
+        public bool IsContinuous => (_columns * _bytesPerItem) == _stride;
+
+        // IMatrix<T>
+        public int ItemSize => Unsafe.SizeOf<<#= ValueItemTypeName #>>();
 
         public unsafe Span<<#= ValueItemTypeName #>> AsSpan()
         {
@@ -104,14 +110,16 @@ namespace <#= Namespace #>
         public override string ToString() => $"Rows={_rows}, Cols={_columns}, Pointer=0x{_pointer:x16}";
     }
 
-    public sealed partial class <#= ContainerClassName #> : MatrixContainerBase<<#= MatrixClassName #>, <#= ValueItemTypeName #>>
+    public sealed partial class <#= ContainerClassName #> : MatrixContainerBase<<#= ValueItemTypeName #>>
     {
+        public new <#= MatrixClassName #> Matrix => (<#= MatrixClassName #>)base.Matrix;
+
         public <#= ContainerClassName #>(int rows, int columns, bool initialize = true)
-            : base(rows, columns, initialize)
+            : base(rows, columns, Unsafe.SizeOf<<#= ValueItemTypeName #>>(), initialize)
         { }
 
         public <#= ContainerClassName #>(int rows, int columns, IEnumerable<<#= ValueItemTypeName #>> items)
-            : base(rows, columns, false)
+            : this(rows, columns, false)
         {
             var length = rows * columns;
             var written = 0;
@@ -137,7 +145,7 @@ namespace <#= Namespace #>
                 throw new ArgumentException("items is small.", nameof(items));
         }
 
-        protected override <#= MatrixClassName #> CreateMatrix(IntPtr intPtr, int width, int height, int bytesPerData, int stride)
+        protected override IMatrix<<#= ValueItemTypeName #>> CreateMatrix(IntPtr intPtr, int width, int height, int bytesPerData, int stride)
         {
             return new <#= MatrixClassName #>(intPtr, width, height, bytesPerData, stride);
         }

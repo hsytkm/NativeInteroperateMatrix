@@ -6,14 +6,13 @@ namespace Nima.Core.Tests.BuiltIn;
 /// <summary>
 /// 空の Container インスタンス作成（整数/小数共通部）
 /// </summary>
-public abstract class BuiltInMatrixContainerTestBase<TContainer, TMatrix, TValue>
-    where TContainer : class, IMatrixContainer<TMatrix, TValue>
-    where TMatrix : struct, IMatrix<TValue>
-    where TValue : struct
+public abstract class BuiltInMatrixContainerTestBase<TContainer, TType>
+    where TContainer : notnull, IMatrixContainer<TType>
+    where TType : struct
 {
-    protected abstract TValue WriteValue { get; }
+    protected abstract TType WriteValue { get; }
 
-    protected abstract IMatrixContainer<TMatrix, TValue> CreateContainer(int rows, int columns, bool initialize);
+    protected abstract IMatrixContainer<TType> CreateContainer(int rows, int columns, bool initialize);
 
     [Theory]
     [ClassData(typeof(RowColPairTestData))]
@@ -25,7 +24,7 @@ public abstract class BuiltInMatrixContainerTestBase<TContainer, TMatrix, TValue
         matrix.Pointer.IsNot(IntPtr.Zero);
         matrix.Rows.Is(rows);
         matrix.Columns.Is(columns);
-        matrix.BytesPerItem.Is(Unsafe.SizeOf<TValue>());
+        matrix.BytesPerItem.Is(Unsafe.SizeOf<TType>());
         matrix.Stride.IsNot(0);         // tekito-
 
         matrix.Width.Is(matrix.Columns);

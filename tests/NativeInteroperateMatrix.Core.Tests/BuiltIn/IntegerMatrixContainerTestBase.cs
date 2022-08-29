@@ -5,11 +5,10 @@ namespace Nima.Core.Tests.BuiltIn;
 /// <summary>
 /// 空の Container インスタンス作成（整数専用）
 /// </summary>
-public abstract class IntegerMatrixContainerTestBase<TContainer, TMatrix, TValue>
-    : BuiltInMatrixContainerTestBase<TContainer, TMatrix, TValue>
-        where TContainer : class, IMatrixContainer<TMatrix, TValue>
-        where TMatrix : struct, IMatrix<TValue>
-        where TValue : struct
+public abstract class IntegerMatrixContainerTestBase<TContainer, TType>
+    : BuiltInMatrixContainerTestBase<TContainer, TType>
+        where TContainer : notnull, IMatrixContainer<TType>
+        where TType : struct
 {
     [Theory]
     [ClassData(typeof(RowColPairTestData))]
@@ -54,42 +53,42 @@ public abstract class IntegerMatrixContainerTestBase<TContainer, TMatrix, TValue
     }
 }
 
-public class ByteMatrixContainerTest : IntegerMatrixContainerTestBase<ByteMatrixContainer, ByteMatrix, byte>
+public class ByteMatrixContainerTest : IntegerMatrixContainerTestBase<ByteMatrixContainer, byte>
 {
     protected override byte WriteValue { get; } = byte.MaxValue;
 
-    protected override IMatrixContainer<ByteMatrix, byte> CreateContainer(int rows, int columns, bool initialize)
+    protected override IMatrixContainer<byte> CreateContainer(int rows, int columns, bool initialize)
          => new ByteMatrixContainer(rows, columns, initialize);
 }
 
-public class Int8MatrixContainerTest : IntegerMatrixContainerTestBase<Int8MatrixContainer, Int8Matrix, sbyte>
+public class Int8MatrixContainerTest : IntegerMatrixContainerTestBase<Int8MatrixContainer, sbyte>
 {
     protected override sbyte WriteValue { get; } = sbyte.MaxValue;
 
-    protected override IMatrixContainer<Int8Matrix, sbyte> CreateContainer(int rows, int columns, bool initialize)
+    protected override IMatrixContainer<sbyte> CreateContainer(int rows, int columns, bool initialize)
          => new Int8MatrixContainer(rows, columns, initialize);
 }
 
-public class Int16MatrixContainerTest : IntegerMatrixContainerTestBase<Int16MatrixContainer, Int16Matrix, short>
+public class Int16MatrixContainerTest : IntegerMatrixContainerTestBase<Int16MatrixContainer, short>
 {
     protected override short WriteValue { get; } = short.MaxValue;
 
-    protected override IMatrixContainer<Int16Matrix, short> CreateContainer(int rows, int columns, bool initialize)
+    protected override IMatrixContainer<short> CreateContainer(int rows, int columns, bool initialize)
          => new Int16MatrixContainer(rows, columns, initialize);
 }
 
-public class Int32MatrixContainerTest : IntegerMatrixContainerTestBase<Int32MatrixContainer, Int32Matrix, int>
+public class Int32MatrixContainerTest : IntegerMatrixContainerTestBase<Int32MatrixContainer, int>
 {
     protected override int WriteValue { get; } = int.MaxValue;
 
-    protected override IMatrixContainer<Int32Matrix, int> CreateContainer(int rows, int columns, bool initialize)
+    protected override IMatrixContainer<int> CreateContainer(int rows, int columns, bool initialize)
          => new Int32MatrixContainer(rows, columns, initialize);
 }
 
-public class Int64MatrixContainerTest : IntegerMatrixContainerTestBase<Int64MatrixContainer, Int64Matrix, long>
+public class Int64MatrixContainerTest : IntegerMatrixContainerTestBase<Int64MatrixContainer, long>
 {
     protected override long WriteValue { get; } = long.MaxValue / 64;   // overflow 対策
 
-    protected override IMatrixContainer<Int64Matrix, long> CreateContainer(int rows, int columns, bool initialize)
+    protected override IMatrixContainer<long> CreateContainer(int rows, int columns, bool initialize)
          => new Int64MatrixContainer(rows, columns, initialize);
 }

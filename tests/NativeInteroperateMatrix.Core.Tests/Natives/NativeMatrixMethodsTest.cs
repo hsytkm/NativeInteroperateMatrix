@@ -9,43 +9,43 @@ internal static class NativeMatrixMethods
 {
     private const string DllName = "NativeInteroperateMatrix.Tests.Natives.Core.dll";
 
-    //
+    // Byte
     [DllImport(DllName, EntryPoint = "SumByteMatrix")]
     public static extern long Sum(in ByteMatrix matrix);
     [DllImport(DllName, EntryPoint = "ClearByteMatrix")]
     public static extern void Clear(in ByteMatrix matrix);
 
-    //
+    // Int8
     [DllImport(DllName, EntryPoint = "SumInt8Matrix")]
     public static extern long Sum(in Int8Matrix matrix);
     [DllImport(DllName, EntryPoint = "ClearInt8Matrix")]
     public static extern void Clear(in Int8Matrix matrix);
 
-    //
+    // Int16
     [DllImport(DllName, EntryPoint = "SumInt16Matrix")]
     public static extern long Sum(in Int16Matrix matrix);
     [DllImport(DllName, EntryPoint = "ClearInt16Matrix")]
     public static extern void Clear(in Int16Matrix matrix);
 
-    //
+    // Int32
     [DllImport(DllName, EntryPoint = "SumInt32Matrix")]
     public static extern long Sum(in Int32Matrix matrix);
     [DllImport(DllName, EntryPoint = "ClearInt32Matrix")]
     public static extern void Clear(in Int32Matrix matrix);
 
-    //
+    // Int64
     [DllImport(DllName, EntryPoint = "SumInt64Matrix")]
     public static extern long Sum(in Int64Matrix matrix);
     [DllImport(DllName, EntryPoint = "ClearInt64Matrix")]
     public static extern void Clear(in Int64Matrix matrix);
 
-    //
+    // Single
     [DllImport(DllName, EntryPoint = "SumSingleMatrix")]
     public static extern double Sum(in SingleMatrix matrix);
     [DllImport(DllName, EntryPoint = "ClearSingleMatrix")]
     public static extern void Clear(in SingleMatrix matrix);
 
-    //
+    // Double
     [DllImport(DllName, EntryPoint = "SumDoubleMatrix")]
     public static extern double Sum(in DoubleMatrix matrix);
     [DllImport(DllName, EntryPoint = "ClearDoubleMatrix")]

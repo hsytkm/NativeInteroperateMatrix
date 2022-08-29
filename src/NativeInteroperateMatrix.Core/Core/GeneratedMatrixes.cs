@@ -23,4 +23,3 @@ public readonly partial record struct SingleMatrix : IMatrix<Single> { }
 
 [MatrixGenerator]
 public readonly partial record struct DoubleMatrix : IMatrix<Double> { }
-

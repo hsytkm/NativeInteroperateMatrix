@@ -40,10 +40,13 @@ using System.Runtime.InteropServices;
             this.Write(this.ToStringHelper.ToStringWithCulture(Namespace));
             this.Write("\r\n");
  } 
-            this.Write("{\r\n    [StructLayout(LayoutKind.Sequential, Pack = 1, Size = 8 + (4 * 4))]\r\n    p" +
-                    "artial record struct ");
+            this.Write("{\r\n    // Do not change the order of the struct because it is the same as C++\r\n  " +
+                    "  [StructLayout(LayoutKind.Sequential, Pack = 1, Size = 8 + (4 * 4))]\r\n    parti" +
+                    "al record struct ");
             this.Write(this.ToStringHelper.ToStringWithCulture(MatrixClassName));
-            this.Write(@"
+            this.Write("    //: IMatrix<");
+            this.Write(this.ToStringHelper.ToStringWithCulture(ValueItemTypeName));
+            this.Write(@">
     {
         private readonly IntPtr _pointer;
         //private readonly int _allocSize;  // = rows * stride;
@@ -55,8 +58,8 @@ using System.Runtime.InteropServices;
         public ");
             this.Write(this.ToStringHelper.ToStringWithCulture(MatrixClassName));
             this.Write("(IntPtr intPtr, int rows, int columns, int bytesPerItem, int stride)\r\n        {\r\n" +
-                    "            if (IntPtr.Size != 8)\r\n                throw new NotSupportedExcepti" +
-                    "on();\r\n\r\n            if (bytesPerItem != Unsafe.SizeOf<");
+                    "            if (IntPtr.Size != 8)   // must be x64\r\n                throw new No" +
+                    "tSupportedException();\r\n\r\n            if (bytesPerItem != Unsafe.SizeOf<");
             this.Write(this.ToStringHelper.ToStringWithCulture(ValueItemTypeName));
             this.Write(@">())
                 throw new ArgumentException(nameof(bytesPerItem));
@@ -68,15 +71,11 @@ using System.Runtime.InteropServices;
             _stride = stride;
         }
 
-        // IMatrix<T>
+        // INativeMemory
         public IntPtr Pointer => _pointer;
-        public int Rows => _rows;
-        public int Columns => _columns;
+        public int AllocatedSize => _columns * _bytesPerItem * _rows;  // don't use stride
         public int BytesPerItem => _bytesPerItem;
         public int BitsPerItem => _bytesPerItem * 8;
-        public int Stride => _stride;
-        public int AllocatedSize => _columns * _bytesPerItem * _rows;  // don't use stride
-        public bool IsContinuous => (_columns * _bytesPerItem) == _stride;
         public bool IsValid
         {
             get
@@ -89,7 +88,16 @@ using System.Runtime.InteropServices;
             }
         }
 
-        public unsafe Span<");
+        // IMatrix
+        public int Rows => _rows;
+        public int Columns => _columns;
+        public int Stride => _stride;
+        public bool IsContinuous => (_columns * _bytesPerItem) == _stride;
+
+        // IMatrix<T>
+        public int ItemSize => Unsafe.SizeOf<");
+            this.Write(this.ToStringHelper.ToStringWithCulture(ValueItemTypeName));
+            this.Write(">();\r\n\r\n        public unsafe Span<");
             this.Write(this.ToStringHelper.ToStringWithCulture(ValueItemTypeName));
             this.Write("> AsSpan()\r\n        {\r\n            var size = _rows * _stride;\r\n            retur" +
                     "n new Span<");
@@ -135,18 +143,22 @@ using System.Runtime.InteropServices;
     public sealed partial class ");
             this.Write(this.ToStringHelper.ToStringWithCulture(ContainerClassName));
             this.Write(" : MatrixContainerBase<");
-            this.Write(this.ToStringHelper.ToStringWithCulture(MatrixClassName));
-            this.Write(", ");
             this.Write(this.ToStringHelper.ToStringWithCulture(ValueItemTypeName));
-            this.Write(">\r\n    {\r\n        public ");
+            this.Write(">\r\n    {\r\n        public new ");
+            this.Write(this.ToStringHelper.ToStringWithCulture(MatrixClassName));
+            this.Write(" Matrix => (");
+            this.Write(this.ToStringHelper.ToStringWithCulture(MatrixClassName));
+            this.Write(")base.Matrix;\r\n\r\n        public ");
             this.Write(this.ToStringHelper.ToStringWithCulture(ContainerClassName));
             this.Write("(int rows, int columns, bool initialize = true)\r\n            : base(rows, columns" +
-                    ", initialize)\r\n        { }\r\n\r\n        public ");
+                    ", Unsafe.SizeOf<");
+            this.Write(this.ToStringHelper.ToStringWithCulture(ValueItemTypeName));
+            this.Write(">(), initialize)\r\n        { }\r\n\r\n        public ");
             this.Write(this.ToStringHelper.ToStringWithCulture(ContainerClassName));
             this.Write("(int rows, int columns, IEnumerable<");
             this.Write(this.ToStringHelper.ToStringWithCulture(ValueItemTypeName));
             this.Write(@"> items)
-            : base(rows, columns, false)
+            : this(rows, columns, false)
         {
             var length = rows * columns;
             var written = 0;
@@ -172,10 +184,10 @@ using System.Runtime.InteropServices;
                 throw new ArgumentException(""items is small."", nameof(items));
         }
 
-        protected override ");
-            this.Write(this.ToStringHelper.ToStringWithCulture(MatrixClassName));
-            this.Write(" CreateMatrix(IntPtr intPtr, int width, int height, int bytesPerData, int stride)" +
-                    "\r\n        {\r\n            return new ");
+        protected override IMatrix<");
+            this.Write(this.ToStringHelper.ToStringWithCulture(ValueItemTypeName));
+            this.Write("> CreateMatrix(IntPtr intPtr, int width, int height, int bytesPerData, int stride" +
+                    ")\r\n        {\r\n            return new ");
             this.Write(this.ToStringHelper.ToStringWithCulture(MatrixClassName));
             this.Write("(intPtr, width, height, bytesPerData, stride);\r\n        }\r\n    }\r\n}\r\n");
             return this.GenerationEnvironment.ToString();

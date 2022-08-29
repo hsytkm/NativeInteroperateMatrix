@@ -1,20 +1,17 @@
-﻿using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
+﻿using System.Runtime.InteropServices;
 
 namespace Nima;
 
-public abstract class MatrixContainerBase<TMatrix, TValue> : IMatrixContainer<TMatrix, TValue>
-    where TMatrix : struct, IMatrix<TValue>
-    where TValue : struct
+public abstract class MatrixContainerBase<T> : IMatrixContainer<T>
+    where T : struct
 {
-    public TMatrix Matrix { get; }
+    public IMatrix<T> Matrix { get; }
 
     IntPtr _allocatedMemoryPointer;
     readonly int _allocatedSize;
 
-    public MatrixContainerBase(int rows, int columns, bool initialize = true)
+    protected MatrixContainerBase(int rows, int columns, int bytesPerData, bool initialize = true)
     {
-        var bytesPerData = Unsafe.SizeOf<TValue>();
         var stride = columns * bytesPerData;
 
         _allocatedSize = stride * rows;
@@ -47,7 +44,7 @@ public abstract class MatrixContainerBase<TMatrix, TValue> : IMatrixContainer<TM
 #endif
     }
 
-    protected abstract TMatrix CreateMatrix(IntPtr intPtr, int width, int height, int bytesPerData, int stride);
+    protected abstract IMatrix<T> CreateMatrix(IntPtr intPtr, int width, int height, int bytesPerData, int stride);
 
     #region IDisposable
     bool _disposedValue;

@@ -151,9 +151,7 @@ using System.Runtime.InteropServices;
             this.Write(")base.Matrix;\r\n\r\n        public ");
             this.Write(this.ToStringHelper.ToStringWithCulture(ContainerClassName));
             this.Write("(int rows, int columns, bool initialize = true)\r\n            : base(rows, columns" +
-                    ", Unsafe.SizeOf<");
-            this.Write(this.ToStringHelper.ToStringWithCulture(ValueItemTypeName));
-            this.Write(">(), initialize)\r\n        { }\r\n\r\n        public ");
+                    ", initialize)\r\n        { }\r\n\r\n        public ");
             this.Write(this.ToStringHelper.ToStringWithCulture(ContainerClassName));
             this.Write("(int rows, int columns, IEnumerable<");
             this.Write(this.ToStringHelper.ToStringWithCulture(ValueItemTypeName));

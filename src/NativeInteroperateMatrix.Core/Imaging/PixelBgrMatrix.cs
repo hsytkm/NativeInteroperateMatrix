@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using Matrix.SourceGenerator;
 
 namespace Nima.Imaging;
@@ -9,7 +10,6 @@ public readonly partial record struct PixelBgrMatrix : IMatrix<PixelBgr>
     public int BytesPerPixel => BytesPerItem;
     public int BitsPerPixel => BitsPerItem;
 
-    #region GetChannelsAverage
     /// <summary>指定領域における各チャンネルの画素平均値を取得します</summary>
     public ColorBgr GetChannelsAverage(int x, int y, int width, int height)
     {
@@ -52,9 +52,7 @@ public readonly partial record struct PixelBgrMatrix : IMatrix<PixelBgr>
 
     /// <summary>画面全体における各チャンネルの画素平均値を取得します</summary>
     public ColorBgr GetChannelsAverageOfEntire() => GetChannelsAverage(0, 0, _columns, _rows);
-    #endregion
 
-    #region FillAllPixels
     /// <summary>指定の画素値で画像全体を埋めます</summary>
     public void FillAllPixels(in PixelBgr pixel)
     {
@@ -75,9 +73,7 @@ public readonly partial record struct PixelBgrMatrix : IMatrix<PixelBgr>
             }
         }
     }
-    #endregion
 
-    #region FillRectangle
     /// <summary>指定領域の画素を塗りつぶします</summary>
     public void FillRectangle(in PixelBgr pixel, int x, int y, int width, int height)
     {
@@ -97,9 +93,7 @@ public readonly partial record struct PixelBgrMatrix : IMatrix<PixelBgr>
             }
         }
     }
-    #endregion
 
-    #region DrawRectangle
     /// <summary>指定枠を描画します</summary>
     public void DrawRectangle(in PixelBgr pixel, int x, int y, int width, int height)
     {
@@ -134,19 +128,17 @@ public readonly partial record struct PixelBgrMatrix : IMatrix<PixelBgr>
                 *(PixelBgr*)ptr = pixel;
         }
     }
-    #endregion
 
-    #region CutOut
     /// <summary>画像の一部を切り出した子画像を取得します</summary>
     public PixelBgrMatrix CutOutPixelMatrix(int x, int y, int width, int height)
     {
         if (_columns < x + width) throw new ArgumentException("vertical direction");
         if (_rows < y + height) throw new ArgumentException("horizontal direction");
-        return new PixelBgrMatrix(GetIntPtr(y, x), height, width, _bytesPerItem, _stride);
-    }
-    #endregion
 
-    #region CopyTo
+        var bytesPerData = Unsafe.SizeOf<PixelBgr>();
+        return new(GetIntPtr(y, x), height, width, bytesPerData, _stride);
+    }
+
     /// <summary>画素値をコピーします</summary>
     public void CopyTo(in PixelBgrMatrix destPixels)
     {
@@ -235,9 +227,7 @@ public readonly partial record struct PixelBgrMatrix : IMatrix<PixelBgr>
             }
         }
     }
-    #endregion
 
-    #region ToBmpFile
     /// <summary>画像をbmpファイルに保存します</summary>
     public void ToBmpFile(string savePath)
     {
@@ -301,6 +291,5 @@ public readonly partial record struct PixelBgrMatrix : IMatrix<PixelBgr>
             return destBuffer;
         }
     }
-    #endregion
 
 }

@@ -115,7 +115,7 @@ namespace <#= Namespace #>
         public new <#= MatrixClassName #> Matrix => (<#= MatrixClassName #>)base.Matrix;
 
         public <#= ContainerClassName #>(int rows, int columns, bool initialize = true)
-            : base(rows, columns, Unsafe.SizeOf<<#= ValueItemTypeName #>>(), initialize)
+            : base(rows, columns, initialize)
         { }
 
         public <#= ContainerClassName #>(int rows, int columns, IEnumerable<<#= ValueItemTypeName #>> items)

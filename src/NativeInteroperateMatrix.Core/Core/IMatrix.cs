@@ -14,8 +14,6 @@ public interface IMatrix
 public interface IMatrix<T> : IMatrix, INativeMemory
     where T : struct
 {
-    int ItemSize { get; }
-
     Span<T> AsSpan();
     Span<T> AsRowSpan(int row);
 

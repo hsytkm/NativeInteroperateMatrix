@@ -1,4 +1,5 @@
-﻿using System.Runtime.InteropServices;
+﻿using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 namespace Nima;
 
@@ -10,8 +11,9 @@ public abstract class MatrixContainerBase<T> : IMatrixContainer<T>
     IntPtr _allocatedMemoryPointer;
     readonly int _allocatedSize;
 
-    protected MatrixContainerBase(int rows, int columns, int bytesPerData, bool initialize = true)
+    protected MatrixContainerBase(int rows, int columns, bool initialize = true)
     {
+        var bytesPerData = Unsafe.SizeOf<T>();
         var stride = columns * bytesPerData;
 
         _allocatedSize = stride * rows;

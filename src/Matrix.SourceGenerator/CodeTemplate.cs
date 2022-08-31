@@ -58,8 +58,8 @@ using System.Runtime.InteropServices;
         public ");
             this.Write(this.ToStringHelper.ToStringWithCulture(MatrixClassName));
             this.Write("(IntPtr intPtr, int rows, int columns, int bytesPerItem, int stride)\r\n        {\r\n" +
-                    "            if (IntPtr.Size != 8)   // must be x64\r\n                throw new No" +
-                    "tSupportedException();\r\n\r\n            if (bytesPerItem != Unsafe.SizeOf<");
+                    "            if (IntPtr.Size != 8)\r\n                throw new NotSupportedExcepti" +
+                    "on(\"Must be x64\");\r\n\r\n            if (bytesPerItem != Unsafe.SizeOf<");
             this.Write(this.ToStringHelper.ToStringWithCulture(ValueItemTypeName));
             this.Write(@">())
                 throw new ArgumentException(nameof(bytesPerItem));
@@ -95,9 +95,7 @@ using System.Runtime.InteropServices;
         public bool IsContinuous => (_columns * _bytesPerItem) == _stride;
 
         // IMatrix<T>
-        public int ItemSize => Unsafe.SizeOf<");
-            this.Write(this.ToStringHelper.ToStringWithCulture(ValueItemTypeName));
-            this.Write(">();\r\n\r\n        public unsafe Span<");
+        public unsafe Span<");
             this.Write(this.ToStringHelper.ToStringWithCulture(ValueItemTypeName));
             this.Write("> AsSpan()\r\n        {\r\n            var size = _rows * _stride;\r\n            retur" +
                     "n new Span<");

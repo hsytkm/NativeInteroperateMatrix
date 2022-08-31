@@ -8,42 +8,50 @@ public abstract class MatrixContainerBase<T> : IMatrixContainer<T>
 {
     public IMatrix<T> Matrix { get; }
 
-    IntPtr _allocatedMemoryPointer;
-    readonly int _allocatedSize;
+    readonly record struct PointerSizePair
+    {
+        public static readonly PointerSizePair Zero = new(IntPtr.Zero, 0);
+        public IntPtr Pointer { get; }
+        public int Size { get; }
+        public PointerSizePair(IntPtr ptr, int size) => (Pointer, Size) = (ptr, size);
+    }
+
+    PointerSizePair _allocatedMemory;
 
     protected MatrixContainerBase(int rows, int columns, bool initialize = true)
     {
-        var bytesPerData = Unsafe.SizeOf<T>();
-        var stride = columns * bytesPerData;
-
-        _allocatedSize = stride * rows;
-        _allocatedMemoryPointer = Alloc(_allocatedSize);
-        GC.AddMemoryPressure(_allocatedSize);
+        int bytesPerData = Unsafe.SizeOf<T>();
+        int stride = columns * bytesPerData;
+        _allocatedMemory = Alloc(stride * rows);
 
         if (initialize)
         {
-            UnsafeUtils.FillZero(_allocatedMemoryPointer, _allocatedSize);
+            UnsafeUtils.FillZero(_allocatedMemory.Pointer, _allocatedMemory.Size);
         }
 
-        Matrix = CreateMatrix(_allocatedMemoryPointer, rows, columns, bytesPerData, stride);
+        Matrix = CreateMatrix(_allocatedMemory.Pointer, rows, columns, bytesPerData, stride);
     }
 
-    static IntPtr Alloc(int size)
+    static PointerSizePair Alloc(int size)
     {
+        IntPtr intPtr;
 #if NET6_0_OR_GREATER
-        unsafe { return (IntPtr)NativeMemory.Alloc((nuint)size); }
+        unsafe { intPtr = (IntPtr)NativeMemory.Alloc((nuint)size); }
 #else
-        return Marshal.AllocCoTaskMem(size);
+        intPtr = Marshal.AllocCoTaskMem(size);
 #endif
+        GC.AddMemoryPressure(size);
+        return new(intPtr, size);
     }
 
-    static void Free(IntPtr ptr)
+    static void Free(in PointerSizePair pair)
     {
 #if NET6_0_OR_GREATER
-        unsafe { NativeMemory.Free((void*)ptr); }
+        unsafe { NativeMemory.Free((void*)pair.Pointer); }
 #else
-        Marshal.FreeCoTaskMem(ptr);
+        Marshal.FreeCoTaskMem(pair.Pointer);
 #endif
+        GC.RemoveMemoryPressure(pair.Size);
     }
 
     protected abstract IMatrix<T> CreateMatrix(IntPtr intPtr, int width, int height, int bytesPerData, int stride);
@@ -60,11 +68,10 @@ public abstract class MatrixContainerBase<T> : IMatrixContainer<T>
         }
 
         // TODO: free unmanaged resources (unmanaged objects) and override a finalizer below.
-        if (_allocatedMemoryPointer != IntPtr.Zero)
+        if (_allocatedMemory != PointerSizePair.Zero)
         {
-            Free(_allocatedMemoryPointer);
-            GC.RemoveMemoryPressure(_allocatedSize);
-            _allocatedMemoryPointer = IntPtr.Zero;
+            Free(_allocatedMemory);
+            _allocatedMemory = PointerSizePair.Zero;
         }
 
         _disposedValue = true;

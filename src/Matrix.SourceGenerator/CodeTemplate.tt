@@ -29,8 +29,8 @@ namespace <#= Namespace #>
 
         public <#= MatrixClassName #>(IntPtr intPtr, int rows, int columns, int bytesPerItem, int stride)
         {
-            if (IntPtr.Size != 8)   // must be x64
-                throw new NotSupportedException();
+            if (IntPtr.Size != 8)
+                throw new NotSupportedException("Must be x64");
 
             if (bytesPerItem != Unsafe.SizeOf<<#= ValueItemTypeName #>>())
                 throw new ArgumentException(nameof(bytesPerItem));
@@ -66,8 +66,6 @@ namespace <#= Namespace #>
         public bool IsContinuous => (_columns * _bytesPerItem) == _stride;
 
         // IMatrix<T>
-        public int ItemSize => Unsafe.SizeOf<<#= ValueItemTypeName #>>();
-
         public unsafe Span<<#= ValueItemTypeName #>> AsSpan()
         {
             var size = _rows * _stride;

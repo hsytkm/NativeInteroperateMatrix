@@ -31,8 +31,8 @@ public abstract class DoubleMatrixContainerTestBase<TContainer, TType>
         var writeValue = WriteValue;
         foreach (var (row, col) in rc)
         {
-            matrix.WriteValue(row, col, writeValue);
-            matrix.ReadValue(row, col).Is(writeValue);
+            matrix[row, col] = writeValue;
+            matrix[row, col].Is(writeValue);
         }
 
         var expected = (double)(dynamic)writeValue * rc.Length;

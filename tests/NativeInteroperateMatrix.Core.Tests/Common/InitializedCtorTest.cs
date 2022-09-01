@@ -31,7 +31,7 @@ public class InitializedCtorTest
         {
             for (var c = 0; c < matrix.Columns; c++)
             {
-                matrix.ReadValue(r, c).Is(array[(r * columns) + c]);
+                matrix[r, c].Is(array[(r * columns) + c]);
             }
         }
 

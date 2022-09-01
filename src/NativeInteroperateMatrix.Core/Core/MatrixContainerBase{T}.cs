@@ -18,7 +18,9 @@ public abstract class MatrixContainerBase<T> : IMatrixContainer<T>
 
     PointerSizePair _allocatedMemory;
 
-    protected MatrixContainerBase(int rows, int columns, bool initialize = true)
+    protected MatrixContainerBase(int rows, int columns) : this(rows, columns, true) { }
+
+    protected MatrixContainerBase(int rows, int columns, bool initialize)
     {
         int bytesPerData = Unsafe.SizeOf<T>();
         int stride = columns * bytesPerData;

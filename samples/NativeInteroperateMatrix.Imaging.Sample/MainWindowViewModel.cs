@@ -55,7 +55,9 @@ class MainWindowViewModel : BindableBase
         for (int y = 0; y < height; y++)
         {
             for (int x = baseX; x < baseX + y; x++)
-                pixelMatrix.WriteValue(x, baseY + y, color);    // ホントは FillRectangle() を使うべきだけど、WriteValue() のテストなので。
+            {
+                pixelMatrix[x, baseY + y] = color;  // ホントは FillRectangle() を使うべきだけど、Indexer のテストなので。
+            }
         }
     }
 

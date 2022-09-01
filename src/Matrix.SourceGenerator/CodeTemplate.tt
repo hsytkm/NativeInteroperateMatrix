@@ -8,7 +8,6 @@
 // </auto-generated>
 #nullable enable
 using System;
-using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
@@ -20,12 +19,12 @@ namespace <#= Namespace #>
     [StructLayout(LayoutKind.Sequential, Pack = 1, Size = 8 + (4 * 4))]
     partial record struct <#= MatrixClassName #>    //: IMatrix<<#= ValueItemTypeName #>>
     {
-        private readonly IntPtr _pointer;
-        //private readonly int _allocSize;  // = rows * stride;
-        private readonly int _rows;         // height
-        private readonly int _columns;      // width
-        private readonly int _bytesPerItem;
-        private readonly int _stride;
+        readonly IntPtr _pointer;
+        //readonly int _allocSize;  // = rows * stride;
+        readonly int _rows;         // height
+        readonly int _columns;      // width
+        readonly int _bytesPerItem;
+        readonly int _stride;
 
         public <#= MatrixClassName #>(IntPtr intPtr, int rows, int columns, int bytesPerItem, int stride)
         {
@@ -42,6 +41,34 @@ namespace <#= Namespace #>
             _stride = stride;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        void ThrowInvalidRow(int row)
+        {
+            if (row < 0 || _rows - 1 < row)
+                throw new ArgumentException($"Invalid row={row}");
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        void ThrowInvalidColumn(int column)
+        {
+            if (column < 0 || _columns - 1 < column)
+                throw new ArgumentException($"Invalid column={column}");
+        }
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        void ThrowInvalidRowColumn(int row, int column)
+        {
+            ThrowInvalidRow(row);
+            ThrowInvalidColumn(column);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        IntPtr GetIntPtr(int row, int column)
+        {
+            ThrowInvalidRowColumn(row, column);
+            return _pointer + (row * _stride) + (column * _bytesPerItem);
+        }
+
         // INativeMemory
         public IntPtr Pointer => _pointer;
         public int AllocatedSize => _columns * _bytesPerItem * _rows;  // don't use stride
@@ -54,7 +81,6 @@ namespace <#= Namespace #>
                 if (_pointer == IntPtr.Zero) return false;
                 if (_columns <= 0 || _rows <= 0) return false;
                 if (_stride < _columns * _bytesPerItem) return false;
-                if (AllocatedSize < _columns * _bytesPerItem * _rows) return false;
                 return true;    //valid
             }
         }
@@ -66,43 +92,27 @@ namespace <#= Namespace #>
         public bool IsContinuous => (_columns * _bytesPerItem) == _stride;
 
         // IMatrix<T>
+        public unsafe ref <#= ValueItemTypeName #> this[int row, int column]
+        {
+            get
+            {
+                IntPtr ptr = GetIntPtr(row, column);
+                return ref Unsafe.AsRef<<#= ValueItemTypeName #>>(ptr.ToPointer());
+            }
+        }
+
         public unsafe Span<<#= ValueItemTypeName #>> AsSpan()
         {
-            var size = _rows * _stride;
+            int size = _rows * _stride;
             return new Span<<#= ValueItemTypeName #>>(_pointer.ToPointer(), size);
         }
 
         public unsafe Span<<#= ValueItemTypeName #>> AsRowSpan(int row)
         {
-            if (row < 0 || _rows - 1 < row)
-                throw new ArgumentException("Invalid row");
+            ThrowInvalidRow(row);
 
-            var ptr = _pointer + (row * _stride);
+            IntPtr ptr = _pointer + (row * _stride);
             return new Span<<#= ValueItemTypeName #>>(ptr.ToPointer(), _columns);
-        }
-
-        private IntPtr GetIntPtr(int row, int column)
-        {
-            if (row < 0 || _rows - 1 < row || column < 0 || _columns - 1 < column)
-                throw new ArgumentException("Out of range.");
-
-            return _pointer + (row * _stride) + (column * _bytesPerItem);
-        }
-                
-        public <#= ValueItemTypeName #> ReadValue(int row, int column)
-        {
-            if (row < 0 || _rows - 1 < row || column < 0 || _columns - 1 < column)
-                throw new ArgumentException("Out of range.");
-
-            return UnsafeUtils.ReadStructureFromPtr<<#= ValueItemTypeName #>>(GetIntPtr(row, column));
-        }
-
-        public void WriteValue(int row, int column, in <#= ValueItemTypeName #> value)
-        {
-            if (row < 0 || _rows - 1 < row || column < 0 || _columns - 1 < column)
-                throw new ArgumentException("Out of range.");
-
-            UnsafeUtils.WriteStructureToPtr(GetIntPtr(row, column), value);
         }
 
         public override string ToString() => $"Rows={_rows}, Cols={_columns}, Pointer=0x{_pointer:x16}";
@@ -112,17 +122,21 @@ namespace <#= Namespace #>
     {
         public new <#= MatrixClassName #> Matrix => (<#= MatrixClassName #>)base.Matrix;
 
-        public <#= ContainerClassName #>(int rows, int columns, bool initialize = true)
+        public <#= ContainerClassName #>(int rows, int columns)
+            : this(rows, columns, true)
+        { }
+
+        public <#= ContainerClassName #>(int rows, int columns, bool initialize)
             : base(rows, columns, initialize)
         { }
 
         public <#= ContainerClassName #>(int rows, int columns, IEnumerable<<#= ValueItemTypeName #>> items)
             : this(rows, columns, false)
         {
-            var length = rows * columns;
-            var written = 0;
-            var row = 0;
-            var column = 0;
+            int length = rows * columns;
+            int written = 0;
+            int row = 0;
+            int column = 0;
             var span = Matrix.AsRowSpan(row);
 
             foreach (var item in items)

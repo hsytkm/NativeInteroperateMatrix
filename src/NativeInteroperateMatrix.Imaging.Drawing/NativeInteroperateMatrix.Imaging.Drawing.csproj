@@ -2,23 +2,18 @@
 
   <PropertyGroup>
     <TargetFrameworks>netcoreapp3.1;net6.0-windows</TargetFrameworks>
-    <LangVersion>latest</LangVersion>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <Nullable>enable</Nullable>
-    <ImplicitUsings>enable</ImplicitUsings>
     <Title>Nima.Imaging.Drawing</Title>
     <AssemblyName>Nima.Imaging.Drawing</AssemblyName>
     <RootNamespace>Nima.Imaging.Drawing</RootNamespace>
   </PropertyGroup>
 
-  <Import Project="../SharedProperties.csproj" />
-
   <ItemGroup>
-      <PackageReference Include="System.Drawing.Common" Version="6.0.0" />
+    <PackageReference Include="System.Drawing.Common" Version="6.0.0" />
   </ItemGroup>
 
   <ItemGroup>
-      <ProjectReference Include="..\NativeInteroperateMatrix.Core\NativeInteroperateMatrix.Core.csproj" />
+    <ProjectReference Include="..\NativeInteroperateMatrix.Core\NativeInteroperateMatrix.Core.csproj" />
   </ItemGroup>
 
 </Project>

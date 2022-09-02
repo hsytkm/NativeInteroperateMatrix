@@ -2,20 +2,15 @@
 
   <PropertyGroup>
     <TargetFrameworks>netcoreapp3.1;net6.0-windows</TargetFrameworks>
-    <LangVersion>latest</LangVersion>
     <UseWPF>true</UseWPF>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <Nullable>enable</Nullable>
-    <ImplicitUsings>enable</ImplicitUsings>
     <Title>Nima.Imaging.Wpf</Title>
     <AssemblyName>Nima.Imaging.Wpf</AssemblyName>
     <RootNamespace>Nima.Imaging.Wpf</RootNamespace>
   </PropertyGroup>
 
-  <Import Project="../SharedProperties.csproj" />
-
   <ItemGroup>
-      <ProjectReference Include="..\NativeInteroperateMatrix.Core\NativeInteroperateMatrix.Core.csproj" />
+    <ProjectReference Include="..\NativeInteroperateMatrix.Core\NativeInteroperateMatrix.Core.csproj" />
   </ItemGroup>
 
 </Project>

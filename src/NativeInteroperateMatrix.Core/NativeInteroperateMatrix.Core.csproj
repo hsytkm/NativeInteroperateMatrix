@@ -2,17 +2,12 @@
 
   <PropertyGroup>
     <TargetFrameworks>netcoreapp3.1;net6.0</TargetFrameworks>
-    <LangVersion>latest</LangVersion>
-    <Nullable>enable</Nullable>
-    <ImplicitUsings>enable</ImplicitUsings>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Title>Nima.Core</Title>
     <AssemblyName>Nima.Core</AssemblyName>
     <RootNamespace>Nima</RootNamespace>
     <NoWarn>IDE0049</NoWarn>
   </PropertyGroup>
-
-  <Import Project="../SharedProperties.csproj" />
 
   <ItemGroup>
     <ProjectReference Include="..\Matrix.SourceGenerator\Matrix.SourceGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />

@@ -6,5 +6,5 @@ public interface IMatrixContainer<T> : IDisposable
     /// <summary>
     /// Matrix of ValueType managed by a container
     /// </summary>
-    IMatrix<T> Matrix { get; }
+    IMatrix<T> MatrixT { get; }
 }

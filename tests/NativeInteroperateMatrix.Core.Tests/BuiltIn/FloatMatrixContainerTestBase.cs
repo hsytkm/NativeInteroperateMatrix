@@ -5,17 +5,19 @@ namespace Nima.Core.Tests.BuiltIn;
 /// <summary>
 /// 空の Container インスタンス作成（小数専用）
 /// </summary>
-public abstract class DoubleMatrixContainerTestBase<TContainer, TType>
-    : BuiltInMatrixContainerTestBase<TContainer, TType>
-        where TContainer : notnull, IMatrixContainer<TType>
-        where TType : struct
+public abstract class FloatMatrixContainerTestBase<TContainer, TType>
+    where TContainer : notnull, IMatrixContainer<TType>
+    where TType : struct
 {
+    protected abstract TType WriteValue { get; }
+    protected abstract TContainer CreateContainer(int rows, int columns, bool initialize);
+
     [Theory]
     [ClassData(typeof(RowColPairTestData))]
     public void ReadWrite(int rows, int columns)
     {
         using var container = CreateContainer(rows, columns, initialize: true);
-        var matrix = container.Matrix;
+        var matrix = container.MatrixT;
 
         GetSum(matrix).Is(0);
 
@@ -53,18 +55,18 @@ public abstract class DoubleMatrixContainerTestBase<TContainer, TType>
     }
 }
 
-public class SingleMatrixContainerTest : DoubleMatrixContainerTestBase<SingleMatrixContainer, float>
+public class SingleMatrixContainerTest : FloatMatrixContainerTestBase<SingleMatrixContainer, float>
 {
     protected override float WriteValue { get; } = float.MaxValue / 128f;  // overflow 対策
 
-    protected override IMatrixContainer<float> CreateContainer(int rows, int columns, bool initialize)
-         => new SingleMatrixContainer(rows, columns, initialize);
+    protected override SingleMatrixContainer CreateContainer(int rows, int columns, bool initialize) =>
+        new(rows, columns, initialize);
 }
 
-public class DoubleMatrixContainerTest : DoubleMatrixContainerTestBase<DoubleMatrixContainer, double>
+public class DoubleMatrixContainerTest : FloatMatrixContainerTestBase<DoubleMatrixContainer, double>
 {
     protected override double WriteValue { get; } = double.MaxValue / 128d;  // overflow 対策
 
-    protected override IMatrixContainer<double> CreateContainer(int rows, int columns, bool initialize)
-         => new DoubleMatrixContainer(rows, columns, initialize);
+    protected override DoubleMatrixContainer CreateContainer(int rows, int columns, bool initialize) =>
+        new(rows, columns, initialize);
 }

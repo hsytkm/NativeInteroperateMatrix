@@ -24,11 +24,11 @@ public readonly partial record struct SingleMatrix : IMatrix<Single> { }
 public readonly partial record struct DoubleMatrix : IMatrix<Double> { }
 
 #if false   // MatrixGenerator 内で Container も一緒に生成しています(手抜き)
-public sealed partial class ByteMatrixContainer : MatrixContainerBase<Byte> { }
-public sealed partial class Int8MatrixContainer : MatrixContainerBase<SByte> { }
-public sealed partial class Int16MatrixContainer : MatrixContainerBase<Int16> { }
-public sealed partial class Int32MatrixContainer : MatrixContainerBase<Int32> { }
-public sealed partial class Int64MatrixContainer : MatrixContainerBase<Int64> { }
-public sealed partial class SingleMatrixContainer : MatrixContainerBase<Single> { }
-public sealed partial class DoubleMatrixContainer : MatrixContainerBase<Double> { }
+public sealed partial class ByteMatrixContainer { }
+public sealed partial class Int8MatrixContainer { }
+public sealed partial class Int16MatrixContainer { }
+public sealed partial class Int32MatrixContainer { }
+public sealed partial class Int64MatrixContainer { }
+public sealed partial class SingleMatrixContainer { }
+public sealed partial class DoubleMatrixContainer { }
 #endif

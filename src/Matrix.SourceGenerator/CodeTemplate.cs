@@ -37,7 +37,7 @@ namespace Matrix.SourceGenerator
                     "  [StructLayout(LayoutKind.Sequential, Pack = 1, Size = 8 + (4 * 4))]\r\n    parti" +
                     "al record struct ");
             this.Write(this.ToStringHelper.ToStringWithCulture(MatrixClassName));
-            this.Write("    //: IMatrix<");
+            this.Write(" : IMatrix<");
             this.Write(this.ToStringHelper.ToStringWithCulture(ValueItemTypeName));
             this.Write(@">
     {
@@ -100,19 +100,31 @@ namespace Matrix.SourceGenerator
                     "ng() => $\"Rows={_rows}, Cols={_columns}, Pointer=0x{_pointer:x16}\";\r\n    }\r\n\r\n  " +
                     "  public sealed partial class ");
             this.Write(this.ToStringHelper.ToStringWithCulture(ContainerClassName));
-            this.Write(" : MatrixContainerBase<");
+            this.Write(" : IMatrixContainer<");
             this.Write(this.ToStringHelper.ToStringWithCulture(ValueItemTypeName));
-            this.Write(">\r\n    {\r\n        public new ");
+            this.Write(">, IDisposable\r\n    {\r\n        public ");
             this.Write(this.ToStringHelper.ToStringWithCulture(MatrixClassName));
-            this.Write(" Matrix => (");
-            this.Write(this.ToStringHelper.ToStringWithCulture(MatrixClassName));
-            this.Write(")base.Matrix;\r\n\r\n        public ");
+            this.Write(" Matrix { get; }\r\n        public IMatrix<");
+            this.Write(this.ToStringHelper.ToStringWithCulture(ValueItemTypeName));
+            this.Write("> MatrixT => (IMatrix<");
+            this.Write(this.ToStringHelper.ToStringWithCulture(ValueItemTypeName));
+            this.Write(@">)Matrix;
+
+        readonly record struct PointerSizePair
+        {
+            public static readonly PointerSizePair Zero = new(IntPtr.Zero, 0);
+            public IntPtr Pointer { get; }
+            public int Size { get; }
+            public PointerSizePair(IntPtr ptr, int size) => (Pointer, Size) = (ptr, size);
+            public void Deconstruct(out IntPtr ptr, out int size) => (ptr, size) = (Pointer, Size);
+        }
+
+        PointerSizePair _allocatedMemory;
+
+        public ");
             this.Write(this.ToStringHelper.ToStringWithCulture(ContainerClassName));
             this.Write("(int rows, int columns)\r\n            : this(rows, columns, true)\r\n        { }\r\n\r\n" +
                     "        public ");
-            this.Write(this.ToStringHelper.ToStringWithCulture(ContainerClassName));
-            this.Write("(int rows, int columns, bool initialize)\r\n            : base(rows, columns, initi" +
-                    "alize)\r\n        { }\r\n\r\n        public ");
             this.Write(this.ToStringHelper.ToStringWithCulture(ContainerClassName));
             this.Write("(int rows, int columns, IEnumerable<");
             this.Write(this.ToStringHelper.ToStringWithCulture(ValueItemTypeName));
@@ -123,7 +135,7 @@ namespace Matrix.SourceGenerator
             int written = 0;
             int row = 0;
             int column = 0;
-            var span = Matrix.AsRowSpan(row);
+            var span = Matrix.AsRowSpan(0);
 
             foreach (var item in items)
             {
@@ -142,13 +154,73 @@ namespace Matrix.SourceGenerator
             if (!(row == rows - 1 && column == columns))
                 throw new ArgumentException(""items is small."", nameof(items));
         }
-
-        protected override IMatrix<");
+        
+        public ");
+            this.Write(this.ToStringHelper.ToStringWithCulture(ContainerClassName));
+            this.Write("(int rows, int columns, bool initialize)\r\n        {\r\n            int bytesPerData" +
+                    " = Unsafe.SizeOf<");
             this.Write(this.ToStringHelper.ToStringWithCulture(ValueItemTypeName));
-            this.Write("> CreateMatrix(IntPtr intPtr, int width, int height, int bytesPerData, int stride" +
-                    ")\r\n        {\r\n            return new ");
+            this.Write(@">();
+            int stride = columns * bytesPerData;
+            _allocatedMemory = Alloc(stride * rows);
+            (IntPtr ptr, int allocSize) = _allocatedMemory;
+
+            if (initialize)
+            {
+                UnsafeUtils.FillZero(ptr, allocSize);
+            }
+            
+            Matrix = new ");
             this.Write(this.ToStringHelper.ToStringWithCulture(MatrixClassName));
-            this.Write("(intPtr, width, height, bytesPerData, stride);\r\n        }\r\n    }\r\n}\r\n");
+            this.Write(@"(ptr, rows, columns, bytesPerData, stride);
+        }
+
+        static PointerSizePair Alloc(int size)
+        {
+            IntPtr intPtr;
+#if NET6_0_OR_GREATER
+            unsafe { intPtr = (IntPtr)NativeMemory.Alloc((nuint)size); }
+#else
+            intPtr = Marshal.AllocCoTaskMem(size);
+#endif
+            GC.AddMemoryPressure(size);
+            return new(intPtr, size);
+        }
+
+        static void Free(in PointerSizePair pair)
+        {
+#if NET6_0_OR_GREATER
+            unsafe { NativeMemory.Free((void*)pair.Pointer); }
+#else
+            Marshal.FreeCoTaskMem(pair.Pointer);
+#endif
+            GC.RemoveMemoryPressure(pair.Size);
+        }
+        
+        bool _disposedValue;
+        public void Dispose(bool disposing)
+        {
+            if (_disposedValue) return;
+
+            if (disposing)
+            {
+                // TODO: dispose managed state (managed objects).
+            }
+
+            // TODO: free unmanaged resources (unmanaged objects) and override a finalizer below.
+            if (_allocatedMemory != PointerSizePair.Zero)
+            {
+                Free(_allocatedMemory);
+                _allocatedMemory = PointerSizePair.Zero;
+            }
+
+            _disposedValue = true;
+        }
+
+        ~");
+            this.Write(this.ToStringHelper.ToStringWithCulture(ContainerClassName));
+            this.Write("() => Dispose(false);\r\n\r\n        public void Dispose()\r\n        {\r\n            Di" +
+                    "spose(true);\r\n            GC.SuppressFinalize(this);\r\n        }\r\n    }\r\n}\r\n");
             return this.GenerationEnvironment.ToString();
         }
     }

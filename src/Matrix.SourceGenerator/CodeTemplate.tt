@@ -17,7 +17,7 @@ namespace <#= Namespace #>
 {
     // Do not change the order of the struct because it is the same as C++
     [StructLayout(LayoutKind.Sequential, Pack = 1, Size = 8 + (4 * 4))]
-    partial record struct <#= MatrixClassName #>    //: IMatrix<<#= ValueItemTypeName #>>
+    partial record struct <#= MatrixClassName #> : IMatrix<<#= ValueItemTypeName #>>
     {
         readonly IntPtr _pointer;
         //readonly int _allocSize;  // = rows * stride;
@@ -118,16 +118,24 @@ namespace <#= Namespace #>
         public override string ToString() => $"Rows={_rows}, Cols={_columns}, Pointer=0x{_pointer:x16}";
     }
 
-    public sealed partial class <#= ContainerClassName #> : MatrixContainerBase<<#= ValueItemTypeName #>>
+    public sealed partial class <#= ContainerClassName #> : IMatrixContainer<<#= ValueItemTypeName #>>, IDisposable
     {
-        public new <#= MatrixClassName #> Matrix => (<#= MatrixClassName #>)base.Matrix;
+        public <#= MatrixClassName #> Matrix { get; }
+        public IMatrix<<#= ValueItemTypeName #>> MatrixT => (IMatrix<<#= ValueItemTypeName #>>)Matrix;
+
+        readonly record struct PointerSizePair
+        {
+            public static readonly PointerSizePair Zero = new(IntPtr.Zero, 0);
+            public IntPtr Pointer { get; }
+            public int Size { get; }
+            public PointerSizePair(IntPtr ptr, int size) => (Pointer, Size) = (ptr, size);
+            public void Deconstruct(out IntPtr ptr, out int size) => (ptr, size) = (Pointer, Size);
+        }
+
+        PointerSizePair _allocatedMemory;
 
         public <#= ContainerClassName #>(int rows, int columns)
             : this(rows, columns, true)
-        { }
-
-        public <#= ContainerClassName #>(int rows, int columns, bool initialize)
-            : base(rows, columns, initialize)
         { }
 
         public <#= ContainerClassName #>(int rows, int columns, IEnumerable<<#= ValueItemTypeName #>> items)
@@ -137,7 +145,7 @@ namespace <#= Namespace #>
             int written = 0;
             int row = 0;
             int column = 0;
-            var span = Matrix.AsRowSpan(row);
+            var span = Matrix.AsRowSpan(0);
 
             foreach (var item in items)
             {
@@ -156,10 +164,70 @@ namespace <#= Namespace #>
             if (!(row == rows - 1 && column == columns))
                 throw new ArgumentException("items is small.", nameof(items));
         }
-
-        protected override IMatrix<<#= ValueItemTypeName #>> CreateMatrix(IntPtr intPtr, int width, int height, int bytesPerData, int stride)
+        
+        public <#= ContainerClassName #>(int rows, int columns, bool initialize)
         {
-            return new <#= MatrixClassName #>(intPtr, width, height, bytesPerData, stride);
+            int bytesPerData = Unsafe.SizeOf<<#= ValueItemTypeName #>>();
+            int stride = columns * bytesPerData;
+            _allocatedMemory = Alloc(stride * rows);
+            (IntPtr ptr, int allocSize) = _allocatedMemory;
+
+            if (initialize)
+            {
+                UnsafeUtils.FillZero(ptr, allocSize);
+            }
+            
+            Matrix = new <#= MatrixClassName #>(ptr, rows, columns, bytesPerData, stride);
+        }
+
+        static PointerSizePair Alloc(int size)
+        {
+            IntPtr intPtr;
+#if NET6_0_OR_GREATER
+            unsafe { intPtr = (IntPtr)NativeMemory.Alloc((nuint)size); }
+#else
+            intPtr = Marshal.AllocCoTaskMem(size);
+#endif
+            GC.AddMemoryPressure(size);
+            return new(intPtr, size);
+        }
+
+        static void Free(in PointerSizePair pair)
+        {
+#if NET6_0_OR_GREATER
+            unsafe { NativeMemory.Free((void*)pair.Pointer); }
+#else
+            Marshal.FreeCoTaskMem(pair.Pointer);
+#endif
+            GC.RemoveMemoryPressure(pair.Size);
+        }
+        
+        bool _disposedValue;
+        public void Dispose(bool disposing)
+        {
+            if (_disposedValue) return;
+
+            if (disposing)
+            {
+                // TODO: dispose managed state (managed objects).
+            }
+
+            // TODO: free unmanaged resources (unmanaged objects) and override a finalizer below.
+            if (_allocatedMemory != PointerSizePair.Zero)
+            {
+                Free(_allocatedMemory);
+                _allocatedMemory = PointerSizePair.Zero;
+            }
+
+            _disposedValue = true;
+        }
+
+        ~<#= ContainerClassName #>() => Dispose(false);
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
     }
 }

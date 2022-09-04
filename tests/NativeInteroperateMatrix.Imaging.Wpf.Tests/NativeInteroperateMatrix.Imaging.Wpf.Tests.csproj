@@ -1,13 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netcoreapp3.1;net6.0</TargetFrameworks>
+    <TargetFrameworks>netcoreapp3.1;net6.0-windows</TargetFrameworks>
+    <UseWPF>true</UseWPF>
     <LangVersion>latest</LangVersion>
     <IsPackable>false</IsPackable>
     <Platforms>x64</Platforms>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <NoWarn>IDE0049</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
@@ -24,26 +24,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\NativeInteroperateMatrix.Core\NativeInteroperateMatrix.Core.csproj" />
+      <ProjectReference Include="..\..\src\NativeInteroperateMatrix.Imaging.Wpf\NativeInteroperateMatrix.Imaging.Wpf.csproj" />
+      <ProjectReference Include="..\NativeInteroperateMatrix.Core.Tests\NativeInteroperateMatrix.Core.Tests.csproj" />
   </ItemGroup>
-
-  <ItemGroup>
-    <None Update="Assets\format24bit.bmp">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\format8bit.bmp">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\image1.bmp">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\image2.bmp">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-
-  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="xcopy /D /Y $(SolutionDir)x64\$(ConfigurationName)\*.* $(TargetDir)" />
-  </Target>
 
 </Project>

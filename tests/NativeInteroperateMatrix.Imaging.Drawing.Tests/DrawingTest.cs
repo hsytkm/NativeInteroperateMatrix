@@ -1,13 +1,15 @@
 ﻿using System.Drawing;
+using System.IO;
 using Nima.Imaging.Drawing;
 using Xunit;
 
 namespace Nima.Core.Tests.Imaging.Drawing;
 
-public class ImagingDrawingTest
+public class DrawingTest
 {
     private const string TempPath = "_temp.bmp";
-    public ImagingDrawingTest()
+
+    public DrawingTest()
     {
         if (File.Exists(TempPath))
             File.Delete(TempPath);
@@ -19,9 +21,7 @@ public class ImagingDrawingTest
     {
         try
         {
-#pragma warning disable CA1416    // 'Bitmap' は 'windows' でのみサポートされています
             using var drawing = new Bitmap(sourcePath);
-#pragma warning restore CA1416
             using var container = drawing.ToPixelBgrMatrixContainer();
 
             await container.Matrix.ToBmpFileAsync(TempPath);

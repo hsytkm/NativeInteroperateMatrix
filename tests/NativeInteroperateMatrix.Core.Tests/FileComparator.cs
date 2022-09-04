@@ -2,7 +2,7 @@
 
 namespace Nima.Core.Tests;
 
-static class FileComparator
+public static class FileComparator
 {
     /// <summary>
     /// Returns the hash string for the file.

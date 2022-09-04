@@ -2,7 +2,7 @@
 
 namespace Nima.Core.Tests.Imaging;
 
-internal class ImagePathTestData : IEnumerable<object[]>
+public class ImagePathTestData : IEnumerable<object[]>
 {
     private readonly List<object[]> _testData = new()
     {

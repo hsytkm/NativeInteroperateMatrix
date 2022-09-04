@@ -46,7 +46,7 @@ public class BitmapSourceTest : ImagePathTestData
         try
         {
             var bitmap = Create(sourcePath);
-            using var container = bitmap.ToPixelBgrMatrixContainer();
+            using var container = bitmap.ToPixelBgr24MatrixContainer();
 
             await container.Matrix.ToBmpFileAsync(TempPath);
             var isMatch = await FileComparator.IsMatchAsync(sourcePath, TempPath);

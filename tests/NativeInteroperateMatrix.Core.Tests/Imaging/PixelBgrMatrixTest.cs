@@ -17,7 +17,7 @@ public class PixelBgrMatrixTest
     [ClassData(typeof(RowColPairTestData))]
     public void CtorInit(int rows, int columns)
     {
-        using var container = new PixelBgrMatrixContainer(rows, columns, true);
+        using var container = new PixelBgr24MatrixContainer(rows, columns, true);
         var matrix = container.Matrix;
 
         var color = new ColorBgr(0, 0, 0);
@@ -28,10 +28,10 @@ public class PixelBgrMatrixTest
     [ClassData(typeof(RowColPairTestData))]
     public void FillAllPixels(int rows, int columns)
     {
-        using var container = new PixelBgrMatrixContainer(rows, columns, false);
+        using var container = new PixelBgr24MatrixContainer(rows, columns, false);
         var matrix = container.Matrix;
 
-        var bgr = PixelBgr.FromBgr(255, 0, 128);    // teketo-
+        var bgr = PixelBgr24.FromBgr(255, 0, 128);    // teketo-
         matrix.FillAllPixels(bgr);
         matrix.GetChannelsAverageOfEntire().Is(new ColorBgr(bgr));
     }
@@ -40,7 +40,7 @@ public class PixelBgrMatrixTest
     [ClassData(typeof(ImagePathTestData))]
     public async Task ReadWrite(string sourcePath)
     {
-        using var container = PixelBgrMatrixContainer.Create(sourcePath);
+        using var container = PixelBgr24MatrixContainer.Create(sourcePath);
         container.Matrix.ToBmpFile(TempPath);
 
         var isMatch = await FileComparator.IsMatchAsync(sourcePath, TempPath);
@@ -53,7 +53,7 @@ public class PixelBgrMatrixTest
     [ClassData(typeof(ImagePathTestData))]
     public async Task ReadWriteAsync(string sourcePath)
     {
-        using var container = await PixelBgrMatrixContainer.CreateAsync(sourcePath);
+        using var container = await PixelBgr24MatrixContainer.CreateAsync(sourcePath);
         await container.Matrix.ToBmpFileAsync(TempPath);
 
         var isMatch = await FileComparator.IsMatchAsync(sourcePath, TempPath);

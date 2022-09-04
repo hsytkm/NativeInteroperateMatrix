@@ -22,7 +22,7 @@ public class DrawingTest
         try
         {
             using var drawing = new Bitmap(sourcePath);
-            using var container = drawing.ToPixelBgrMatrixContainer();
+            using var container = drawing.ToPixelBgr24MatrixContainer();
 
             await container.Matrix.ToBmpFileAsync(TempPath);
             var isMatch = await FileComparator.IsMatchAsync(sourcePath, TempPath);

@@ -5,7 +5,7 @@ using Matrix.SourceGenerator;
 namespace Nima.Imaging;
 
 [MatrixGenerator]
-public readonly partial record struct PixelBgrMatrix : IMatrix<PixelBgr>
+public readonly partial record struct PixelBgr24Matrix : IMatrix<PixelBgr24>
 {
     public int BytesPerPixel => BytesPerItem;
     public int BitsPerPixel => BitsPerItem;
@@ -54,7 +54,7 @@ public readonly partial record struct PixelBgrMatrix : IMatrix<PixelBgr>
     public ColorBgr GetChannelsAverageOfEntire() => GetChannelsAverage(0, 0, _columns, _rows);
 
     /// <summary>指定の画素値で画像全体を埋めます</summary>
-    public void FillAllPixels(in PixelBgr pixel)
+    public void FillAllPixels(in PixelBgr24 pixel)
     {
         unsafe
         {
@@ -66,7 +66,7 @@ public readonly partial record struct PixelBgrMatrix : IMatrix<PixelBgr>
             for (var line = pixelsHead; line < pixelsTail; line += stride)
             {
                 var lineTail = line + widthOffset;
-                for (var p = (PixelBgr*)line; p < lineTail; ++p)
+                for (var p = (PixelBgr24*)line; p < lineTail; ++p)
                 {
                     *p = pixel;
                 }
@@ -75,7 +75,7 @@ public readonly partial record struct PixelBgrMatrix : IMatrix<PixelBgr>
     }
 
     /// <summary>指定領域の画素を塗りつぶします</summary>
-    public void FillRectangle(in PixelBgr pixel, int x, int y, int width, int height)
+    public void FillRectangle(in PixelBgr24 pixel, int x, int y, int width, int height)
     {
         if (_columns < x + width) throw new ArgumentException("vertical direction");
         if (_rows < y + height) throw new ArgumentException("horizontal direction");
@@ -88,14 +88,14 @@ public readonly partial record struct PixelBgrMatrix : IMatrix<PixelBgr>
 
             for (var linePtr = lineHeadPtr; linePtr < lineTailPtr; linePtr += _stride)
             {
-                for (var p = (PixelBgr*)linePtr; p < linePtr + widthOffset; p++)
+                for (var p = (PixelBgr24*)linePtr; p < linePtr + widthOffset; p++)
                     *p = pixel;
             }
         }
     }
 
     /// <summary>指定枠を描画します</summary>
-    public void DrawRectangle(in PixelBgr pixel, int x, int y, int width, int height)
+    public void DrawRectangle(in PixelBgr24 pixel, int x, int y, int width, int height)
     {
         if (_columns < x + width) throw new ArgumentException("vertical direction");
         if (_rows < y + height) throw new ArgumentException("horizontal direction");
@@ -109,38 +109,38 @@ public readonly partial record struct PixelBgrMatrix : IMatrix<PixelBgr>
 
             // 上ライン
             for (var ptr = rectHeadPtr; ptr < rectHeadPtr + widthOffset; ptr += bytesPerPixel)
-                *(PixelBgr*)ptr = pixel;
+                *(PixelBgr24*)ptr = pixel;
 
             // 下ライン
             var bottomHeadPtr = rectHeadPtr + (height - 1) * stride;
             for (var ptr = bottomHeadPtr; ptr < bottomHeadPtr + widthOffset; ptr += bytesPerPixel)
-                *(PixelBgr*)ptr = pixel;
+                *(PixelBgr24*)ptr = pixel;
 
             // 左ライン
             var leftTailPtr = rectHeadPtr + height * stride;
             for (var ptr = rectHeadPtr; ptr < leftTailPtr; ptr += stride)
-                *(PixelBgr*)ptr = pixel;
+                *(PixelBgr24*)ptr = pixel;
 
             // 右ライン
             var rightHeadPtr = rectHeadPtr + widthOffset;
             var rightTailPtr = rightHeadPtr + height * stride;
             for (var ptr = rightHeadPtr; ptr < rightTailPtr; ptr += stride)
-                *(PixelBgr*)ptr = pixel;
+                *(PixelBgr24*)ptr = pixel;
         }
     }
 
     /// <summary>画像の一部を切り出した子画像を取得します</summary>
-    public PixelBgrMatrix CutOutPixelMatrix(int x, int y, int width, int height)
+    public PixelBgr24Matrix CutOutPixelMatrix(int x, int y, int width, int height)
     {
         if (_columns < x + width) throw new ArgumentException("vertical direction");
         if (_rows < y + height) throw new ArgumentException("horizontal direction");
 
-        var bytesPerData = Unsafe.SizeOf<PixelBgr>();
+        var bytesPerData = Unsafe.SizeOf<PixelBgr24>();
         return new(GetIntPtr(y, x), height, width, bytesPerData, _stride);
     }
 
     /// <summary>画素値をコピーします</summary>
-    public void CopyTo(in PixelBgrMatrix destPixels)
+    public void CopyTo(in PixelBgr24Matrix destPixels)
     {
         if (_columns != destPixels._columns || _rows != destPixels._rows) throw new ArgumentException("size is different.");
         if (_pointer == destPixels._pointer) throw new ArgumentException("same pointer.");
@@ -148,7 +148,7 @@ public readonly partial record struct PixelBgrMatrix : IMatrix<PixelBgr>
         CopyToInternal(this, destPixels);
 
         // 画素値のコピー（サイズチェックなし）
-        static void CopyToInternal(in PixelBgrMatrix srcPixels, in PixelBgrMatrix destPixels)
+        static void CopyToInternal(in PixelBgr24Matrix srcPixels, in PixelBgr24Matrix destPixels)
         {
             // メモリが連続していれば memcopy
             if (srcPixels.IsContinuous && destPixels.IsContinuous)
@@ -172,7 +172,7 @@ public readonly partial record struct PixelBgrMatrix : IMatrix<PixelBgr>
 
                     for (var x = 0; x < width * bytesPerPixel; x += bytesPerPixel)
                     {
-                        *(PixelBgr*)(dst + x) = *(PixelBgr*)(src + x);
+                        *(PixelBgr24*)(dst + x) = *(PixelBgr24*)(src + x);
                     }
                 }
             }
@@ -180,9 +180,9 @@ public readonly partial record struct PixelBgrMatrix : IMatrix<PixelBgr>
     }
 
     /// <summary>画素値を拡大コピーします</summary>
-    public void CopyToWithScaleUp(in PixelBgrMatrix destination)
+    public void CopyToWithScaleUp(in PixelBgr24Matrix destination)
     {
-        if (_bytesPerItem != PixelBgr.Size || destination._bytesPerItem != PixelBgr.Size)
+        if (_bytesPerItem != PixelBgr24.Size || destination._bytesPerItem != PixelBgr24.Size)
             throw new ArgumentException("bytes/pixel error.");
 
         if (destination._columns % _columns != 0 || destination._rows % _rows != 0)
@@ -197,7 +197,7 @@ public readonly partial record struct PixelBgrMatrix : IMatrix<PixelBgr>
 
         ScaleUp(this, destination, magnification);
 
-        static unsafe void ScaleUp(in PixelBgrMatrix source, in PixelBgrMatrix destination, int magnification)
+        static unsafe void ScaleUp(in PixelBgr24Matrix source, in PixelBgr24Matrix destination, int magnification)
         {
             var bytesPerPixel = source._bytesPerItem;
             var srcPixelHead = (byte*)source._pointer;
@@ -215,13 +215,13 @@ public readonly partial record struct PixelBgrMatrix : IMatrix<PixelBgr>
 
                 for (var x = 0; x < srcWidth * bytesPerPixel; x += bytesPerPixel)
                 {
-                    var pixel = (PixelBgr*)(src + x);
+                    var pixel = (PixelBgr24*)(src + x);
                     var dest1 = dest0 + x * magnification;
 
                     for (byte* dest2 = dest1; dest2 < dest1 + destStride * magnification; dest2 += destStride)
                     {
                         for (var dest3 = dest2; dest3 < dest2 + bytesPerPixel * magnification; dest3 += bytesPerPixel)
-                            *(PixelBgr*)dest3 = *pixel;
+                            *(PixelBgr24*)dest3 = *pixel;
                     }
                 }
             }
@@ -260,7 +260,7 @@ public readonly partial record struct PixelBgrMatrix : IMatrix<PixelBgr>
         return ms;
 
         // Bitmapのバイナリ配列を取得します
-        static byte[] GetBitmapBinary(in PixelBgrMatrix pixel)
+        static byte[] GetBitmapBinary(in PixelBgr24Matrix pixel)
         {
             var height = pixel._rows;
             var srcStride = pixel._stride;

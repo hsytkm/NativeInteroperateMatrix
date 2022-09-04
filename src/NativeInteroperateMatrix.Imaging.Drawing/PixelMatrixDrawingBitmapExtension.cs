@@ -25,11 +25,11 @@ public static class PixelMatrixDrawingBitmapExtension
     }
 
     /// <summary>PixelBgrMatrixContainer を作成して返します</summary>
-    public static PixelBgrMatrixContainer ToPixelBgrMatrixContainer(this Bitmap bitmap, bool isDisposeBitmap = false)
+    public static PixelBgr24MatrixContainer ToPixelBgr24MatrixContainer(this Bitmap bitmap, bool isDisposeBitmap = false)
     {
         if (bitmap.IsInvalid()) throw new ArgumentException("Invalid Image");
 
-        var container = new PixelBgrMatrixContainer(rows: bitmap.Height, columns: bitmap.Width, false);
+        var container = new PixelBgr24MatrixContainer(rows: bitmap.Height, columns: bitmap.Width, false);
         var pixels = container.Matrix;
 
         switch (bitmap.PixelFormat)
@@ -48,7 +48,7 @@ public static class PixelMatrixDrawingBitmapExtension
     }
 
     /// <summary>PixelBgrMatrix に画素値をコピーします</summary>
-    public static void Copy24bitToBgrMatrix(this Bitmap bitmap, in PixelBgrMatrix pixels, bool isDisposeBitmap = false)
+    public static void Copy24bitToBgrMatrix(this Bitmap bitmap, in PixelBgr24Matrix pixels, bool isDisposeBitmap = false)
     {
         if (bitmap.IsInvalid()) throw new ArgumentException("Invalid Bitmap");
         if (!pixels.IsValid) throw new ArgumentException("Invalid Pixels");
@@ -95,7 +95,7 @@ public static class PixelMatrixDrawingBitmapExtension
                     {
                         for (var x = 0; x < bitmap.Width; ++x)
                         {
-                            *(PixelBgr*)(destPtr + x * destBytesPerPixel) = *(PixelBgr*)(srcPtr + x * srcBytesPerPixel);
+                            *(PixelBgr24*)(destPtr + x * destBytesPerPixel) = *(PixelBgr24*)(srcPtr + x * srcBytesPerPixel);
                         }
                     }
                 }
@@ -110,7 +110,7 @@ public static class PixelMatrixDrawingBitmapExtension
     }
 
     /// <summary>PixelBgrMatrix に画素値をコピーします</summary>
-    public static void Copy8bitToBgrMatrix(this Bitmap bitmap, in PixelBgrMatrix pixels, bool isDisposeBitmap = false)
+    public static void Copy8bitToBgrMatrix(this Bitmap bitmap, in PixelBgr24Matrix pixels, bool isDisposeBitmap = false)
     {
         if (bitmap.IsInvalid()) throw new ArgumentException("Invalid Bitmap");
         if (!pixels.IsValid) throw new ArgumentException("Invalid Pixels");
@@ -140,7 +140,7 @@ public static class PixelMatrixDrawingBitmapExtension
                 {
                     for (var x = 0; x < bitmap.Width; ++x)
                     {
-                        *(PixelBgr*)(destPtr + x * destBytesPerPixel) = PixelBgr.FromGray(*(srcPtr + x));
+                        *(PixelBgr24*)(destPtr + x * destBytesPerPixel) = PixelBgr24.FromGray(*(srcPtr + x));
                     }
                 }
             }

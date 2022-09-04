@@ -20,17 +20,17 @@ public static class PixelMatrixBitmapSourceExtension
     }
 
     /// <summary>ToPixelBgrMatrixContainer を作成して返します</summary>
-    public static PixelBgrMatrixContainer ToPixelBgrMatrixContainer(this BitmapSource bitmap)
+    public static PixelBgr24MatrixContainer ToPixelBgr24MatrixContainer(this BitmapSource bitmap)
     {
         if (bitmap.IsInvalid()) throw new ArgumentException("Invalid Image");
 
-        var container = new PixelBgrMatrixContainer(rows: bitmap.PixelHeight, columns: bitmap.PixelWidth, false);
+        var container = new PixelBgr24MatrixContainer(rows: bitmap.PixelHeight, columns: bitmap.PixelWidth, false);
         container.Matrix.CopyTo(bitmap);
         return container;
     }
 
     /// <summary>ImagePixels に画素値をコピーします</summary>
-    internal static void CopyTo(in this PixelBgrMatrix pixel, BitmapSource bitmap)
+    internal static void CopyTo(in this PixelBgr24Matrix pixel, BitmapSource bitmap)
     {
         if (bitmap.IsInvalid()) throw new ArgumentException("Invalid Bitmap");
         if (!pixel.IsValid) throw new ArgumentException("Invalid Pixels");
@@ -61,10 +61,10 @@ public static class PixelMatrixBitmapSourceExtension
                         rect1Line.Y = y;
                         bitmap.CopyPixels(rect1Line, bufferArray, bufferSize, 0);
 
-                        var dest = (PixelBgr*)(destHead + y * pixel.Stride);
+                        var dest = (PixelBgr24*)(destHead + y * pixel.Stride);
                         for (var ptr = head; ptr < tail; ptr += bytesPerPixel)
                         {
-                            *(dest++) = *((PixelBgr*)ptr);
+                            *(dest++) = *((PixelBgr24*)ptr);
                         }
                     }
                 }

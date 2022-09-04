@@ -3,12 +3,12 @@
 namespace Nima.Imaging;
 
 // SourceGenerator 内で Container も一緒に生成しちゃっています(手抜き)
-public sealed partial class PixelBgrMatrixContainer
+public sealed partial class PixelBgr24MatrixContainer
 {
     /// <summary>Bitmapファイルから PixelBgrMatrixContainer を生成します</summary>
     /// <param name="filePath">File path of Bitmap</param>
     /// <returns></returns>
-    public static PixelBgrMatrixContainer Create(string filePath)
+    public static PixelBgr24MatrixContainer Create(string filePath)
     {
         if (!File.Exists(filePath))
             throw new FileNotFoundException(filePath);
@@ -20,7 +20,7 @@ public sealed partial class PixelBgrMatrixContainer
     /// <summary>Bitmap の Stream から PixelBgrMatrixContainer を生成します</summary>
     /// <param name="stream">Stream of Bitmap</param>
     /// <returns></returns>
-    public static PixelBgrMatrixContainer Create(Stream stream)
+    public static PixelBgr24MatrixContainer Create(Stream stream)
     {
         var header = UnsafeUtils.ReadStruct<BitmapHeader>(stream);
         if (!header.CanRead)
@@ -33,7 +33,7 @@ public sealed partial class PixelBgrMatrixContainer
         var headerSize = Unsafe.SizeOf<BitmapHeader>();
         var colLength = cols * bytesPerPixel;
 
-        var container = new PixelBgrMatrixContainer(rows, cols, false);
+        var container = new PixelBgr24MatrixContainer(rows, cols, false);
         var destPtr = container.Matrix.Pointer;
         var array = new byte[colLength];
 
@@ -56,7 +56,7 @@ public sealed partial class PixelBgrMatrixContainer
     /// <summary>Bitmapファイルから PixelBgrMatrixContainer を生成します</summary>
     /// <param name="filePath">File path of Bitmap</param>
     /// <returns></returns>
-    public static async Task<PixelBgrMatrixContainer> CreateAsync(string filePath, CancellationToken cancellationToken = default)
+    public static async Task<PixelBgr24MatrixContainer> CreateAsync(string filePath, CancellationToken cancellationToken = default)
     {
         if (!File.Exists(filePath))
             throw new FileNotFoundException(filePath);
@@ -68,7 +68,7 @@ public sealed partial class PixelBgrMatrixContainer
     /// <summary>Bitmap の Stream から PixelBgrMatrixContainer を生成します</summary>
     /// <param name="stream">Stream of Bitmap</param>
     /// <returns></returns>
-    public static async Task<PixelBgrMatrixContainer> CreateAsync(Stream stream, CancellationToken cancellationToken = default)
+    public static async Task<PixelBgr24MatrixContainer> CreateAsync(Stream stream, CancellationToken cancellationToken = default)
     {
         var header = await UnsafeUtils.ReadStructAsync<BitmapHeader>(stream, cancellationToken);
         if (!header.CanRead)
@@ -81,7 +81,7 @@ public sealed partial class PixelBgrMatrixContainer
         var headerSize = Unsafe.SizeOf<BitmapHeader>();
         var colLength = cols * bytesPerPixel;
 
-        var container = new PixelBgrMatrixContainer(rows, cols, false);
+        var container = new PixelBgr24MatrixContainer(rows, cols, false);
         var destPtr = container.Matrix.Pointer;
         var array = new byte[colLength];
 

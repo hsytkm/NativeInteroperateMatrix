@@ -6,10 +6,10 @@ public static class PixelMatrixExtension
     static readonly double _dpiY = _dpiX;
 
     /// <summary>System.Windows.Media.Imaging.BitmapSource に変換します</summary>
-    public static System.Windows.Media.Imaging.BitmapSource ToBitmapSource(in this PixelBgrMatrix pixel, bool isFreeze = true)
+    public static System.Windows.Media.Imaging.BitmapSource ToBitmapSource(in this PixelBgr24Matrix pixel, bool isFreeze = true)
     {
         if (!pixel.IsValid) throw new ArgumentException("Invalid ImagePixels");
-        if (pixel.BytesPerPixel != PixelBgr.Size) throw new NotSupportedException("Invalid BytesPerPixel");
+        if (pixel.BytesPerPixel != PixelBgr24.Size) throw new NotSupportedException("Invalid BytesPerPixel");
 
         var bitmapSource = System.Windows.Media.Imaging.BitmapSource.Create(
             pixel.Columns, pixel.Rows, _dpiX, _dpiY,
@@ -21,7 +21,7 @@ public static class PixelMatrixExtension
     }
 
     /// <summary>System.Windows.Media.Imaging.WriteableBitmap の画素値を更新します(遅いです)</summary>
-    public static void CopyTo(this System.Windows.Media.Imaging.WriteableBitmap writeableBitmap, in PixelBgrMatrix pixel, bool isFreeze = false)
+    public static void CopyTo(this System.Windows.Media.Imaging.WriteableBitmap writeableBitmap, in PixelBgr24Matrix pixel, bool isFreeze = false)
     {
         if (!pixel.IsValid) throw new ArgumentException("Invalid Image");
 
@@ -39,10 +39,10 @@ public static class PixelMatrixExtension
     }
 
     /// <summary>System.Windows.Media.Imaging.WriteableBitmap に変換します</summary>
-    public static System.Windows.Media.Imaging.WriteableBitmap ToWriteableBitmap(in this PixelBgrMatrix pixel, bool isFreeze = false)
+    public static System.Windows.Media.Imaging.WriteableBitmap ToWriteableBitmap(in this PixelBgr24Matrix pixel, bool isFreeze = false)
     {
         if (!pixel.IsValid) throw new ArgumentException("Invalid ImagePixels");
-        if (pixel.BytesPerPixel != PixelBgr.Size) throw new NotSupportedException("Invalid BytesPerPixel");
+        if (pixel.BytesPerPixel != PixelBgr24.Size) throw new NotSupportedException("Invalid BytesPerPixel");
 
         var writeableBitmap = new System.Windows.Media.Imaging.WriteableBitmap(
             pixel.Columns, pixel.Rows, _dpiX, _dpiY,

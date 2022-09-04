@@ -18,7 +18,7 @@ class MainWindowViewModel : BindableBase
         var bitmapImage = BitmapSourceExtension.FromFile(@"Asserts\image1.bmp");
         SourceImage = new ReactivePropertySlim<BitmapSource>(initialValue: bitmapImage);
 
-        using var pixelContainer = bitmapImage.ToPixelBgrMatrixContainer();
+        using var pixelContainer = bitmapImage.ToPixelBgr24MatrixContainer();
         var fullPixelMatrix = pixelContainer.Matrix;
 
         // 元画像の画素値平均
@@ -34,7 +34,7 @@ class MainWindowViewModel : BindableBase
 
         // 3. 上部を切り出して指定塗り
         var headerPixelMatrix = fullPixelMatrix.CutOutPixelMatrix(0, 0, fullPixelMatrix.Columns, 30);
-        headerPixelMatrix.FillAllPixels(PixelBgrs.Gray);
+        headerPixelMatrix.FillAllPixels(PixelBgr24Color.Gray);
         var headerChannelAverage2 = headerPixelMatrix.GetChannelsAverageOfEntire();
 
         // 4. 上部を除いた左部を切り出してグレスケ塗り
@@ -47,10 +47,10 @@ class MainWindowViewModel : BindableBase
     }
 
     // 三角領域を単色で塗り(WriteValueのテスト)
-    static void FillTriangle(in PixelBgrMatrix pixelMatrix)
+    static void FillTriangle(in PixelBgr24Matrix pixelMatrix)
     {
         int baseX = 100, baseY = 200, height = 100;
-        var color = PixelBgr.FromBgr(0, 0xff, 0);
+        var color = PixelBgr24.FromBgr(0, 0xff, 0);
 
         for (int y = 0; y < height; y++)
         {
@@ -62,7 +62,7 @@ class MainWindowViewModel : BindableBase
     }
 
     // 垂直方向で階調が変化するグレー塗り
-    static void FillGrayScaleVertical(in PixelBgrMatrix pixelMatrix)
+    static void FillGrayScaleVertical(in PixelBgr24Matrix pixelMatrix)
     {
         const int range = 256;
         var length = pixelMatrix.Rows / range;
@@ -71,13 +71,13 @@ class MainWindowViewModel : BindableBase
         {
             for (int lv = 0; lv < range; ++lv)
             {
-                var color = PixelBgr.FromGray((byte)(lv & 0xff));
+                var color = PixelBgr24.FromGray((byte)(lv & 0xff));
                 pixelMatrix.FillRectangle(color, 0, lv * length, pixelMatrix.Columns, length);
             }
         }
 
         var filledHeight = length * range;
-        pixelMatrix.FillRectangle(PixelBgrs.Black, 0, filledHeight, pixelMatrix.Columns, pixelMatrix.Rows - filledHeight);
+        pixelMatrix.FillRectangle(PixelBgr24Color.Black, 0, filledHeight, pixelMatrix.Columns, pixelMatrix.Rows - filledHeight);
     }
 
 }

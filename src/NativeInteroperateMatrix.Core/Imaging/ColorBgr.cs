@@ -12,7 +12,8 @@ public sealed record ColorBgr : IFormattable
     public ColorBgr(in PixelBgr24 pixels) : this((double)pixels.Blue, pixels.Green, pixels.Red) { }
     public ColorBgr(ReadOnlySpan<double> channels)
     {
-        if (channels.Length != 3) throw new ArgumentException("channels length is invalid.");
+        if (channels.Length != 3)
+            throw new ArgumentException("channels length is invalid.");
 
         B = channels[0];
         G = channels[1];

@@ -5,28 +5,28 @@ namespace Nima;
 
 public static class UnsafeUtils
 {
-    //[DllImport("kernel32.dll", EntryPoint = "RtlMoveMemory", SetLastError = false)]
-    //private static extern void RtlMoveMemory(IntPtr dest, IntPtr src, [MarshalAs(UnmanagedType.U4)] int length);
-
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static unsafe void MemCopy(IntPtr dest, IntPtr src, int length)
-        => MemCopyInternal(dest.ToPointer(), src.ToPointer(), length);
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static unsafe void MemCopy(void* dest, void* src, int length)
         => MemCopyInternal(dest, src, length);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static unsafe void MemCopy(void* dest, void* src, int length)
+        => MemCopyInternal(new IntPtr(dest), new IntPtr(src), length);
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static unsafe void MemCopy(IntPtr dest, void* src, int length)
-        => MemCopyInternal(dest.ToPointer(), src, length);
+        => MemCopyInternal(dest, new IntPtr(src), length);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static unsafe void MemCopy(void* dest, IntPtr src, int length)
-        => MemCopyInternal(dest, src.ToPointer(), length);
+        => MemCopyInternal(new IntPtr(dest), src, length);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static unsafe void MemCopyInternal(void* dest, void* src, int length)
+    static unsafe void MemCopyInternal(IntPtr dest, IntPtr src, int length)
     {
+#if true
+        Unsafe.CopyBlockUnaligned(dest.ToPointer(), src.ToPointer(), (uint)length);
+#else
         var destPtr = (byte*)dest;
         var srcPtr = (byte*)src;
         var tail = destPtr + length;
@@ -51,6 +51,7 @@ public static class UnsafeUtils
             ++srcPtr;
             ++destPtr;
         }
+#endif
     }
 
     /// <summary>構造体を byte[] に書き出します</summary>
@@ -139,11 +140,11 @@ public static class UnsafeUtils
     {
         var size = Unsafe.SizeOf<T>();
         var array = ArrayPool<byte>.Shared.Rent(size);   // stackalloc cannot be used in Task.
-
+        var memory = array.AsMemory()[0..size];
         try
         {
             stream.Position = 0;
-            _ = await stream.ReadAsync(array, cancellationToken);
+            _ = await stream.ReadAsync(memory, cancellationToken);
 
             var data = default(T);
             unsafe

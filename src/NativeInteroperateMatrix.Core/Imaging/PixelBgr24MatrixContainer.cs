@@ -3,7 +3,8 @@
 namespace Nima.Imaging;
 
 // SourceGenerator 内で Container も一緒に生成しちゃっています(手抜き)
-public sealed partial class PixelBgr24MatrixContainer
+public /*sealed*/ partial class PixelBgr24MatrixContainer
+    //: IMatrixContainer<PixelBgr24>, IDisposable
 {
     /// <summary>Bitmapファイルから PixelBgrMatrixContainer を生成します</summary>
     /// <param name="filePath">File path of Bitmap</param>

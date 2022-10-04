@@ -21,7 +21,7 @@ public static class PixelMatrixExtension
     }
 
     /// <summary>System.Windows.Media.Imaging.WriteableBitmap の画素値を更新します(遅いです)</summary>
-    public static void CopyTo(this System.Windows.Media.Imaging.WriteableBitmap writeableBitmap, in PixelBgr24Matrix pixel, bool isFreeze = false)
+    public static void CopyFrom(this System.Windows.Media.Imaging.WriteableBitmap writeableBitmap, in PixelBgr24Matrix pixel, bool isFreeze = false)
     {
         if (!pixel.IsValid) throw new ArgumentException("Invalid Image");
 
@@ -48,7 +48,7 @@ public static class PixelMatrixExtension
             pixel.Columns, pixel.Rows, _dpiX, _dpiY,
             System.Windows.Media.PixelFormats.Bgr24, null);
 
-        CopyTo(writeableBitmap, pixel, isFreeze);
+        CopyFrom(writeableBitmap, pixel, isFreeze);
         return writeableBitmap;
     }
 

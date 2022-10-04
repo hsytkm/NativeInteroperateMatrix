@@ -98,7 +98,7 @@ namespace Matrix.SourceGenerator
             this.Write(this.ToStringHelper.ToStringWithCulture(ValueItemTypeName));
             this.Write(">(ptr.ToPointer(), _columns);\r\n        }\r\n\r\n        public override string ToStri" +
                     "ng() => $\"Rows={_rows}, Cols={_columns}, Pointer=0x{_pointer:x16}\";\r\n    }\r\n\r\n  " +
-                    "  public sealed partial class ");
+                    "  public /*sealed*/ partial class ");
             this.Write(this.ToStringHelper.ToStringWithCulture(ContainerClassName));
             this.Write(" : IMatrixContainer<");
             this.Write(this.ToStringHelper.ToStringWithCulture(ValueItemTypeName));

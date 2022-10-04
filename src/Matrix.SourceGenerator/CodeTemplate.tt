@@ -118,7 +118,7 @@ namespace <#= Namespace #>
         public override string ToString() => $"Rows={_rows}, Cols={_columns}, Pointer=0x{_pointer:x16}";
     }
 
-    public sealed partial class <#= ContainerClassName #> : IMatrixContainer<<#= ValueItemTypeName #>>, IDisposable
+    public /*sealed*/ partial class <#= ContainerClassName #> : IMatrixContainer<<#= ValueItemTypeName #>>, IDisposable
     {
         public <#= MatrixClassName #> Matrix { get; }
         public IMatrix<<#= ValueItemTypeName #>> MatrixT => (IMatrix<<#= ValueItemTypeName #>>)Matrix;

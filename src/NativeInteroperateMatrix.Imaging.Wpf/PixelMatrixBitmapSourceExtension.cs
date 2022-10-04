@@ -25,12 +25,12 @@ public static class PixelMatrixBitmapSourceExtension
         if (bitmap.IsInvalid()) throw new ArgumentException("Invalid Image");
 
         var container = new PixelBgr24MatrixContainer(rows: bitmap.PixelHeight, columns: bitmap.PixelWidth, false);
-        container.Matrix.CopyTo(bitmap);
+        container.Matrix.CopyFrom(bitmap);
         return container;
     }
 
-    /// <summary>ImagePixels に画素値をコピーします</summary>
-    internal static void CopyTo(in this PixelBgr24Matrix pixel, BitmapSource bitmap)
+    /// <summary>BitmapSource から PixelBgr24Matrix に画素値をコピーします</summary>
+    internal static void CopyFrom(in this PixelBgr24Matrix pixel, BitmapSource bitmap)
     {
         if (bitmap.IsInvalid()) throw new ArgumentException("Invalid Bitmap");
         if (!pixel.IsValid) throw new ArgumentException("Invalid Pixels");
@@ -44,8 +44,7 @@ public static class PixelMatrixBitmapSourceExtension
 
         // 1行ずつメモリに読み出して処理する(ヒープ使用量の削減)
         var bufferSize = bitmap.PixelWidth * bytesPerPixel;
-        var bufferArray = ArrayPool<byte>.Shared.Rent(bufferSize);
-        // ◆Sliceしていません。後で対応します。
+        var bufferArray = ArrayPool<byte>.Shared.Rent(bufferSize); // Sliceしていません。
         try
         {
             unsafe

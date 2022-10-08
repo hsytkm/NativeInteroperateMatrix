@@ -133,6 +133,21 @@ namespace <#= Namespace #>
         }
 
         PointerSizePair _allocatedMemory;
+        
+        public <#= ContainerClassName #>(int rows, int columns, bool initialize)
+        {
+            int bytesPerData = Unsafe.SizeOf<<#= ValueItemTypeName #>>();
+            int stride = columns * bytesPerData;
+            _allocatedMemory = Alloc(stride * rows);
+            (IntPtr ptr, int allocSize) = _allocatedMemory;
+
+            if (initialize)
+            {
+                UnsafeUtils.FillZero(ptr, allocSize);
+            }
+            
+            Matrix = new <#= MatrixClassName #>(ptr, rows, columns, bytesPerData, stride);
+        }
 
         public <#= ContainerClassName #>(int rows, int columns)
             : this(rows, columns, true)
@@ -165,21 +180,33 @@ namespace <#= Namespace #>
                 throw new ArgumentException("items is small.", nameof(items));
         }
         
-        public <#= ContainerClassName #>(int rows, int columns, bool initialize)
+        public <#= ContainerClassName #>(int rows, int columns, ReadOnlySpan<<#= ValueItemTypeName #>> items)
+            : this(rows, columns, false)
         {
-            int bytesPerData = Unsafe.SizeOf<<#= ValueItemTypeName #>>();
-            int stride = columns * bytesPerData;
-            _allocatedMemory = Alloc(stride * rows);
-            (IntPtr ptr, int allocSize) = _allocatedMemory;
+            int length = rows * columns;
+            int written = 0;
+            int row = 0;
+            int column = 0;
+            var span = Matrix.AsRowSpan(0);
 
-            if (initialize)
+            foreach (var item in items)
             {
-                UnsafeUtils.FillZero(ptr, allocSize);
-            }
-            
-            Matrix = new <#= MatrixClassName #>(ptr, rows, columns, bytesPerData, stride);
-        }
+                if (column >= columns)
+                {
+                    column = 0;
+                    row++;
+                    span = Matrix.AsRowSpan(row);
+                }
+                span[column++] = item;
 
+                if (++written > length)
+                    throw new ArgumentException("items is large.", nameof(items));
+            }
+
+            if (!(row == rows - 1 && column == columns))
+                throw new ArgumentException("items is small.", nameof(items));
+        }
+        
         static PointerSizePair Alloc(int size)
         {
             IntPtr intPtr;

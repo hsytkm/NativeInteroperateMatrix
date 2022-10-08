@@ -73,7 +73,7 @@ public class NativeMatrixMethodsTest
     {
         var max = GetMaxValue<byte>(rows * columns);
         var items = Enumerable.Range(0, rows * columns).Select(x => (sbyte)(x % max)).ToArray();
-        using var container = new Int8MatrixContainer(rows, columns, items);
+        using var container = new Int8MatrixContainer(rows, columns, items.AsSpan());
 
         var expected = items.Select(x => (long)x).Sum();
         NativeMatrixMethods.Sum(container.Matrix).Is(expected);
@@ -88,7 +88,7 @@ public class NativeMatrixMethodsTest
     {
         var max = GetMaxValue<short>(rows * columns);
         var items = Enumerable.Range(0, rows * columns).Select(x => (short)(x % max)).ToArray();
-        using var container = new Int16MatrixContainer(rows, columns, items);
+        using var container = new Int16MatrixContainer(rows, columns, items.AsSpan());
 
         var expected = items.Select(x => (long)x).Sum();
         NativeMatrixMethods.Sum(container.Matrix).Is(expected);
@@ -103,7 +103,7 @@ public class NativeMatrixMethodsTest
     {
         var max = GetMaxValue<int>(rows * columns);
         var items = Enumerable.Range(0, rows * columns).Select(x => (int)(x % max)).ToArray();
-        using var container = new Int32MatrixContainer(rows, columns, items);
+        using var container = new Int32MatrixContainer(rows, columns, items.AsSpan());
 
         var expected = items.Select(x => (long)x).Sum();
         NativeMatrixMethods.Sum(container.Matrix).Is(expected);
@@ -118,7 +118,7 @@ public class NativeMatrixMethodsTest
     {
         var max = GetMaxValue<long>(rows * columns);
         var items = Enumerable.Range(0, rows * columns).Select(x => (long)(x % max)).ToArray();
-        using var container = new Int64MatrixContainer(rows, columns, items);
+        using var container = new Int64MatrixContainer(rows, columns, items.AsSpan());
 
         var expected = items.Select(x => (long)x).Sum();
         NativeMatrixMethods.Sum(container.Matrix).Is(expected);
@@ -134,7 +134,7 @@ public class NativeMatrixMethodsTest
         var denom = 100f;
         var max = GetMaxValue<int>(rows * columns);
         var items = Enumerable.Range(0, rows * columns).Select(x => x % max).Select(x => x / denom).ToArray();
-        using var container = new SingleMatrixContainer(rows, columns, items);
+        using var container = new SingleMatrixContainer(rows, columns, items.AsSpan());
 
         var expected = items.Select(x => (double)x).Sum();
         NativeMatrixMethods.Sum(container.Matrix).Is(expected);
@@ -150,7 +150,7 @@ public class NativeMatrixMethodsTest
         var denom = 1000d;
         var max = GetMaxValue<int>(rows * columns);
         var items = Enumerable.Range(0, rows * columns).Select(x => x % max).Select(x => x / denom).ToArray();
-        using var container = new DoubleMatrixContainer(rows, columns, items);
+        using var container = new DoubleMatrixContainer(rows, columns, items.AsSpan());
 
         var expected = items.Select(x => (double)x).Sum();
         NativeMatrixMethods.Sum(container.Matrix).Is(expected);

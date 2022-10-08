@@ -120,8 +120,25 @@ namespace Matrix.SourceGenerator
         }
 
         PointerSizePair _allocatedMemory;
-
+        
         public ");
+            this.Write(this.ToStringHelper.ToStringWithCulture(ContainerClassName));
+            this.Write("(int rows, int columns, bool initialize)\r\n        {\r\n            int bytesPerData" +
+                    " = Unsafe.SizeOf<");
+            this.Write(this.ToStringHelper.ToStringWithCulture(ValueItemTypeName));
+            this.Write(@">();
+            int stride = columns * bytesPerData;
+            _allocatedMemory = Alloc(stride * rows);
+            (IntPtr ptr, int allocSize) = _allocatedMemory;
+
+            if (initialize)
+            {
+                UnsafeUtils.FillZero(ptr, allocSize);
+            }
+            
+            Matrix = new ");
+            this.Write(this.ToStringHelper.ToStringWithCulture(MatrixClassName));
+            this.Write("(ptr, rows, columns, bytesPerData, stride);\r\n        }\r\n\r\n        public ");
             this.Write(this.ToStringHelper.ToStringWithCulture(ContainerClassName));
             this.Write("(int rows, int columns)\r\n            : this(rows, columns, true)\r\n        { }\r\n\r\n" +
                     "        public ");
@@ -157,67 +174,34 @@ namespace Matrix.SourceGenerator
         
         public ");
             this.Write(this.ToStringHelper.ToStringWithCulture(ContainerClassName));
-            this.Write("(int rows, int columns, bool initialize)\r\n        {\r\n            int bytesPerData" +
-                    " = Unsafe.SizeOf<");
+            this.Write("(int rows, int columns, ReadOnlySpan<");
             this.Write(this.ToStringHelper.ToStringWithCulture(ValueItemTypeName));
-            this.Write(@">();
-            int stride = columns * bytesPerData;
-            _allocatedMemory = Alloc(stride * rows);
-            (IntPtr ptr, int allocSize) = _allocatedMemory;
-
-            if (initialize)
-            {
-                UnsafeUtils.FillZero(ptr, allocSize);
-            }
-            
-            Matrix = new ");
-            this.Write(this.ToStringHelper.ToStringWithCulture(MatrixClassName));
-            this.Write(@"(ptr, rows, columns, bytesPerData, stride);
-        }
-
-        static PointerSizePair Alloc(int size)
-        {
-            IntPtr intPtr;
-#if NET6_0_OR_GREATER
-            unsafe { intPtr = (IntPtr)NativeMemory.Alloc((nuint)size); }
-#else
-            intPtr = Marshal.AllocCoTaskMem(size);
-#endif
-            GC.AddMemoryPressure(size);
-            return new(intPtr, size);
-        }
-
-        static void Free(in PointerSizePair pair)
-        {
-#if NET6_0_OR_GREATER
-            unsafe { NativeMemory.Free((void*)pair.Pointer); }
-#else
-            Marshal.FreeCoTaskMem(pair.Pointer);
-#endif
-            GC.RemoveMemoryPressure(pair.Size);
-        }
-        
-        bool _disposedValue;
-        public void Dispose(bool disposing)
-        {
-            if (_disposedValue) return;
-
-            if (disposing)
-            {
-                // TODO: dispose managed state (managed objects).
-            }
-
-            // TODO: free unmanaged resources (unmanaged objects) and override a finalizer below.
-            if (_allocatedMemory != PointerSizePair.Zero)
-            {
-                Free(_allocatedMemory);
-                _allocatedMemory = PointerSizePair.Zero;
-            }
-
-            _disposedValue = true;
-        }
-
-        ~");
+            this.Write("> items)\r\n            : this(rows, columns, false)\r\n        {\r\n            int le" +
+                    "ngth = rows * columns;\r\n            int written = 0;\r\n            int row = 0;\r\n" +
+                    "            int column = 0;\r\n            var span = Matrix.AsRowSpan(0);\r\n\r\n    " +
+                    "        foreach (var item in items)\r\n            {\r\n                if (column >" +
+                    "= columns)\r\n                {\r\n                    column = 0;\r\n                " +
+                    "    row++;\r\n                    span = Matrix.AsRowSpan(row);\r\n                }" +
+                    "\r\n                span[column++] = item;\r\n\r\n                if (++written > leng" +
+                    "th)\r\n                    throw new ArgumentException(\"items is large.\", nameof(i" +
+                    "tems));\r\n            }\r\n\r\n            if (!(row == rows - 1 && column == columns" +
+                    "))\r\n                throw new ArgumentException(\"items is small.\", nameof(items)" +
+                    ");\r\n        }\r\n        \r\n        static PointerSizePair Alloc(int size)\r\n       " +
+                    " {\r\n            IntPtr intPtr;\r\n#if NET6_0_OR_GREATER\r\n            unsafe { intP" +
+                    "tr = (IntPtr)NativeMemory.Alloc((nuint)size); }\r\n#else\r\n            intPtr = Mar" +
+                    "shal.AllocCoTaskMem(size);\r\n#endif\r\n            GC.AddMemoryPressure(size);\r\n   " +
+                    "         return new(intPtr, size);\r\n        }\r\n\r\n        static void Free(in Poi" +
+                    "nterSizePair pair)\r\n        {\r\n#if NET6_0_OR_GREATER\r\n            unsafe { Nativ" +
+                    "eMemory.Free((void*)pair.Pointer); }\r\n#else\r\n            Marshal.FreeCoTaskMem(p" +
+                    "air.Pointer);\r\n#endif\r\n            GC.RemoveMemoryPressure(pair.Size);\r\n        " +
+                    "}\r\n        \r\n        bool _disposedValue;\r\n        public void Dispose(bool disp" +
+                    "osing)\r\n        {\r\n            if (_disposedValue) return;\r\n\r\n            if (di" +
+                    "sposing)\r\n            {\r\n                // TODO: dispose managed state (managed" +
+                    " objects).\r\n            }\r\n\r\n            // TODO: free unmanaged resources (unma" +
+                    "naged objects) and override a finalizer below.\r\n            if (_allocatedMemory" +
+                    " != PointerSizePair.Zero)\r\n            {\r\n                Free(_allocatedMemory)" +
+                    ";\r\n                _allocatedMemory = PointerSizePair.Zero;\r\n            }\r\n\r\n  " +
+                    "          _disposedValue = true;\r\n        }\r\n\r\n        ~");
             this.Write(this.ToStringHelper.ToStringWithCulture(ContainerClassName));
             this.Write("() => Dispose(false);\r\n\r\n        public void Dispose()\r\n        {\r\n            Di" +
                     "spose(true);\r\n            GC.SuppressFinalize(this);\r\n        }\r\n    }\r\n}\r\n");

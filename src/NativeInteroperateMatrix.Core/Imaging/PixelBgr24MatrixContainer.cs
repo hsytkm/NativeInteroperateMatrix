@@ -14,6 +14,9 @@ public /*sealed*/ partial class PixelBgr24MatrixContainer
         if (!File.Exists(filePath))
             throw new FileNotFoundException(filePath);
 
+        if (Path.GetExtension(filePath) != ".bmp")
+            throw new NotSupportedException(filePath);
+
         using var fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read);
         return Create(fileStream);
     }

@@ -207,6 +207,10 @@ namespace <#= Namespace #>
                 throw new ArgumentException("items is small.", nameof(items));
         }
         
+        public <#= ContainerClassName #>(int rows, int columns, ReadOnlySpan<byte> items)
+            : this(rows, columns, MemoryMarshal.Cast<byte, <#= ValueItemTypeName #>>(bytes))
+        { }
+
         static PointerSizePair Alloc(int size)
         {
             IntPtr intPtr;

@@ -18,16 +18,6 @@ public interface IMatrix
     int Stride { get; }
 
     /// <summary>
-    /// Maximum number of columns
-    /// </summary>
-    int Width => Columns;
-
-    /// <summary>
-    /// Maximum number of rows
-    /// </summary>
-    int Height => Rows;
-
-    /// <summary>
     /// Whether the memory is contiguous
     /// </summary>
     bool IsContinuous { get; }

@@ -52,8 +52,8 @@ public static class PixelMatrixDrawingBitmapExtension
     {
         if (bitmap.IsInvalid()) throw new ArgumentException("Invalid Bitmap");
         if (!pixels.IsValid) throw new ArgumentException("Invalid Pixels");
-        if (bitmap.Width != pixels.Columns) throw new ArgumentException("Different Width");
-        if (bitmap.Height != pixels.Rows) throw new ArgumentException("Different Height");
+        if (bitmap.Width != pixels.Width) throw new ArgumentException("Different Width");
+        if (bitmap.Height != pixels.Height) throw new ArgumentException("Different Height");
 
         var srcBytesPerPixel = bitmap.GetBytesPerPixel();
         if (srcBytesPerPixel < pixels.BytesPerItem)
@@ -114,8 +114,8 @@ public static class PixelMatrixDrawingBitmapExtension
     {
         if (bitmap.IsInvalid()) throw new ArgumentException("Invalid Bitmap");
         if (!pixels.IsValid) throw new ArgumentException("Invalid Pixels");
-        if (bitmap.Width != pixels.Columns) throw new ArgumentException("Different Width");
-        if (bitmap.Height != pixels.Rows) throw new ArgumentException("Different Height");
+        if (bitmap.Width != pixels.Width) throw new ArgumentException("Different Width");
+        if (bitmap.Height != pixels.Height) throw new ArgumentException("Different Height");
 
         if (bitmap.GetBytesPerPixel() != 1)
             throw new NotImplementedException("Different BytesPerPixel");

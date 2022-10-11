@@ -7,8 +7,44 @@ namespace Nima.Imaging;
 [MatrixGenerator]
 public readonly partial record struct PixelBgr24Matrix : IMatrix<PixelBgr24>
 {
+    public int Width => Columns;
+    public int Height => Rows;
     public int BytesPerPixel => BytesPerItem;
     public int BitsPerPixel => BitsPerItem;
+
+    public unsafe void CopyFrom(IntPtr intPtr, int width, int height, int stride)
+    {
+        var srcSize = height * stride;
+        if (AllocatedSize < srcSize)
+            throw new NotSupportedException("Allocated size is short.");
+
+        var destStride = Stride;
+        if (destStride == stride)
+        {
+            UnsafeUtils.MemCopy(Pointer, intPtr, srcSize);
+        }
+        else
+        {
+            var destPtr = (byte*)Pointer.ToPointer();
+            var srcPtr = (byte*)intPtr.ToPointer();
+
+            for (int row = 0; row < height; row++)
+            {
+                UnsafeUtils.MemCopy(destPtr, srcPtr, stride);
+                destPtr += destStride;
+                srcPtr += stride;
+            }
+        }
+    }
+
+    public void CopyFrom(in PixelBgr24Matrix destPixels)
+    {
+        var intPtr = destPixels.Pointer;
+        var width = destPixels.Width;
+        var height = destPixels.Height;
+        var stride = destPixels.Stride;
+        CopyFrom(intPtr, width, height, stride);
+    }
 
     /// <summary>指定領域における各チャンネルの画素平均値を取得します</summary>
     public ColorBgr GetChannelsAverage(int x, int y, int width, int height)

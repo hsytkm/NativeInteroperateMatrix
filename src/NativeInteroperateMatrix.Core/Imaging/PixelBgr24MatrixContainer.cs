@@ -105,4 +105,14 @@ public /*sealed*/ partial class PixelBgr24MatrixContainer
         return container;
     }
 
+    public static bool CanReuseContainer(PixelBgr24MatrixContainer container, in PixelBgr24Matrix pixels)
+    {
+        if (container.Matrix.Columns != pixels.Columns
+            || container.Matrix.Rows != pixels.Rows
+            || container.Matrix.BytesPerPixel != pixels.BytesPerPixel)
+            return false;
+
+        return true;
+    }
+
 }

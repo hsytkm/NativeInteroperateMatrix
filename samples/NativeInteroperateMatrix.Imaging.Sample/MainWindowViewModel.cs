@@ -33,12 +33,12 @@ class MainWindowViewModel : BindableBase
         fullPixelMatrix.DrawRectangle(Colors.Cyan.ToPixelBgr(), 200, 200, 100, 200);
 
         // 3. 上部を切り出して指定塗り
-        var headerPixelMatrix = fullPixelMatrix.CutOutPixelMatrix(0, 0, fullPixelMatrix.Columns, 30);
+        var headerPixelMatrix = fullPixelMatrix.CutOutPixelMatrix(0, 0, fullPixelMatrix.Width, 30);
         headerPixelMatrix.FillAllPixels(PixelBgr24Color.Gray);
         var headerChannelAverage2 = headerPixelMatrix.GetChannelsAverageOfEntire();
 
         // 4. 上部を除いた左部を切り出してグレスケ塗り
-        var leftPixelMatrix = fullPixelMatrix.CutOutPixelMatrix(0, headerPixelMatrix.Rows, 50, fullPixelMatrix.Rows - headerPixelMatrix.Rows);
+        var leftPixelMatrix = fullPixelMatrix.CutOutPixelMatrix(0, headerPixelMatrix.Height, 50, fullPixelMatrix.Height - headerPixelMatrix.Height);
         FillGrayScaleVertical(leftPixelMatrix);
 
         // BitmapSourceに変換してView表示
@@ -65,19 +65,19 @@ class MainWindowViewModel : BindableBase
     static void FillGrayScaleVertical(in PixelBgr24Matrix pixelMatrix)
     {
         const int range = 256;
-        var length = pixelMatrix.Rows / range;
+        var length = pixelMatrix.Height / range;
 
         if (length > 0)
         {
             for (int lv = 0; lv < range; ++lv)
             {
                 var color = PixelBgr24.FromGray((byte)(lv & 0xff));
-                pixelMatrix.FillRectangle(color, 0, lv * length, pixelMatrix.Columns, length);
+                pixelMatrix.FillRectangle(color, 0, lv * length, pixelMatrix.Width, length);
             }
         }
 
         var filledHeight = length * range;
-        pixelMatrix.FillRectangle(PixelBgr24Color.Black, 0, filledHeight, pixelMatrix.Columns, pixelMatrix.Rows - filledHeight);
+        pixelMatrix.FillRectangle(PixelBgr24Color.Black, 0, filledHeight, pixelMatrix.Width, pixelMatrix.Height - filledHeight);
     }
 
 }

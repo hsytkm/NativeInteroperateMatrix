@@ -4,9 +4,8 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <Description>Interoperate 2-dimensional array with natives</Description>
-    <Version>2.0.0-rc3</Version>
+    <Version>2.0.0-rc4</Version>
     <Authors>myoga</Authors>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/hsytkm/NativeInteroperateMatrix</PackageProjectUrl>
     <RepositoryUrl>https://github.com/hsytkm/NativeInteroperateMatrix</RepositoryUrl>
     <NeutralLanguage>en-US</NeutralLanguage>
@@ -17,6 +16,12 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <!--<PackageLicenseExpression>MIT</PackageLicenseExpression>-->
+    <PackageLicenseFile>LICENSE</PackageLicenseFile> 
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\..\LICENSE" Pack="true" PackagePath=""/>
+  </ItemGroup>
 </Project>
 

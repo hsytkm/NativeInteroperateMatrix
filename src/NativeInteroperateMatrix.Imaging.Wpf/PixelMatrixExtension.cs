@@ -12,9 +12,9 @@ public static class PixelMatrixExtension
         if (pixel.BytesPerPixel != PixelBgr24.Size) throw new NotSupportedException("Invalid BytesPerPixel");
 
         var bitmapSource = System.Windows.Media.Imaging.BitmapSource.Create(
-            pixel.Columns, pixel.Rows, _dpiX, _dpiY,
+            pixel.Width, pixel.Height, _dpiX, _dpiY,
             System.Windows.Media.PixelFormats.Bgr24, null,
-            pixel.Pointer, pixel.Stride * pixel.Rows, pixel.Stride);
+            pixel.Pointer, pixel.Stride * pixel.Width, pixel.Stride);
 
         if (isFreeze) bitmapSource.Freeze();
         return bitmapSource;
@@ -27,13 +27,13 @@ public static class PixelMatrixExtension
 
         if (writeableBitmap.IsFrozen) throw new ArgumentException("WriteableBitmap is frozen");
         if (writeableBitmap.IsInvalid()) throw new ArgumentException("Invalid Image");
-        if (writeableBitmap.PixelWidth != pixel.Columns) throw new ArgumentException("Different Width");
-        if (writeableBitmap.PixelHeight != pixel.Rows) throw new ArgumentException("Different Height");
+        if (writeableBitmap.PixelWidth != pixel.Width) throw new ArgumentException("Different Width");
+        if (writeableBitmap.PixelHeight != pixel.Height) throw new ArgumentException("Different Height");
         if (writeableBitmap.GetBytesPerPixel() != pixel.BytesPerPixel) throw new ArgumentException("Different BytesPerPixel");
 
         writeableBitmap.WritePixels(
-            new System.Windows.Int32Rect(0, 0, pixel.Columns, pixel.Rows),
-            pixel.Pointer, pixel.Stride * pixel.Rows, pixel.Stride);
+            new System.Windows.Int32Rect(0, 0, pixel.Width, pixel.Height),
+            pixel.Pointer, pixel.Stride * pixel.Width, pixel.Stride);
 
         if (isFreeze) writeableBitmap.Freeze();
     }
@@ -45,7 +45,7 @@ public static class PixelMatrixExtension
         if (pixel.BytesPerPixel != PixelBgr24.Size) throw new NotSupportedException("Invalid BytesPerPixel");
 
         var writeableBitmap = new System.Windows.Media.Imaging.WriteableBitmap(
-            pixel.Columns, pixel.Rows, _dpiX, _dpiY,
+            pixel.Width, pixel.Height, _dpiX, _dpiY,
             System.Windows.Media.PixelFormats.Bgr24, null);
 
         CopyFrom(writeableBitmap, pixel, isFreeze);

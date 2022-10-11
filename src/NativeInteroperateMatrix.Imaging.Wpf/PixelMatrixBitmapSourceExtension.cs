@@ -30,12 +30,12 @@ public static class PixelMatrixBitmapSourceExtension
     }
 
     /// <summary>BitmapSource から PixelBgr24Matrix に画素値をコピーします</summary>
-    internal static void CopyFrom(in this PixelBgr24Matrix pixel, BitmapSource bitmap)
+    public static void CopyFrom(in this PixelBgr24Matrix pixel, BitmapSource bitmap)
     {
         if (bitmap.IsInvalid()) throw new ArgumentException("Invalid Bitmap");
         if (!pixel.IsValid) throw new ArgumentException("Invalid Pixels");
-        if (bitmap.PixelWidth != pixel.Columns) throw new ArgumentException("Different Width");
-        if (bitmap.PixelHeight != pixel.Rows) throw new ArgumentException("Different Height");
+        if (bitmap.PixelWidth != pixel.Width) throw new ArgumentException("Different Width");
+        if (bitmap.PixelHeight != pixel.Height) throw new ArgumentException("Different Height");
 
         var bytesPerPixel = bitmap.GetBytesPerPixel();
         if (bytesPerPixel < pixel.BytesPerPixel) throw new ArgumentException("Invalid BytesPerPixel");

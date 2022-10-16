@@ -172,7 +172,8 @@ public readonly partial record struct PixelBgr24Matrix : IMatrix<PixelBgr24>
         if (_rows < y + height) throw new ArgumentException("horizontal direction");
 
         var bytesPerData = Unsafe.SizeOf<PixelBgr24>();
-        return new(GetIntPtr(y, x), height, width, bytesPerData, _stride);
+        var size = AllocatedSize - (y * Stride) - (x * BytesPerItem);
+        return new(GetIntPtr(y, x), size, height, width, bytesPerData, _stride);
     }
 
     /// <summary>画素値をコピーします</summary>

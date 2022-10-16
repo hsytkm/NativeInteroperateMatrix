@@ -4,7 +4,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <Description>Interoperate 2-dimensional array with natives</Description>
-    <Version>2.0.0-rc4</Version>
+    <Version>2.0.0-rc5</Version>
     <Authors>myoga</Authors>
     <PackageProjectUrl>https://github.com/hsytkm/NativeInteroperateMatrix</PackageProjectUrl>
     <RepositoryUrl>https://github.com/hsytkm/NativeInteroperateMatrix</RepositoryUrl>

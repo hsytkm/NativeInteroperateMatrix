@@ -16,17 +16,17 @@ namespace <#= Namespace #>
 <# } #>
 {
     // Do not change the order of the struct because it is the same as C++
-    [StructLayout(LayoutKind.Sequential, Pack = 1, Size = 8 + (4 * 4))]
+    [StructLayout(LayoutKind.Sequential, Pack = 1, Size = 8 + (5 * 4))]
     partial record struct <#= MatrixClassName #> : IMatrix<<#= ValueItemTypeName #>>
     {
         readonly IntPtr _pointer;
-        //readonly int _allocSize;  // = rows * stride;
+        readonly int _allocSize;
         readonly int _rows;         // height
         readonly int _columns;      // width
         readonly int _bytesPerItem;
         readonly int _stride;
 
-        public <#= MatrixClassName #>(IntPtr intPtr, int rows, int columns, int bytesPerItem, int stride)
+        public <#= MatrixClassName #>(IntPtr pointer, int allocSize, int rows, int columns, int bytesPerItem, int stride)
         {
             if (IntPtr.Size != 8)
                 throw new NotSupportedException("Must be x64");
@@ -34,7 +34,8 @@ namespace <#= Namespace #>
             if (bytesPerItem != Unsafe.SizeOf<<#= ValueItemTypeName #>>())
                 throw new ArgumentException(nameof(bytesPerItem));
 
-            _pointer = intPtr;
+            _pointer = pointer;
+            _allocSize = allocSize;
             _rows = rows;
             _columns = columns;
             _bytesPerItem = bytesPerItem;
@@ -71,7 +72,7 @@ namespace <#= Namespace #>
 
         // INativeMemory
         public IntPtr Pointer => _pointer;
-        public int AllocatedSize => _columns * _bytesPerItem * _rows;  // don't use stride
+        public int AllocatedSize => _allocSize;
         public int BytesPerItem => _bytesPerItem;
         public int BitsPerItem => _bytesPerItem * 8;
         public bool IsValid
@@ -146,7 +147,7 @@ namespace <#= Namespace #>
                 UnsafeUtils.FillZero(ptr, allocSize);
             }
             
-            Matrix = new <#= MatrixClassName #>(ptr, rows, columns, bytesPerData, stride);
+            Matrix = new <#= MatrixClassName #>(ptr, allocSize, rows, columns, bytesPerData, stride);
         }
 
         public <#= ContainerClassName #>(int rows, int columns)
@@ -207,9 +208,11 @@ namespace <#= Namespace #>
                 throw new ArgumentException("items is small.", nameof(items));
         }
         
+<# if (ValueItemTypeName != "Byte") { #>
         public <#= ContainerClassName #>(int rows, int columns, ReadOnlySpan<byte> items)
-            : this(rows, columns, MemoryMarshal.Cast<byte, <#= ValueItemTypeName #>>(bytes))
+            : this(rows, columns, MemoryMarshal.Cast<byte, <#= ValueItemTypeName #>>(items))
         { }
+<# } #>
 
         static PointerSizePair Alloc(int size)
         {

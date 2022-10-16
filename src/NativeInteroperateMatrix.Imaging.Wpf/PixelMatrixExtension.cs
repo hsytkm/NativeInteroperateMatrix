@@ -14,7 +14,7 @@ public static class PixelMatrixExtension
         var bitmapSource = System.Windows.Media.Imaging.BitmapSource.Create(
             pixel.Width, pixel.Height, _dpiX, _dpiY,
             System.Windows.Media.PixelFormats.Bgr24, null,
-            pixel.Pointer, pixel.Stride * pixel.Width, pixel.Stride);
+            pixel.Pointer, pixel.Stride * pixel.Height, pixel.Stride);
 
         if (isFreeze) bitmapSource.Freeze();
         return bitmapSource;
@@ -33,7 +33,7 @@ public static class PixelMatrixExtension
 
         writeableBitmap.WritePixels(
             new System.Windows.Int32Rect(0, 0, pixel.Width, pixel.Height),
-            pixel.Pointer, pixel.Stride * pixel.Width, pixel.Stride);
+            pixel.Pointer, pixel.Stride * pixel.Height, pixel.Stride);
 
         if (isFreeze) writeableBitmap.Freeze();
     }

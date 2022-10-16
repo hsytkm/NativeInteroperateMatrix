@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include <cstdint>
 
 namespace NimaNativeCore {
 
@@ -7,10 +8,11 @@ namespace NimaNativeCore {
     struct MatrixBase
     {
         void* pointer_;
-        int rows_;          // _rows=Height
-        int columns_;       // _columns=Width
-        int bytesPerData_;
-        int stride_;
+        int32_t allocSize_;
+        int32_t rows_;          // _rows=Height
+        int32_t columns_;       // _columns=Width
+        int32_t bytesPerData_;
+        int32_t stride_;
 
         bool is_valid() const
         {
@@ -24,7 +26,7 @@ namespace NimaNativeCore {
 
         inline T* get_value_ptr_rc(int row, int col) const
         {
-            auto ptr = (unsigned char*)pointer_ + (row * stride_);
+            auto ptr = (uint8_t*)pointer_ + (row * stride_);
             return (T*)ptr + col;
         }
 
@@ -40,7 +42,7 @@ namespace NimaNativeCore {
 
         void fill_value(T value)
         {
-            auto head = (unsigned char*)pointer_;
+            auto head = (uint8_t*)pointer_;
             int row_offset = rows_ * stride_;
 
             for (auto ptr_row = head; ptr_row < head + row_offset; ptr_row += stride_) {
@@ -60,8 +62,8 @@ namespace NimaNativeCore {
                 return -2;
             }
 
-            auto src = (const unsigned char*)pointer_;
-            auto dest = (unsigned char*)dest_matrix.pointer_;
+            auto src = (const uint8_t*)pointer_;
+            auto dest = (uint8_t*)dest_matrix.pointer_;
             int row_offset = rows_ * stride_;
             int col_offset = columns_ * bytesPerData_;
             for (size_t row = 0; row < row_offset; row += stride_) {
@@ -73,11 +75,11 @@ namespace NimaNativeCore {
         }
 
 #if true    //for test
-        long long get_sum_int64() const
+        int64_t get_sum_int64() const
         {
-            long long sum = 0;
+            int64_t sum = 0;
             int row_offset = rows_ * stride_;
-            auto head = (const unsigned char*)pointer_;
+            auto head = (const uint8_t*)pointer_;
 
             for (auto ptr_row = head; ptr_row < head + row_offset; ptr_row += stride_) {
                 for (auto ptr = (T*)ptr_row; ptr < (T*)ptr_row + columns_; ptr++) {
@@ -91,7 +93,7 @@ namespace NimaNativeCore {
         {
             double sum = .0;
             int row_offset = rows_ * stride_;
-            auto head = (const unsigned char*)pointer_;
+            auto head = (const uint8_t*)pointer_;
 
             for (auto ptr_row = head; ptr_row < head + row_offset; ptr_row += stride_) {
                 for (auto ptr = (T*)ptr_row; ptr < (T*)ptr_row + columns_; ptr++) {

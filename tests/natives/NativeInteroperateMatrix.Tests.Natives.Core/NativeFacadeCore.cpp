@@ -4,7 +4,7 @@
 using namespace NimaNativeCore;
 
 // Byte
-DllExport long long SumByteMatrix(ByteMatrix* matrix)
+DllExport int64_t SumByteMatrix(ByteMatrix* matrix)
 {
     return matrix->get_sum_int64();
 }
@@ -14,7 +14,7 @@ DllExport void ClearByteMatrix(ByteMatrix* matrix)
 }
 
 // Int8
-DllExport long long SumInt8Matrix(Int8Matrix* matrix)
+DllExport int64_t SumInt8Matrix(Int8Matrix* matrix)
 {
     return matrix->get_sum_int64();
 }
@@ -24,7 +24,7 @@ DllExport void ClearInt8Matrix(Int8Matrix* matrix)
 }
 
 // Int16
-DllExport long long SumInt16Matrix(Int16Matrix* matrix)
+DllExport int64_t SumInt16Matrix(Int16Matrix* matrix)
 {
     return matrix->get_sum_int64();
 }
@@ -34,7 +34,7 @@ DllExport void ClearInt16Matrix(Int16Matrix* matrix)
 }
 
 // Int32
-DllExport long long SumInt32Matrix(Int32Matrix* matrix)
+DllExport int64_t SumInt32Matrix(Int32Matrix* matrix)
 {
     return matrix->get_sum_int64();
 }
@@ -44,7 +44,7 @@ DllExport void ClearInt32Matrix(Int32Matrix* matrix)
 }
 
 // Int64
-DllExport long long SumInt64Matrix(Int64Matrix* matrix)
+DllExport int64_t SumInt64Matrix(Int64Matrix* matrix)
 {
     return matrix->get_sum_int64();
 }

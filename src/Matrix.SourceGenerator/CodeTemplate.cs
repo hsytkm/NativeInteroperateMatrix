@@ -34,7 +34,7 @@ namespace Matrix.SourceGenerator
             this.Write("\r\n");
  } 
             this.Write("{\r\n    // Do not change the order of the struct because it is the same as C++\r\n  " +
-                    "  [StructLayout(LayoutKind.Sequential, Pack = 1, Size = 8 + (4 * 4))]\r\n    parti" +
+                    "  [StructLayout(LayoutKind.Sequential, Pack = 1, Size = 8 + (5 * 4))]\r\n    parti" +
                     "al record struct ");
             this.Write(this.ToStringHelper.ToStringWithCulture(MatrixClassName));
             this.Write(" : IMatrix<");
@@ -42,7 +42,7 @@ namespace Matrix.SourceGenerator
             this.Write(@">
     {
         readonly IntPtr _pointer;
-        //readonly int _allocSize;  // = rows * stride;
+        readonly int _allocSize;
         readonly int _rows;         // height
         readonly int _columns;      // width
         readonly int _bytesPerItem;
@@ -50,37 +50,38 @@ namespace Matrix.SourceGenerator
 
         public ");
             this.Write(this.ToStringHelper.ToStringWithCulture(MatrixClassName));
-            this.Write("(IntPtr intPtr, int rows, int columns, int bytesPerItem, int stride)\r\n        {\r\n" +
-                    "            if (IntPtr.Size != 8)\r\n                throw new NotSupportedExcepti" +
-                    "on(\"Must be x64\");\r\n\r\n            if (bytesPerItem != Unsafe.SizeOf<");
+            this.Write("(IntPtr pointer, int allocSize, int rows, int columns, int bytesPerItem, int stri" +
+                    "de)\r\n        {\r\n            if (IntPtr.Size != 8)\r\n                throw new Not" +
+                    "SupportedException(\"Must be x64\");\r\n\r\n            if (bytesPerItem != Unsafe.Siz" +
+                    "eOf<");
             this.Write(this.ToStringHelper.ToStringWithCulture(ValueItemTypeName));
             this.Write(">())\r\n                throw new ArgumentException(nameof(bytesPerItem));\r\n\r\n     " +
-                    "       _pointer = intPtr;\r\n            _rows = rows;\r\n            _columns = col" +
-                    "umns;\r\n            _bytesPerItem = bytesPerItem;\r\n            _stride = stride;\r" +
-                    "\n        }\r\n\r\n        [MethodImpl(MethodImplOptions.AggressiveInlining)]\r\n      " +
-                    "  void ThrowInvalidRow(int row)\r\n        {\r\n            if (row < 0 || _rows - 1" +
-                    " < row)\r\n                throw new ArgumentException($\"Invalid row={row}\");\r\n   " +
-                    "     }\r\n\r\n        [MethodImpl(MethodImplOptions.AggressiveInlining)]\r\n        vo" +
-                    "id ThrowInvalidColumn(int column)\r\n        {\r\n            if (column < 0 || _col" +
-                    "umns - 1 < column)\r\n                throw new ArgumentException($\"Invalid column" +
-                    "={column}\");\r\n        }\r\n        \r\n        [MethodImpl(MethodImplOptions.Aggress" +
-                    "iveInlining)]\r\n        void ThrowInvalidRowColumn(int row, int column)\r\n        " +
-                    "{\r\n            ThrowInvalidRow(row);\r\n            ThrowInvalidColumn(column);\r\n " +
-                    "       }\r\n\r\n        [MethodImpl(MethodImplOptions.AggressiveInlining)]\r\n        " +
-                    "IntPtr GetIntPtr(int row, int column)\r\n        {\r\n            ThrowInvalidRowCol" +
-                    "umn(row, column);\r\n            return _pointer + (row * _stride) + (column * _by" +
-                    "tesPerItem);\r\n        }\r\n\r\n        // INativeMemory\r\n        public IntPtr Point" +
-                    "er => _pointer;\r\n        public int AllocatedSize => _columns * _bytesPerItem * " +
-                    "_rows;  // don\'t use stride\r\n        public int BytesPerItem => _bytesPerItem;\r\n" +
-                    "        public int BitsPerItem => _bytesPerItem * 8;\r\n        public bool IsVali" +
-                    "d\r\n        {\r\n            get\r\n            {\r\n                if (_pointer == In" +
-                    "tPtr.Zero) return false;\r\n                if (_columns <= 0 || _rows <= 0) retur" +
-                    "n false;\r\n                if (_stride < _columns * _bytesPerItem) return false;\r" +
-                    "\n                return true;    //valid\r\n            }\r\n        }\r\n\r\n        //" +
-                    " IMatrix\r\n        public int Rows => _rows;\r\n        public int Columns => _colu" +
-                    "mns;\r\n        public int Stride => _stride;\r\n        public bool IsContinuous =>" +
-                    " (_columns * _bytesPerItem) == _stride;\r\n\r\n        // IMatrix<T>\r\n        public" +
-                    " unsafe ref ");
+                    "       _pointer = pointer;\r\n            _allocSize = allocSize;\r\n            _ro" +
+                    "ws = rows;\r\n            _columns = columns;\r\n            _bytesPerItem = bytesPe" +
+                    "rItem;\r\n            _stride = stride;\r\n        }\r\n\r\n        [MethodImpl(MethodIm" +
+                    "plOptions.AggressiveInlining)]\r\n        void ThrowInvalidRow(int row)\r\n        {" +
+                    "\r\n            if (row < 0 || _rows - 1 < row)\r\n                throw new Argumen" +
+                    "tException($\"Invalid row={row}\");\r\n        }\r\n\r\n        [MethodImpl(MethodImplOp" +
+                    "tions.AggressiveInlining)]\r\n        void ThrowInvalidColumn(int column)\r\n       " +
+                    " {\r\n            if (column < 0 || _columns - 1 < column)\r\n                throw " +
+                    "new ArgumentException($\"Invalid column={column}\");\r\n        }\r\n        \r\n       " +
+                    " [MethodImpl(MethodImplOptions.AggressiveInlining)]\r\n        void ThrowInvalidRo" +
+                    "wColumn(int row, int column)\r\n        {\r\n            ThrowInvalidRow(row);\r\n    " +
+                    "        ThrowInvalidColumn(column);\r\n        }\r\n\r\n        [MethodImpl(MethodImpl" +
+                    "Options.AggressiveInlining)]\r\n        IntPtr GetIntPtr(int row, int column)\r\n   " +
+                    "     {\r\n            ThrowInvalidRowColumn(row, column);\r\n            return _poi" +
+                    "nter + (row * _stride) + (column * _bytesPerItem);\r\n        }\r\n\r\n        // INat" +
+                    "iveMemory\r\n        public IntPtr Pointer => _pointer;\r\n        public int Alloca" +
+                    "tedSize => _allocSize;\r\n        public int BytesPerItem => _bytesPerItem;\r\n     " +
+                    "   public int BitsPerItem => _bytesPerItem * 8;\r\n        public bool IsValid\r\n  " +
+                    "      {\r\n            get\r\n            {\r\n                if (_pointer == IntPtr." +
+                    "Zero) return false;\r\n                if (_columns <= 0 || _rows <= 0) return fal" +
+                    "se;\r\n                if (_stride < _columns * _bytesPerItem) return false;\r\n    " +
+                    "            return true;    //valid\r\n            }\r\n        }\r\n\r\n        // IMat" +
+                    "rix\r\n        public int Rows => _rows;\r\n        public int Columns => _columns;\r" +
+                    "\n        public int Stride => _stride;\r\n        public bool IsContinuous => (_co" +
+                    "lumns * _bytesPerItem) == _stride;\r\n\r\n        // IMatrix<T>\r\n        public unsa" +
+                    "fe ref ");
             this.Write(this.ToStringHelper.ToStringWithCulture(ValueItemTypeName));
             this.Write(" this[int row, int column]\r\n        {\r\n            get\r\n            {\r\n          " +
                     "      IntPtr ptr = GetIntPtr(row, column);\r\n                return ref Unsafe.As" +
@@ -138,7 +139,8 @@ namespace Matrix.SourceGenerator
             
             Matrix = new ");
             this.Write(this.ToStringHelper.ToStringWithCulture(MatrixClassName));
-            this.Write("(ptr, rows, columns, bytesPerData, stride);\r\n        }\r\n\r\n        public ");
+            this.Write("(ptr, allocSize, rows, columns, bytesPerData, stride);\r\n        }\r\n\r\n        publ" +
+                    "ic ");
             this.Write(this.ToStringHelper.ToStringWithCulture(ContainerClassName));
             this.Write("(int rows, int columns)\r\n            : this(rows, columns, true)\r\n        { }\r\n\r\n" +
                     "        public ");
@@ -176,32 +178,86 @@ namespace Matrix.SourceGenerator
             this.Write(this.ToStringHelper.ToStringWithCulture(ContainerClassName));
             this.Write("(int rows, int columns, ReadOnlySpan<");
             this.Write(this.ToStringHelper.ToStringWithCulture(ValueItemTypeName));
-            this.Write("> items)\r\n            : this(rows, columns, false)\r\n        {\r\n            int le" +
-                    "ngth = rows * columns;\r\n            int written = 0;\r\n            int row = 0;\r\n" +
-                    "            int column = 0;\r\n            var span = Matrix.AsRowSpan(0);\r\n\r\n    " +
-                    "        foreach (var item in items)\r\n            {\r\n                if (column >" +
-                    "= columns)\r\n                {\r\n                    column = 0;\r\n                " +
-                    "    row++;\r\n                    span = Matrix.AsRowSpan(row);\r\n                }" +
-                    "\r\n                span[column++] = item;\r\n\r\n                if (++written > leng" +
-                    "th)\r\n                    throw new ArgumentException(\"items is large.\", nameof(i" +
-                    "tems));\r\n            }\r\n\r\n            if (!(row == rows - 1 && column == columns" +
-                    "))\r\n                throw new ArgumentException(\"items is small.\", nameof(items)" +
-                    ");\r\n        }\r\n        \r\n        static PointerSizePair Alloc(int size)\r\n       " +
-                    " {\r\n            IntPtr intPtr;\r\n#if NET6_0_OR_GREATER\r\n            unsafe { intP" +
-                    "tr = (IntPtr)NativeMemory.Alloc((nuint)size); }\r\n#else\r\n            intPtr = Mar" +
-                    "shal.AllocCoTaskMem(size);\r\n#endif\r\n            GC.AddMemoryPressure(size);\r\n   " +
-                    "         return new(intPtr, size);\r\n        }\r\n\r\n        static void Free(in Poi" +
-                    "nterSizePair pair)\r\n        {\r\n#if NET6_0_OR_GREATER\r\n            unsafe { Nativ" +
-                    "eMemory.Free((void*)pair.Pointer); }\r\n#else\r\n            Marshal.FreeCoTaskMem(p" +
-                    "air.Pointer);\r\n#endif\r\n            GC.RemoveMemoryPressure(pair.Size);\r\n        " +
-                    "}\r\n        \r\n        bool _disposedValue;\r\n        public void Dispose(bool disp" +
-                    "osing)\r\n        {\r\n            if (_disposedValue) return;\r\n\r\n            if (di" +
-                    "sposing)\r\n            {\r\n                // TODO: dispose managed state (managed" +
-                    " objects).\r\n            }\r\n\r\n            // TODO: free unmanaged resources (unma" +
-                    "naged objects) and override a finalizer below.\r\n            if (_allocatedMemory" +
-                    " != PointerSizePair.Zero)\r\n            {\r\n                Free(_allocatedMemory)" +
-                    ";\r\n                _allocatedMemory = PointerSizePair.Zero;\r\n            }\r\n\r\n  " +
-                    "          _disposedValue = true;\r\n        }\r\n\r\n        ~");
+            this.Write(@"> items)
+            : this(rows, columns, false)
+        {
+            int length = rows * columns;
+            int written = 0;
+            int row = 0;
+            int column = 0;
+            var span = Matrix.AsRowSpan(0);
+
+            foreach (var item in items)
+            {
+                if (column >= columns)
+                {
+                    column = 0;
+                    row++;
+                    span = Matrix.AsRowSpan(row);
+                }
+                span[column++] = item;
+
+                if (++written > length)
+                    throw new ArgumentException(""items is large."", nameof(items));
+            }
+
+            if (!(row == rows - 1 && column == columns))
+                throw new ArgumentException(""items is small."", nameof(items));
+        }
+        
+");
+ if (ValueItemTypeName != "Byte") { 
+            this.Write("        public ");
+            this.Write(this.ToStringHelper.ToStringWithCulture(ContainerClassName));
+            this.Write("(int rows, int columns, ReadOnlySpan<byte> items)\r\n            : this(rows, colum" +
+                    "ns, MemoryMarshal.Cast<byte, ");
+            this.Write(this.ToStringHelper.ToStringWithCulture(ValueItemTypeName));
+            this.Write(">(items))\r\n        { }\r\n");
+ } 
+            this.Write(@"
+        static PointerSizePair Alloc(int size)
+        {
+            IntPtr intPtr;
+#if NET6_0_OR_GREATER
+            unsafe { intPtr = (IntPtr)NativeMemory.Alloc((nuint)size); }
+#else
+            intPtr = Marshal.AllocCoTaskMem(size);
+#endif
+            GC.AddMemoryPressure(size);
+            return new(intPtr, size);
+        }
+
+        static void Free(in PointerSizePair pair)
+        {
+#if NET6_0_OR_GREATER
+            unsafe { NativeMemory.Free((void*)pair.Pointer); }
+#else
+            Marshal.FreeCoTaskMem(pair.Pointer);
+#endif
+            GC.RemoveMemoryPressure(pair.Size);
+        }
+        
+        bool _disposedValue;
+        public void Dispose(bool disposing)
+        {
+            if (_disposedValue) return;
+
+            if (disposing)
+            {
+                // TODO: dispose managed state (managed objects).
+            }
+
+            // TODO: free unmanaged resources (unmanaged objects) and override a finalizer below.
+            if (_allocatedMemory != PointerSizePair.Zero)
+            {
+                Free(_allocatedMemory);
+                _allocatedMemory = PointerSizePair.Zero;
+            }
+
+            _disposedValue = true;
+        }
+
+        ~");
             this.Write(this.ToStringHelper.ToStringWithCulture(ContainerClassName));
             this.Write("() => Dispose(false);\r\n\r\n        public void Dispose()\r\n        {\r\n            Di" +
                     "spose(true);\r\n            GC.SuppressFinalize(this);\r\n        }\r\n    }\r\n}\r\n");

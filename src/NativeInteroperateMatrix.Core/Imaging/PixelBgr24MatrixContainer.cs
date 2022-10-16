@@ -4,8 +4,26 @@ namespace Nima.Imaging;
 
 // SourceGenerator 内で Container も一緒に生成しちゃっています(手抜き)
 public /*sealed*/ partial class PixelBgr24MatrixContainer
-    //: IMatrixContainer<PixelBgr24>, IDisposable
+//: IMatrixContainer<PixelBgr24>, IDisposable
 {
+    private PixelBgr24MatrixContainer(in PixelBgr24Matrix matrix)
+        : this(matrix.Rows, matrix.Columns, false)
+    {
+        Matrix = matrix;
+    }
+
+    /// <summary>
+    /// 確保メモリを変更せずに小さい画像サイズに変更します
+    /// </summary>
+    public PixelBgr24MatrixContainer ShrinkToNewMatrix(int newRows, int newColumns, int newBytesPerPixel, int newStride)
+    {
+        if (newStride * newRows > Matrix.AllocatedSize)
+            throw new NotSupportedException();
+
+        var newMatrix = new PixelBgr24Matrix(Matrix.Pointer, Matrix.AllocatedSize, newRows, newColumns, newBytesPerPixel, newStride);
+        return new(newMatrix);
+    }
+
     /// <summary>Bitmapファイルから PixelBgrMatrixContainer を生成します</summary>
     /// <param name="filePath">File path of Bitmap</param>
     /// <returns></returns>
@@ -105,11 +123,21 @@ public /*sealed*/ partial class PixelBgr24MatrixContainer
         return container;
     }
 
-    public static bool CanReuseContainer(PixelBgr24MatrixContainer container, in PixelBgr24Matrix pixels)
+    /// <summary>
+    /// 指定と同じ画像のコンテナを新規に作成します
+    /// </summary>
+    public static PixelBgr24MatrixContainer Clone(in PixelBgr24Matrix pixels)
     {
-        if (container.Matrix.Columns != pixels.Columns
-            || container.Matrix.Rows != pixels.Rows
-            || container.Matrix.BytesPerPixel != pixels.BytesPerPixel)
+        var container = new PixelBgr24MatrixContainer(pixels.Rows, pixels.Columns, false);
+        container.Matrix.CopyFrom(pixels);
+        return container;
+    }
+
+    public bool CanReuseContainer(in PixelBgr24Matrix pixels)
+    {
+        if (Matrix.Columns != pixels.Columns
+            || Matrix.Rows != pixels.Rows
+            || Matrix.BytesPerPixel != pixels.BytesPerPixel)
             return false;
 
         return true;

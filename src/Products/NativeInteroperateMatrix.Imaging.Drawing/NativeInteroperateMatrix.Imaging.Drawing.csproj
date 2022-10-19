@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netcoreapp3.1;net6.0-windows</TargetFrameworks>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+      <TargetFrameworks>netcoreapp3.1;net6.0-windows</TargetFrameworks>
+      <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Title>Nima.Imaging.Drawing</Title>
     <AssemblyName>Nima.Imaging.Drawing</AssemblyName>
     <RootNamespace>Nima.Imaging.Drawing</RootNamespace>

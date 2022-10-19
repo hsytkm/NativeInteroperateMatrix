@@ -5,11 +5,11 @@ VisualStudioVersion = 17.3.32811.315
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{4FE1A2EF-90C9-4DF3-8ECE-65BD651DD1F7}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NativeInteroperateMatrix.Core", "src\NativeInteroperateMatrix.Core\NativeInteroperateMatrix.Core.csproj", "{A33D8F70-DEF2-4193-93EB-9185B363552A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NativeInteroperateMatrix.Core", "src\Products\NativeInteroperateMatrix.Core\NativeInteroperateMatrix.Core.csproj", "{A33D8F70-DEF2-4193-93EB-9185B363552A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NativeInteroperateMatrix.Imaging.Wpf", "src\NativeInteroperateMatrix.Imaging.Wpf\NativeInteroperateMatrix.Imaging.Wpf.csproj", "{6B172BA1-56A5-4D27-9C84-3F7FDE932282}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NativeInteroperateMatrix.Imaging.Wpf", "src\Products\NativeInteroperateMatrix.Imaging.Wpf\NativeInteroperateMatrix.Imaging.Wpf.csproj", "{6B172BA1-56A5-4D27-9C84-3F7FDE932282}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NativeInteroperateMatrix.Imaging.Drawing", "src\NativeInteroperateMatrix.Imaging.Drawing\NativeInteroperateMatrix.Imaging.Drawing.csproj", "{FB5FA3DC-BCD7-4C6A-BCA1-1FDC64B6E416}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NativeInteroperateMatrix.Imaging.Drawing", "src\Products\NativeInteroperateMatrix.Imaging.Drawing\NativeInteroperateMatrix.Imaging.Drawing.csproj", "{FB5FA3DC-BCD7-4C6A-BCA1-1FDC64B6E416}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{B530AB32-3E14-4B24-8D30-7B062FC271AB}"
 EndProject

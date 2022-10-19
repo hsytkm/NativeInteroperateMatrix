@@ -24,7 +24,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\src\NativeInteroperateMatrix.Imaging.Drawing\NativeInteroperateMatrix.Imaging.Drawing.csproj" />
+        <ProjectReference Include="..\..\src\Products\NativeInteroperateMatrix.Imaging.Drawing\NativeInteroperateMatrix.Imaging.Drawing.csproj" />
         <ProjectReference Include="..\NativeInteroperateMatrix.Core.Tests\NativeInteroperateMatrix.Core.Tests.csproj" />
     </ItemGroup>
 

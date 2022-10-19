@@ -24,7 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\NativeInteroperateMatrix.Core\NativeInteroperateMatrix.Core.csproj" />
+    <ProjectReference Include="..\..\src\Products\NativeInteroperateMatrix.Core\NativeInteroperateMatrix.Core.csproj" />
   </ItemGroup>
 
   <ItemGroup>

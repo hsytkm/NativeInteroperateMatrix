@@ -19,7 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\NativeInteroperateMatrix.Imaging.Wpf\NativeInteroperateMatrix.Imaging.Wpf.csproj" />
+    <ProjectReference Include="..\..\src\Products\NativeInteroperateMatrix.Imaging.Wpf\NativeInteroperateMatrix.Imaging.Wpf.csproj" />
   </ItemGroup>
 
   <ItemGroup>

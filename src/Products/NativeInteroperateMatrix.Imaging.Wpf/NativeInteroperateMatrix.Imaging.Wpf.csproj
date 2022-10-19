@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netcoreapp3.1;net6.0-windows</TargetFrameworks>
-    <UseWPF>true</UseWPF>
+      <TargetFrameworks>netcoreapp3.1;net6.0-windows</TargetFrameworks>
+      <UseWPF>true</UseWPF>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Title>Nima.Imaging.Wpf</Title>
     <AssemblyName>Nima.Imaging.Wpf</AssemblyName>

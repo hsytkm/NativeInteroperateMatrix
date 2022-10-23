@@ -1,9 +1,6 @@
-﻿using System.Diagnostics;
-using System.Runtime.CompilerServices;
-using Matrix.SourceGenerator;
+﻿namespace Nima.Imaging;
 
-namespace Nima.Imaging;
-
+#if false
 [MatrixGenerator]
 public readonly partial record struct PixelBgr24Matrix : IMatrix<PixelBgr24>
 {
@@ -15,7 +12,7 @@ public readonly partial record struct PixelBgr24Matrix : IMatrix<PixelBgr24>
     public unsafe void CopyFrom(IntPtr intPtr, int width, int height, int stride)
     {
         var srcSize = height * stride;
-        if (AllocatedSize < srcSize)
+        if (AllocateSize < srcSize)
             throw new NotSupportedException("Allocated size is short.");
 
         var destStride = Stride;
@@ -172,7 +169,7 @@ public readonly partial record struct PixelBgr24Matrix : IMatrix<PixelBgr24>
         if (_rows < y + height) throw new ArgumentException("horizontal direction");
 
         var bytesPerData = Unsafe.SizeOf<PixelBgr24>();
-        var size = AllocatedSize - (y * Stride) - (x * BytesPerItem);
+        var size = AllocateSize - (y * Stride) - (x * BytesPerItem);
         return new(GetIntPtr(y, x), size, height, width, bytesPerData, _stride);
     }
 
@@ -190,7 +187,7 @@ public readonly partial record struct PixelBgr24Matrix : IMatrix<PixelBgr24>
             // メモリが連続していれば memcopy
             if (srcPixels.IsContinuous && destPixels.IsContinuous)
             {
-                UnsafeUtils.MemCopy(destPixels._pointer, srcPixels._pointer, srcPixels.AllocatedSize);
+                UnsafeUtils.MemCopy(destPixels._pointer, srcPixels._pointer, srcPixels.AllocateSize);
                 return;
             }
 
@@ -330,3 +327,4 @@ public readonly partial record struct PixelBgr24Matrix : IMatrix<PixelBgr24>
     }
 
 }
+#endif

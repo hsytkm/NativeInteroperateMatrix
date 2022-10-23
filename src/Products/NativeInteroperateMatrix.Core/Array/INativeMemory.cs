@@ -10,7 +10,7 @@ public interface INativeMemory
     /// <summary>
     /// Allocated memory size (byte)
     /// </summary>
-    int AllocatedSize { get; }
+    int AllocateSize { get; }
 
     /// <summary>
     /// byte size of each item

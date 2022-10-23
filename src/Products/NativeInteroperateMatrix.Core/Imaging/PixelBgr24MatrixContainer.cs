@@ -1,7 +1,6 @@
-﻿using System.Runtime.CompilerServices;
+﻿namespace Nima.Imaging;
 
-namespace Nima.Imaging;
-
+#if false
 // SourceGenerator 内で Container も一緒に生成しちゃっています(手抜き)
 public /*sealed*/ partial class PixelBgr24MatrixContainer
 //: IMatrixContainer<PixelBgr24>, IDisposable
@@ -17,10 +16,10 @@ public /*sealed*/ partial class PixelBgr24MatrixContainer
     /// </summary>
     public PixelBgr24MatrixContainer ShrinkToNewMatrix(int newRows, int newColumns, int newBytesPerPixel, int newStride)
     {
-        if (newStride * newRows > Matrix.AllocatedSize)
+        if (newStride * newRows > Matrix.AllocateSize)
             throw new NotSupportedException();
 
-        var newMatrix = new PixelBgr24Matrix(Matrix.Pointer, Matrix.AllocatedSize, newRows, newColumns, newBytesPerPixel, newStride);
+        var newMatrix = new PixelBgr24Matrix(Matrix.Pointer, Matrix.AllocateSize, newRows, newColumns, newBytesPerPixel, newStride);
         return new(newMatrix);
     }
 
@@ -144,3 +143,4 @@ public /*sealed*/ partial class PixelBgr24MatrixContainer
     }
 
 }
+#endif

@@ -1,65 +1,61 @@
-﻿using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
-
-namespace Nima;
+﻿namespace Nima;
 
 // Do not change the order of the struct because it is the same as C++
-[StructLayout(LayoutKind.Sequential, Pack = 1, Size = 8 + (3 * 4))]
-public readonly record struct NativeArray : IArray, INativeMemory
+[StructLayout(LayoutKind.Sequential, Pack = 1, Size = 8 + (2 * sizeof(int)))]
+public readonly record struct NativeArray : INativeArray
 {
-    //public static NativeArray Zero = new(IntPtr.Zero, 0, 0);
+    public static NativeArray Zero = new(IntPtr.Zero, 0, 0);
 
     readonly IntPtr _pointer;
-    readonly int _allocSize;
-    readonly int _count;
+    readonly int _allocateSize;
     readonly int _bytesPerItem;
 
-    public NativeArray(IntPtr pointer, int allocSize, int bytesPerItem)
+    public NativeArray(IntPtr pointer, int allocateSize, int bytesPerItem)
     {
         if (IntPtr.Size != 8)
-            throw new NotSupportedException("Must be x64");
+            throw new NotSupportedException("Must be x64.");
 
         _pointer = pointer;
-        _allocSize = allocSize;
-        _count = allocSize / bytesPerItem;
+        _allocateSize = allocateSize;
         _bytesPerItem = bytesPerItem;
-    }
 
-    public NativeArray GetRearrangedArray(int bytesPerItem) => new(_pointer, _allocSize, bytesPerItem);
+        if (!IsValid)
+            throw new NotSupportedException($"Invalid {nameof(NativeArray)} ctor.");
+    }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     void ThrowInvalidLength(int index)
     {
-        if (index < 0 || _count - 1 < index)
-            throw new ArgumentException($"Invalid length={index}");
+        if (index < 0 || Length - 1 < index)
+            throw new ArgumentException($"Invalid length={index}.");
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     IntPtr GetIntPtr(int index)
     {
         ThrowInvalidLength(index);
-        return _pointer + (index * _bytesPerItem);
+        return Pointer + (index * BytesPerItem);
     }
 
     // INativeMemory
     public IntPtr Pointer => _pointer;
-    public int AllocatedSize => _allocSize;
+    public int AllocateSize => _allocateSize;
     public int BytesPerItem => _bytesPerItem;
     public int BitsPerItem => _bytesPerItem * 8;
     public bool IsValid
     {
         get
         {
-            if (_pointer == IntPtr.Zero) return false;
-            if (_count <= 0) return false;
-            if (_bytesPerItem <= 0) return false;
-            if (_allocSize < _count * _bytesPerItem) return false;
+            if (Pointer == IntPtr.Zero) return false;
+            if (Length <= 0) return false;
+            if (BytesPerItem <= 0) return false;
+            if (AllocateSize < Length * BytesPerItem) return false;
             return true;    //valid
         }
     }
 
     // IArray
-    public int Count => _count;
+    public int Length => AllocateSize / BytesPerItem;
 
     // IMatrix<T>
     public unsafe ref Byte this[int index]
@@ -71,8 +67,15 @@ public readonly record struct NativeArray : IArray, INativeMemory
         }
     }
 
-    public unsafe Span<Byte> AsSpan() => new(_pointer.ToPointer(), _count);
-    public unsafe Span<Byte> AsReadOnlySpan() => AsSpan();
+    public unsafe Span<T> AsSpan<T>() where T : struct
+    {
+        int length = Length / Unsafe.SizeOf<T>();
+        return new(Pointer.ToPointer(), length);
+    }
 
-    public override string ToString() => $"Length={_count}, Pointer=0x{_pointer:x16}";
+    public unsafe Span<T> AsReadOnlySpan<T>() where T : struct => AsSpan<T>();
+
+    public NativeArray GetRearrangedArray(int bytesPerItem) => new(Pointer, AllocateSize, bytesPerItem);
+
+    public override string ToString() => $"Length={Length}, Pointer=0x{Pointer:x16}";
 }

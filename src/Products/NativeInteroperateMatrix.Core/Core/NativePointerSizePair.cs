@@ -1,7 +1,4 @@
-﻿using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
-
-namespace Nima;
+﻿namespace Nima;
 
 internal readonly record struct NativePointerSizePair
 {
@@ -12,8 +9,7 @@ internal readonly record struct NativePointerSizePair
     public NativePointerSizePair(IntPtr ptr, int size) => (Pointer, Size) = (ptr, size);
     public void Deconstruct(out IntPtr ptr, out int size) => (ptr, size) = (Pointer, Size);
 
-    public unsafe Span<T> AsSpan<T>() where T : struct =>
-        new(Pointer.ToPointer(), Size / Unsafe.SizeOf<T>());
+    //public unsafe Span<byte> AsSpan() => new(Pointer.ToPointer(), Size);
 
     public static NativePointerSizePair Alloc(int size, bool initialize = true)
     {

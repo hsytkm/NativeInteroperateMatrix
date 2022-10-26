@@ -25,22 +25,20 @@ public static class PixelMatrixDrawingBitmapExtension
     }
 
     /// <summary>PixelBgrMatrixContainer を作成して返します</summary>
-    public static PixelBgr24MatrixContainer ToPixelBgr24MatrixContainer(this Bitmap bitmap, bool isDisposeBitmap = false)
+    public static IPixelBgr24MatrixContainer ToPixelBgr24MatrixContainer(this Bitmap bitmap, bool isDisposeBitmap = false)
     {
         if (bitmap.IsInvalid()) throw new ArgumentException("Invalid Image");
 
         var container = new PixelBgr24MatrixContainer(rows: bitmap.Height, columns: bitmap.Width, false);
-        var pixels = container.Matrix;
 
         switch (bitmap.PixelFormat)
         {
             case PixelFormat.Format24bppRgb:
-                Copy24bitToBgrMatrix(bitmap, pixels, isDisposeBitmap);
+                bitmap.CopyTo(container, isDisposeBitmap);
                 break;
-            case PixelFormat.Format8bppIndexed:
-                // ◆未テスト
-                Copy8bitToBgrMatrix(bitmap, pixels, isDisposeBitmap);
-                break;
+            //case PixelFormat.Format8bppIndexed: // ◆未テスト
+            //    bitmap.Copy8bitToBgrMatrix(container, isDisposeBitmap);
+            //    break;
             default:
                 throw new NotImplementedException($"PixelFormat : {bitmap.PixelFormat}");
         }
@@ -48,15 +46,17 @@ public static class PixelMatrixDrawingBitmapExtension
     }
 
     /// <summary>PixelBgrMatrix に画素値をコピーします</summary>
-    public static void Copy24bitToBgrMatrix(this Bitmap bitmap, in PixelBgr24Matrix pixels, bool isDisposeBitmap = false)
+    public static void CopyTo(this Bitmap bitmap, IPixelBgr24MatrixContainer container, bool isDisposeBitmap = false)
     {
+        using var disposable = container.GetMatrixForWrite(out NativeMatrix matrix);
+
         if (bitmap.IsInvalid()) throw new ArgumentException("Invalid Bitmap");
-        if (!pixels.IsValid) throw new ArgumentException("Invalid Pixels");
-        if (bitmap.Width != pixels.Width) throw new ArgumentException("Different Width");
-        if (bitmap.Height != pixels.Height) throw new ArgumentException("Different Height");
+        if (!matrix.IsValid) throw new ArgumentException("Invalid Pixels");
+        if (bitmap.Width != matrix.Width) throw new ArgumentException("Different Width");
+        if (bitmap.Height != matrix.Height) throw new ArgumentException("Different Height");
 
         var srcBytesPerPixel = bitmap.GetBytesPerPixel();
-        if (srcBytesPerPixel < pixels.BytesPerItem)
+        if (srcBytesPerPixel < matrix.BytesPerItem)
             throw new NotImplementedException("Different BytesPerPixel");
 
         var bitmapData = bitmap.LockBits(new Rectangle(Point.Empty, bitmap.Size), ImageLockMode.ReadOnly, bitmap.PixelFormat);
@@ -69,9 +69,9 @@ public static class PixelMatrixDrawingBitmapExtension
                 var srcStride = bitmapData.Stride;
                 var srcPtrTail = srcHead + (bitmap.Height * srcStride);
 
-                var destHead = (byte*)pixels.Pointer;
-                var destStride = pixels.Stride;
-                var destBytesPerPixel = pixels.BytesPerItem;
+                var destHead = (byte*)matrix.Pointer;
+                var destStride = matrix.Stride;
+                var destBytesPerPixel = matrix.BytesPerItem;
 
                 var isSameLength = srcBytesPerPixel == destBytesPerPixel;
 
@@ -110,47 +110,49 @@ public static class PixelMatrixDrawingBitmapExtension
     }
 
     /// <summary>PixelBgrMatrix に画素値をコピーします</summary>
-    public static void Copy8bitToBgrMatrix(this Bitmap bitmap, in PixelBgr24Matrix pixels, bool isDisposeBitmap = false)
-    {
-        if (bitmap.IsInvalid()) throw new ArgumentException("Invalid Bitmap");
-        if (!pixels.IsValid) throw new ArgumentException("Invalid Pixels");
-        if (bitmap.Width != pixels.Width) throw new ArgumentException("Different Width");
-        if (bitmap.Height != pixels.Height) throw new ArgumentException("Different Height");
+    //public static void Copy8bitToBgrMatrix(this Bitmap bitmap, IPixelBgr24MatrixContainer container, bool isDisposeBitmap = false)
+    //{
+    //    using var disposable = container.GetMatrixForWrite(out NativeMatrix matrix);
 
-        if (bitmap.GetBytesPerPixel() != 1)
-            throw new NotImplementedException("Different BytesPerPixel");
+    //    if (bitmap.IsInvalid()) throw new ArgumentException("Invalid Bitmap");
+    //    if (!matrix.IsValid) throw new ArgumentException("Invalid Pixels");
+    //    if (bitmap.Width != matrix.Width) throw new ArgumentException("Different Width");
+    //    if (bitmap.Height != matrix.Height) throw new ArgumentException("Different Height");
 
-        var bitmapData = bitmap.LockBits(new Rectangle(Point.Empty, bitmap.Size), ImageLockMode.ReadOnly, bitmap.PixelFormat);
+    //    if (bitmap.GetBytesPerPixel() != 1)
+    //        throw new NotImplementedException("Different BytesPerPixel");
 
-        try
-        {
-            unsafe
-            {
-                var srcHead = (byte*)bitmapData.Scan0;
-                var srcStride = bitmapData.Stride;
-                var srcPtrTail = srcHead + (bitmap.Height * srcStride);
+    //    var bitmapData = bitmap.LockBits(new Rectangle(Point.Empty, bitmap.Size), ImageLockMode.ReadOnly, bitmap.PixelFormat);
 
-                var destHead = (byte*)pixels.Pointer;
-                var destStride = pixels.Stride;
-                var destBytesPerPixel = pixels.BytesPerItem;
+    //    try
+    //    {
+    //        unsafe
+    //        {
+    //            var srcHead = (byte*)bitmapData.Scan0;
+    //            var srcStride = bitmapData.Stride;
+    //            var srcPtrTail = srcHead + (bitmap.Height * srcStride);
 
-                for (byte* srcPtr = srcHead, destPtr = destHead;
-                     srcPtr < srcPtrTail;
-                     srcPtr += srcStride, destPtr += destStride)
-                {
-                    for (var x = 0; x < bitmap.Width; ++x)
-                    {
-                        *(PixelBgr24*)(destPtr + x * destBytesPerPixel) = PixelBgr24.FromGray(*(srcPtr + x));
-                    }
-                }
-            }
-        }
-        finally
-        {
-            bitmap.UnlockBits(bitmapData);
-        }
+    //            var destHead = (byte*)matrix.Pointer;
+    //            var destStride = matrix.Stride;
+    //            var destBytesPerPixel = matrix.BytesPerItem;
 
-        if (isDisposeBitmap) bitmap.Dispose();
-    }
+    //            for (byte* srcPtr = srcHead, destPtr = destHead;
+    //                 srcPtr < srcPtrTail;
+    //                 srcPtr += srcStride, destPtr += destStride)
+    //            {
+    //                for (var x = 0; x < bitmap.Width; ++x)
+    //                {
+    //                    *(PixelBgr24*)(destPtr + x * destBytesPerPixel) = PixelBgr24.FromGray(*(srcPtr + x));
+    //                }
+    //            }
+    //        }
+    //    }
+    //    finally
+    //    {
+    //        bitmap.UnlockBits(bitmapData);
+    //    }
+
+    //    if (isDisposeBitmap) bitmap.Dispose();
+    //}
 
 }

@@ -10,6 +10,6 @@ public static class PixelBgrExtension
 public static class MediaColorExtension
 {
     /// <summary>色を変換します</summary>
-    public static System.Windows.Media.Color ToMediaColor(in this PixelBgr24 pixel) =>
+    public static System.Windows.Media.Color ToMediaColor(this PixelBgr24 pixel) =>
         System.Windows.Media.Color.FromRgb(pixel.Red, pixel.Green, pixel.Blue);
 }

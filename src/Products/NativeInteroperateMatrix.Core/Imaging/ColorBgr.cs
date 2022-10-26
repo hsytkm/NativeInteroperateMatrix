@@ -23,9 +23,10 @@ public sealed record ColorBgr : IFormattable
 
     private static double ToLuminanceY(double b, double g, double r) => 0.299 * r + 0.587 * g + 0.114 * b;
 
-    public override string ToString() => $"B={B:f1}, G={G:f1}, R={R:f1}, Y={Y:f1}";
+    public override string ToString() => $"B={B}, G={G}, R={R}, Y={Y}";
 
-    public string ToString(string? format, IFormatProvider? formatProvider)
-        => $"B={B.ToString(format, formatProvider)}, G={G.ToString(format, formatProvider)}, R={R.ToString(format, formatProvider)}, Y={Y.ToString(format, formatProvider)}";
+    public string ToString(string? format, IFormatProvider? formatProvider) =>
+        $"B={B.ToString(format, formatProvider)}, G={G.ToString(format, formatProvider)}, " +
+        $"R={R.ToString(format, formatProvider)}, Y={Y.ToString(format, formatProvider)}";
 
 }

@@ -12,6 +12,9 @@ public interface INativeMatrix : INativeMemory
     /// </summary>
     int Columns { get; }
 
+    int Width { get; }
+    int Height { get; }
+
     /// <summary>
     /// Memory size of one row
     /// </summary>
@@ -27,7 +30,7 @@ public interface INativeMatrix : INativeMemory
     /// </summary>
     Span<T> AsSpan<T>() where T : struct;
 
-    //ReadOnlySpan<T> AsReadOnlySpan<T>() where T : struct;
+    ReadOnlySpan<T> AsReadOnlySpan<T>() where T : struct;
 
     /// <summary>
     /// Return the Span of the specified row
@@ -35,6 +38,6 @@ public interface INativeMatrix : INativeMemory
     /// <param name="row">Specified row</param>
     Span<T> AsRowSpan<T>(int row) where T : struct;
 
-    //ReadOnlySpan<T> AsRowReadOnlySpan<T>() where T : struct;
+    ReadOnlySpan<T> AsRowReadOnlySpan<T>(int row) where T : struct;
 
 }

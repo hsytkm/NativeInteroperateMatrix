@@ -4,10 +4,11 @@ namespace Nima.Imaging.Wpf;
 
 public static class PixelMatrixContainerExtension
 {
-    public static bool CanReuseContainer(this PixelBgr24MatrixContainer container, BitmapSource bitmap)
+    public static bool CanReuseContainer(this IPixelBgr24MatrixContainer container, BitmapSource bitmap)
     {
-        if (container.Matrix.Width != bitmap.PixelWidth
-            || container.Matrix.Height != bitmap.PixelHeight)
+        using var disposable = container.GetMatrixForRead(out NativeMatrix matrix);
+
+        if (matrix.Width != bitmap.PixelWidth || matrix.Height != bitmap.PixelHeight)
             return false;
 
         return true;

@@ -1,14 +1,10 @@
 ﻿namespace Nima.Imaging;
 
-public /*sealed*/ class PixelBgr24MatrixContainer : MatrixContainerBase
+public /*sealed*/ class PixelBgr24MatrixContainer : MatrixContainerBase, IPixelBgr24MatrixContainer
 {
-    protected new PixelBgr24Matrix Matrix { get; }
-
-    private PixelBgr24MatrixContainer(int rows, int columns, bool initialize)
-        : base(rows, columns, Unsafe.SizeOf<PixelBgr24Matrix>(), initialize)
-    {
-        Matrix = new PixelBgr24Matrix(base.Matrix);
-    }
+    public PixelBgr24MatrixContainer(int rows, int columns, bool initialize)
+        : base(rows, columns, Unsafe.SizeOf<NativeMatrix>(), initialize)
+    { }
 
     /// <summary>
     /// 確保メモリを変更せずに小さい画像サイズに変更します
@@ -18,7 +14,7 @@ public /*sealed*/ class PixelBgr24MatrixContainer : MatrixContainerBase
         if (newStride * newRows > Matrix.AllocateSize)
             throw new NotSupportedException();
 
-        var newMatrix = new PixelBgr24Matrix(Matrix.Pointer, Matrix.AllocateSize, newRows, newColumns, newBytesPerPixel, newStride);
+        var newMatrix = new NativeMatrix(Matrix.Pointer, Matrix.AllocateSize, newRows, newColumns, newBytesPerPixel, newStride);
         return new(newMatrix.Rows, newMatrix.Columns, false);
     }
 
@@ -124,18 +120,18 @@ public /*sealed*/ class PixelBgr24MatrixContainer : MatrixContainerBase
     /// <summary>
     /// 指定と同じ画像のコンテナを新規に作成します
     /// </summary>
-    public static PixelBgr24MatrixContainer Clone(in PixelBgr24Matrix pixels)
+    public static PixelBgr24MatrixContainer Clone(NativeMatrix pixels)
     {
         PixelBgr24MatrixContainer container = new(pixels.Rows, pixels.Columns, false);
         container.Matrix.CopyFrom(pixels);
         return container;
     }
 
-    public bool CanReuseContainer(in PixelBgr24Matrix pixels)
+    public bool CanReuseContainer(NativeMatrix pixels)
     {
         if (Matrix.Columns != pixels.Columns
             || Matrix.Rows != pixels.Rows
-            || Matrix.BytesPerPixel != pixels.BytesPerPixel)
+            || Matrix.BytesPerItem != pixels.BytesPerItem)
             return false;
 
         return true;

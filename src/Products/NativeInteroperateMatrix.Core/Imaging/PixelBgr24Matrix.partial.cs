@@ -1,54 +1,10 @@
 ﻿namespace Nima.Imaging;
 
+#if false
 partial record struct PixelBgr24Matrix
 {
-    public int Width => Columns;
-    public int Height => Rows;
     public int BytesPerPixel => BytesPerItem;
     public int BitsPerPixel => BitsPerItem;
-
-    public unsafe Span<PixelBgr24> AsSpan()
-    {
-        int length = AllocateSize / Unsafe.SizeOf<PixelBgr24>();
-        return new Span<PixelBgr24>(Pointer.ToPointer(), length);
-    }
-
-    public unsafe Span<PixelBgr24> AsRowSpan(int row)
-    {
-        ThrowInvalidRow(row);
-
-        IntPtr ptr = Pointer + (row * Stride);
-        int length = Columns * BytesPerItem / Unsafe.SizeOf<PixelBgr24>();
-        return new Span<PixelBgr24>(ptr.ToPointer(), length);
-    }
-
-    public unsafe void CopyFrom(IntPtr intPtr, int width, int height, int stride)
-    {
-        var srcSize = height * stride;
-        if (AllocateSize < srcSize)
-            throw new NotSupportedException("Allocated size is short.");
-
-        var destStride = Stride;
-        if (destStride == stride)
-        {
-            UnsafeUtils.MemCopy(Pointer, intPtr, srcSize);
-        }
-        else
-        {
-            var destPtr = (byte*)Pointer.ToPointer();
-            var srcPtr = (byte*)intPtr.ToPointer();
-
-            for (int row = 0; row < height; row++)
-            {
-                UnsafeUtils.MemCopy(destPtr, srcPtr, stride);
-                destPtr += destStride;
-                srcPtr += stride;
-            }
-        }
-    }
-
-    public void CopyFrom(in PixelBgr24Matrix dest) =>
-        CopyFrom(dest.Pointer, dest.Width, dest.Height, dest.Stride);
 
     /// <summary>指定領域における各チャンネルの画素平均値を取得します</summary>
     public ColorBgr GetChannelsAverage(int x, int y, int width, int height)
@@ -180,46 +136,6 @@ partial record struct PixelBgr24Matrix
         return new(GetIntPtr(y, x), size, height, width, bytesPerData, _stride);
     }
 
-    /// <summary>画素値をコピーします</summary>
-    public void CopyTo(in PixelBgr24Matrix destPixels)
-    {
-        if (_columns != destPixels._columns || _rows != destPixels._rows) throw new ArgumentException("size is different.");
-        if (_pointer == destPixels._pointer) throw new ArgumentException("same pointer.");
-
-        CopyToInternal(this, destPixels);
-
-        // 画素値のコピー（サイズチェックなし）
-        static void CopyToInternal(in PixelBgr24Matrix srcPixels, in PixelBgr24Matrix destPixels)
-        {
-            // メモリが連続していれば memcopy
-            if (srcPixels.IsContinuous && destPixels.IsContinuous)
-            {
-                UnsafeUtils.MemCopy(destPixels._pointer, srcPixels._pointer, srcPixels.AllocateSize);
-                return;
-            }
-
-            unsafe
-            {
-                var (width, height, bytesPerPixel) = (srcPixels._columns, srcPixels._rows, srcPixels._bytesPerItem);
-                var srcHeadPtr = (byte*)srcPixels._pointer;
-                var srcStride = srcPixels._stride;
-                var dstHeadPtr = (byte*)destPixels._pointer;
-                var dstStride = destPixels._stride;
-
-                for (var y = 0; y < height; y++)
-                {
-                    var src = srcHeadPtr + y * srcStride;
-                    var dst = dstHeadPtr + y * dstStride;
-
-                    for (var x = 0; x < width * bytesPerPixel; x += bytesPerPixel)
-                    {
-                        *(PixelBgr24*)(dst + x) = *(PixelBgr24*)(src + x);
-                    }
-                }
-            }
-        }
-    }
-
     /// <summary>画素値を拡大コピーします</summary>
     public void CopyToWithScaleUp(in PixelBgr24Matrix destination)
     {
@@ -334,3 +250,4 @@ partial record struct PixelBgr24Matrix
     }
 
 }
+#endif

@@ -72,18 +72,10 @@ public readonly record struct NativeMatrix : INativeMatrix
     // IMatrix
     public int Rows => _rows;
     public int Columns => _columns;
+    public int Width => Columns;
+    public int Height => Rows;
     public int Stride => _stride;
     public bool IsContinuous => (Columns * BytesPerItem) == Stride;
-
-    //// IMatrix<T>
-    //public unsafe ref Byte this[int row, int column]
-    //{
-    //    get
-    //    {
-    //        IntPtr ptr = GetIntPtr(row, column);
-    //        return ref Unsafe.AsRef<Byte>(ptr.ToPointer());
-    //    }
-    //}
 
     public unsafe Span<T> AsSpan<T>() where T : struct
     {
@@ -91,7 +83,7 @@ public readonly record struct NativeMatrix : INativeMatrix
         return new(Pointer.ToPointer(), length);
     }
 
-    //public ReadOnlySpan<T> AsReadOnlySpan<T>() where T : struct => AsSpan<T>();
+    public ReadOnlySpan<T> AsReadOnlySpan<T>() where T : struct => AsSpan<T>();
 
     public unsafe Span<T> AsRowSpan<T>(int row) where T : struct
     {
@@ -102,7 +94,85 @@ public readonly record struct NativeMatrix : INativeMatrix
         return new(ptr.ToPointer(), length);
     }
 
-    //public ReadOnlySpan<T> AsRowReadOnlySpan<T>(int row) where T : struct => AsRowSpan<T>(row);
+    public ReadOnlySpan<T> AsRowReadOnlySpan<T>(int row) where T : struct => AsRowSpan<T>(row);
+
+    /// <summary>引数から値をコピーします</summary>
+    public void CopyFrom(IntPtr intPtr, int rows, int columns, int stride)
+    {
+        int srcSize = rows * stride;
+        if (AllocateSize < srcSize)
+            throw new NotSupportedException("Allocated size is short.");
+
+        int destStride = Stride;
+        if (destStride == stride)
+        {
+            UnsafeUtils.MemCopy(Pointer, intPtr, srcSize);
+        }
+        else
+        {
+            IntPtr destPtr = Pointer;
+            IntPtr srcPtr = intPtr;
+
+            for (int row = 0; row < rows; row++)
+            {
+                UnsafeUtils.MemCopy(destPtr, srcPtr, stride);
+                destPtr += destStride;
+                srcPtr += stride;
+            }
+        }
+    }
+
+    /// <summary>引数から値をコピーします</summary>
+    public void CopyFrom(NativeMatrix src) =>
+        CopyFrom(src.Pointer, src.Rows, src.Columns, src.Stride);
+
+
+    /// <summary>引数に値をコピーします</summary>
+    public void CopyTo(NativeMatrix destMatrix)
+    {
+        throw new NotImplementedException("♪未確認です");
+
+        // 画素値のコピー（サイズチェックなし）
+        static void copyToCore(NativeMatrix srcMatrix, NativeMatrix destMatrix)
+        {
+            // メモリが連続していれば memcopy
+            if (srcMatrix.AllocateSize == destMatrix.AllocateSize
+                && srcMatrix.IsContinuous && destMatrix.IsContinuous)
+            {
+                UnsafeUtils.MemCopy(destMatrix.Pointer, srcMatrix.Pointer, srcMatrix.AllocateSize);
+                return;
+            }
+
+            unsafe
+            {
+                var (width, height, bytesPerPixel) = (srcMatrix.Columns, srcMatrix.Rows, srcMatrix.BytesPerItem);
+                byte* srcHeadPtr = (byte*)srcMatrix.Pointer;
+                int srcStride = srcMatrix.Stride;
+                byte* dstHeadPtr = (byte*)destMatrix.Pointer;
+                int dstStride = destMatrix.Stride;
+
+                for (int y = 0; y < height; y++)
+                {
+                    byte* src = srcHeadPtr + y * srcStride;
+                    byte* dst = dstHeadPtr + y * dstStride;
+
+                    for (int x = 0; x < width * bytesPerPixel; x += bytesPerPixel)
+                    {
+                        for (int i = x; i < x + bytesPerPixel; i++)
+                            *(dst + i) = *(src + i);
+                    }
+                }
+            }
+        }
+
+        if (Columns != destMatrix.Columns || Rows != destMatrix.Rows)
+            throw new ArgumentException("Size is different.");
+
+        if (Pointer == destMatrix.Pointer)
+            throw new ArgumentException("Same pointer.");
+
+        copyToCore(this, destMatrix);
+    }
 
     public override string ToString() => $"Rows={Rows}, Cols={Columns}, Pointer=0x{Pointer:x16}";
 }

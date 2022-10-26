@@ -1,5 +1,6 @@
 ﻿namespace Nima.Imaging;
 
+#if false
 // Do not change the order of the struct because it is the same as C++
 [StructLayout(LayoutKind.Sequential, Pack = 1, Size = 8 + (5 * sizeof(int)))]
 public readonly partial record struct PixelBgr24Matrix : INativeMatrix
@@ -81,3 +82,4 @@ public readonly partial record struct PixelBgr24Matrix : INativeMatrix
 
     public override string ToString() => $"Rows={Rows}, Cols={Columns}, Pointer=0x{Pointer:x16}";
 }
+#endif

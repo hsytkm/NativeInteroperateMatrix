@@ -3,15 +3,19 @@
 public abstract class ArrayContainerBase : NativeMemoryContainerBase, INativeArrayContainer
 {
     /// <summary>
-    /// 外部公開用の配列(NativeMemoryをWrapしています)
+    /// 外部公開用の1次元配列(NativeMemoryをWrapしています)
     /// </summary>
     protected NativeArray Array { get; }
 
-    // メモリ読み出し中カウンタ
-    int _readCounter;
+    /// <summary>
+    /// メモリ読み出し中カウンタ
+    /// </summary>
+    public int ReadCounter { get; private set; }
 
-    // メモリ書き込み中フラグ
-    bool _isWriting;
+    /// <summary>
+    /// メモリ書き込み中フラグ
+    /// </summary>
+    public bool IsWriting { get; private set; }
 
     protected ArrayContainerBase(int length, int bytesPerItem, bool initialize)
         : base(length * bytesPerItem, initialize)
@@ -22,25 +26,25 @@ public abstract class ArrayContainerBase : NativeMemoryContainerBase, INativeArr
 
     public IDisposable GetArrayForRead(out NativeArray array)
     {
-        if (_isWriting)
+        if (IsWriting)
             throw new NotSupportedException("Someone is writing.");
 
-        _readCounter++;
+        ReadCounter++;
         array = Array;
-        return new DisposableAction(() => _readCounter--);
+        return new DisposableAction(() => ReadCounter--);
     }
 
     public IDisposable GetArrayForWrite(out NativeArray array)
     {
-        if (_isWriting)
+        if (IsWriting)
             throw new NotSupportedException("Someone is writing.");
 
-        if (_readCounter > 0)
+        if (ReadCounter > 0)
             throw new NotSupportedException("Someone is reading.");
 
-        _isWriting = true;
+        IsWriting = true;
         array = Array;
-        return new DisposableAction(() => _isWriting = false);
+        return new DisposableAction(() => IsWriting = false);
     }
 
 }

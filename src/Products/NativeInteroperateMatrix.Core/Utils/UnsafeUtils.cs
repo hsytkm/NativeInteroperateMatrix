@@ -5,53 +5,20 @@ namespace Nima;
 public static class UnsafeUtils
 {
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static unsafe void MemCopy(IntPtr dest, IntPtr src, int length)
-        => MemCopyInternal(dest, src, length);
+    public static unsafe void MemCopy(void* dest, void* src, int length) =>
+        Unsafe.CopyBlockUnaligned(dest, src, (uint)length);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static unsafe void MemCopy(void* dest, void* src, int length)
-        => MemCopyInternal(new IntPtr(dest), new IntPtr(src), length);
+    public static unsafe void MemCopy(IntPtr dest, IntPtr src, int length) =>
+        MemCopy(dest.ToPointer(), src.ToPointer(), length);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static unsafe void MemCopy(IntPtr dest, void* src, int length)
-        => MemCopyInternal(dest, new IntPtr(src), length);
+        => MemCopy(dest.ToPointer(), src, length);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static unsafe void MemCopy(void* dest, IntPtr src, int length)
-        => MemCopyInternal(new IntPtr(dest), src, length);
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    static unsafe void MemCopyInternal(IntPtr dest, IntPtr src, int length)
-    {
-#if true
-        Unsafe.CopyBlockUnaligned(dest.ToPointer(), src.ToPointer(), (uint)length);
-#else
-        var destPtr = (byte*)dest;
-        var srcPtr = (byte*)src;
-        var tail = destPtr + length;
-
-        while (destPtr + 7 < tail)
-        {
-            *(ulong*)destPtr = *(ulong*)srcPtr;
-            srcPtr += 8;
-            destPtr += 8;
-        }
-
-        if (destPtr + 3 < tail)
-        {
-            *(uint*)destPtr = *(uint*)srcPtr;
-            srcPtr += 4;
-            destPtr += 4;
-        }
-
-        while (destPtr < tail)
-        {
-            *destPtr = *srcPtr;
-            ++srcPtr;
-            ++destPtr;
-        }
-#endif
-    }
+        => MemCopy(dest, src.ToPointer(), length);
 
     /// <summary>構造体を byte[] に書き出します</summary>
     public static unsafe void CopyStructToArray<T>(T srcData, Span<byte> destArray)
@@ -104,13 +71,13 @@ public static class UnsafeUtils
 
     /// <summary>構造体を IntPtr に書き出します</summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static unsafe void FillZero(IntPtr dest, int size)
-        => FillZero(dest.ToPointer(), size);
+    public static unsafe void FillZero(IntPtr dest, int size) =>
+        FillZero(dest.ToPointer(), size);
 
     /// <summary>構造体を pointer に書き出します</summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static unsafe void FillZero(void* dest, int size)
-        => Unsafe.InitBlock(dest, 0, (uint)size);
+    public static unsafe void FillZero(void* dest, int size) =>
+        Unsafe.InitBlock(dest, 0, (uint)size);
 
     /// <summary>Stream の内容を構造体として読込んで返します</summary>
     public static T ReadStruct<T>(Stream stream)
@@ -142,7 +109,7 @@ public static class UnsafeUtils
         var memory = array.AsMemory()[0..size];
         try
         {
-            stream.Position = 0;
+            stream.Seek(0, SeekOrigin.Begin);
             _ = await stream.ReadAsync(memory, cancellationToken);
 
             var data = default(T);

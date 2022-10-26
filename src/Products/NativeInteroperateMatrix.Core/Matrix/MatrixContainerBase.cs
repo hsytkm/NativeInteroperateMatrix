@@ -1,17 +1,21 @@
 ﻿namespace Nima;
 
-public /*sealed*/ class MatrixContainerBase : NativeMemoryContainerBase
+public abstract class MatrixContainerBase : NativeMemoryContainerBase, IMatrixContainer
 {
     /// <summary>
-    /// 外部公開用の配列(NativeMemoryをWrapしています)
+    /// 外部公開用の2次元配列(NativeMemoryをWrapしています)
     /// </summary>
     protected NativeMatrix Matrix { get; }
 
-    // メモリ読み出し中カウンタ
-    int _readCounter;
+    /// <summary>
+    /// メモリ読み出し中カウンタ
+    /// </summary>
+    public int ReadCounter { get; private set; }
 
-    // メモリ書き込み中フラグ
-    bool _isWriting;
+    /// <summary>
+    /// メモリ書き込み中フラグ
+    /// </summary>
+    public bool IsWriting { get; private set; }
 
     protected MatrixContainerBase(int rows, int columns, int bytesPerItem, bool initialize)
         : base(rows * columns * bytesPerItem, initialize)
@@ -21,27 +25,27 @@ public /*sealed*/ class MatrixContainerBase : NativeMemoryContainerBase
         Matrix = new NativeMatrix(AllocatedMemory.Pointer, allocateSize, bytesPerItem, rows, columns, stride);
     }
 
-    public IDisposable GetArrayForRead(out NativeMatrix matrix)
+    public IDisposable GetMatrixForRead(out NativeMatrix matrix)
     {
-        if (_isWriting)
+        if (IsWriting)
             throw new NotSupportedException("Someone is writing.");
 
-        _readCounter++;
+        ReadCounter++;
         matrix = Matrix;
-        return new DisposableAction(() => _readCounter--);
+        return new DisposableAction(() => ReadCounter--);
     }
 
-    public IDisposable GetArrayForWrite(out NativeMatrix matrix)
+    public IDisposable GetMatrixForWrite(out NativeMatrix matrix)
     {
-        if (_isWriting)
+        if (IsWriting)
             throw new NotSupportedException("Someone is writing.");
 
-        if (_readCounter > 0)
+        if (ReadCounter > 0)
             throw new NotSupportedException("Someone is reading.");
 
-        _isWriting = true;
+        IsWriting = true;
         matrix = Matrix;
-        return new DisposableAction(() => _isWriting = false);
+        return new DisposableAction(() => IsWriting = false);
     }
 
 }

@@ -4,12 +4,8 @@ public /*sealed*/ class ByteArrayContainer : ArrayContainerBase
 {
     static readonly int _bytesPerItem = Unsafe.SizeOf<Byte>();
 
-    protected ByteArrayContainer(int length, int bytesPerItem, bool initialize)
-        : base(length, bytesPerItem, initialize)
-    { }
-
     public ByteArrayContainer(int length, bool initialize = true)
-        : this(length, _bytesPerItem, initialize)
+        : base(length, _bytesPerItem, initialize)
     { }
 
     public ByteArrayContainer(int length, IEnumerable<Byte> items)

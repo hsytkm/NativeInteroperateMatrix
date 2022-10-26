@@ -1,14 +1,13 @@
 ﻿namespace Nima.Imaging;
 
-#if false
-// SourceGenerator 内で Container も一緒に生成しちゃっています(手抜き)
-public /*sealed*/ partial class PixelBgr24MatrixContainer
-//: IMatrixContainer<PixelBgr24>, IDisposable
+public /*sealed*/ class PixelBgr24MatrixContainer : MatrixContainerBase
 {
-    private PixelBgr24MatrixContainer(in PixelBgr24Matrix matrix)
-        : this(matrix.Rows, matrix.Columns, false)
+    protected new PixelBgr24Matrix Matrix { get; }
+
+    private PixelBgr24MatrixContainer(int rows, int columns, bool initialize)
+        : base(rows, columns, Unsafe.SizeOf<PixelBgr24Matrix>(), initialize)
     {
-        Matrix = matrix;
+        Matrix = new PixelBgr24Matrix(base.Matrix);
     }
 
     /// <summary>
@@ -20,7 +19,7 @@ public /*sealed*/ partial class PixelBgr24MatrixContainer
             throw new NotSupportedException();
 
         var newMatrix = new PixelBgr24Matrix(Matrix.Pointer, Matrix.AllocateSize, newRows, newColumns, newBytesPerPixel, newStride);
-        return new(newMatrix);
+        return new(newMatrix.Rows, newMatrix.Columns, false);
     }
 
     /// <summary>Bitmapファイルから PixelBgrMatrixContainer を生成します</summary>
@@ -47,21 +46,21 @@ public /*sealed*/ partial class PixelBgr24MatrixContainer
         if (!header.CanRead)
             throw new InvalidDataException("Invalid bitmap format.");
 
-        var rows = header.Height;
-        var cols = header.Width;
-        var stride = header.ImageStride;
-        var bytesPerPixel = header.BytesPerPixel;
-        var headerSize = Unsafe.SizeOf<BitmapHeader>();
-        var colLength = cols * bytesPerPixel;
+        int rows = header.Height;
+        int cols = header.Width;
+        int stride = header.ImageStride;
+        int bytesPerPixel = header.BytesPerPixel;
+        int headerSize = Unsafe.SizeOf<BitmapHeader>();
+        int colLength = cols * bytesPerPixel;
 
-        var container = new PixelBgr24MatrixContainer(rows, cols, false);
-        var destPtr = container.Matrix.Pointer;
-        var array = new byte[colLength];
+        PixelBgr24MatrixContainer container = new(rows, cols, false);
+        IntPtr destPtr = container.Matrix.Pointer;
+        byte[] array = new byte[colLength];
 
-        for (var row = 0; row < rows; row++)
+        for (int row = 0; row < rows; row++)
         {
             stream.Position = headerSize + (rows - 1 - row) * stride;
-            stream.Read(array);
+            _ = stream.Read(array);
 
             unsafe
             {
@@ -95,21 +94,21 @@ public /*sealed*/ partial class PixelBgr24MatrixContainer
         if (!header.CanRead)
             throw new InvalidDataException("Invalid bitmap format.");
 
-        var rows = header.Height;
-        var cols = header.Width;
-        var stride = header.ImageStride;
-        var bytesPerPixel = header.BytesPerPixel;
-        var headerSize = Unsafe.SizeOf<BitmapHeader>();
-        var colLength = cols * bytesPerPixel;
+        int rows = header.Height;
+        int cols = header.Width;
+        int stride = header.ImageStride;
+        int bytesPerPixel = header.BytesPerPixel;
+        int headerSize = Unsafe.SizeOf<BitmapHeader>();
+        int colLength = cols * bytesPerPixel;
 
-        var container = new PixelBgr24MatrixContainer(rows, cols, false);
-        var destPtr = container.Matrix.Pointer;
-        var array = new byte[colLength];
+        PixelBgr24MatrixContainer container = new(rows, cols, false);
+        IntPtr destPtr = container.Matrix.Pointer;
+        byte[] array = new byte[colLength];
 
-        for (var row = 0; row < rows; row++)
+        for (int row = 0; row < rows; row++)
         {
             stream.Position = headerSize + (rows - 1 - row) * stride;
-            await stream.ReadAsync(array, cancellationToken);
+            _ = await stream.ReadAsync(array, cancellationToken);
 
             unsafe
             {
@@ -127,7 +126,7 @@ public /*sealed*/ partial class PixelBgr24MatrixContainer
     /// </summary>
     public static PixelBgr24MatrixContainer Clone(in PixelBgr24Matrix pixels)
     {
-        var container = new PixelBgr24MatrixContainer(pixels.Rows, pixels.Columns, false);
+        PixelBgr24MatrixContainer container = new(pixels.Rows, pixels.Columns, false);
         container.Matrix.CopyFrom(pixels);
         return container;
     }
@@ -143,4 +142,3 @@ public /*sealed*/ partial class PixelBgr24MatrixContainer
     }
 
 }
-#endif

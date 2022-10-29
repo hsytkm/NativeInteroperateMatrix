@@ -20,8 +20,8 @@ public abstract class MatrixContainerBase : NativeMemoryContainerBase, IMatrixCo
     protected MatrixContainerBase(int rows, int columns, int bytesPerItem, bool initialize)
         : base(rows * columns * bytesPerItem, initialize)
     {
-        int stride = rows * bytesPerItem;
-        int allocateSize = columns * stride;
+        int stride = columns * bytesPerItem;
+        int allocateSize = rows * stride;
         Matrix = new NativeMatrix(AllocatedMemory.Pointer, allocateSize, bytesPerItem, rows, columns, stride);
     }
 

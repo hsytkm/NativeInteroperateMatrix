@@ -16,9 +16,6 @@ public readonly record struct NativeMatrix : INativeMatrix
         if (IntPtr.Size != 8)
             throw new NotSupportedException("Must be x64.");
 
-        if (bytesPerItem != Unsafe.SizeOf<Byte>())
-            throw new ArgumentException(nameof(bytesPerItem));
-
         _pointer = pointer;
         _allocateSize = allocateSize;
         _rows = rows;
@@ -45,7 +42,7 @@ public readonly record struct NativeMatrix : INativeMatrix
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    IntPtr GetIntPtr(int row, int column)
+    public IntPtr GetIntPtr(int row, int column)
     {
         ThrowInvalidRow(row);
         ThrowInvalidColumn(column);

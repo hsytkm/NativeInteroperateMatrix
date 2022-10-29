@@ -48,7 +48,7 @@ public static class PixelMatrixDrawingBitmapExtension
     /// <summary>PixelBgrMatrix に画素値をコピーします</summary>
     public static void CopyTo(this Bitmap bitmap, IPixelBgr24MatrixContainer container, bool isDisposeBitmap = false)
     {
-        using var disposable = container.GetMatrixForWrite(out NativeMatrix matrix);
+        using var token = container.GetMatrixForWrite(out NativeMatrix matrix);
 
         if (bitmap.IsInvalid()) throw new ArgumentException("Invalid Bitmap");
         if (!matrix.IsValid) throw new ArgumentException("Invalid Pixels");
@@ -112,7 +112,7 @@ public static class PixelMatrixDrawingBitmapExtension
     /// <summary>PixelBgrMatrix に画素値をコピーします</summary>
     //public static void Copy8bitToBgrMatrix(this Bitmap bitmap, IPixelBgr24MatrixContainer container, bool isDisposeBitmap = false)
     //{
-    //    using var disposable = container.GetMatrixForWrite(out NativeMatrix matrix);
+    //    using var token = container.GetMatrixForWrite(out NativeMatrix matrix);
 
     //    if (bitmap.IsInvalid()) throw new ArgumentException("Invalid Bitmap");
     //    if (!matrix.IsValid) throw new ArgumentException("Invalid Pixels");

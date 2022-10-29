@@ -19,18 +19,20 @@ class MainWindowViewModel : BindableBase
         SourceImage = new ReactivePropertySlim<BitmapSource>(initialValue: bitmapImage);
 
         using var pixelContainer = bitmapImage.ToPixelBgr24MatrixContainer();
-        var fullPixelMatrix = pixelContainer.Matrix;
-
+    
         // 元画像の画素値平均
-        var channelAverage1 = fullPixelMatrix.GetChannelsAverageOfEntire();
+        var channelAverage1 = pixelContainer.GetChannelsAverageOfEntire();
 
         Debug.WriteLine($"{channelAverage1:f1}");
 
         // 1. 三角領域を指定色で指定塗り
-        FillTriangle(fullPixelMatrix);
+        FillTriangle(pixelContainer);
 
         // 2. 四角形（塗りつぶしなし）を描画
-        fullPixelMatrix.DrawRectangle(Colors.Cyan.ToPixelBgr(), 200, 200, 100, 200);
+        pixelContainer.DrawRectangle(Colors.Cyan.ToPixelBgr(), 200, 200, 100, 200);
+
+#if false   //♪未実装です
+        var fullPixelMatrix = pixelContainer.Matrix;
 
         // 3. 上部を切り出して指定塗り
         var headerPixelMatrix = fullPixelMatrix.CutOutPixelMatrix(0, 0, fullPixelMatrix.Width, 30);
@@ -40,30 +42,35 @@ class MainWindowViewModel : BindableBase
         // 4. 上部を除いた左部を切り出してグレスケ塗り
         var leftPixelMatrix = fullPixelMatrix.CutOutPixelMatrix(0, headerPixelMatrix.Height, 50, fullPixelMatrix.Height - headerPixelMatrix.Height);
         FillGrayScaleVertical(leftPixelMatrix);
+#endif
 
         // BitmapSourceに変換してView表示
-        var writableBitmap = fullPixelMatrix.ToWriteableBitmap();
+        var writableBitmap = pixelContainer.ToWriteableBitmap();
         WriteableImage = new ReactivePropertySlim<WriteableBitmap>(initialValue: writableBitmap);
     }
 
     // 三角領域を単色で塗り(WriteValueのテスト)
-    static void FillTriangle(in PixelBgr24Matrix pixelMatrix)
+    static void FillTriangle(PixelBgr24MatrixContainer container)
     {
+        using var token = container.GetMatrixForRead(out var pixelMatrix);
+
         int baseX = 100, baseY = 200, height = 100;
         var color = PixelBgr24.FromBgr(0, 0xff, 0);
-
         for (int y = 0; y < height; y++)
         {
+            var rowSpan = pixelMatrix.AsRowSpan<PixelBgr24>(baseY + y);
             for (int x = baseX; x < baseX + y; x++)
             {
-                pixelMatrix[x, baseY + y] = color;  // ホントは FillRectangle() を使うべきだけど、Indexer のテストなので。
+                rowSpan[x] = color;  // ホントは FillRectangle() を使うべきだけど、Span のテストなので。
             }
         }
     }
 
     // 垂直方向で階調が変化するグレー塗り
-    static void FillGrayScaleVertical(in PixelBgr24Matrix pixelMatrix)
+    static void FillGrayScaleVertical(PixelBgr24MatrixContainer container)
     {
+        using var token = container.GetMatrixForRead(out var pixelMatrix);
+
         const int range = 256;
         var length = pixelMatrix.Height / range;
 
@@ -72,12 +79,12 @@ class MainWindowViewModel : BindableBase
             for (int lv = 0; lv < range; ++lv)
             {
                 var color = PixelBgr24.FromGray((byte)(lv & 0xff));
-                pixelMatrix.FillRectangle(color, 0, lv * length, pixelMatrix.Width, length);
+                container.FillRectangle(color, 0, lv * length, pixelMatrix.Width, length);
             }
         }
 
         var filledHeight = length * range;
-        pixelMatrix.FillRectangle(PixelBgr24Color.Black, 0, filledHeight, pixelMatrix.Width, pixelMatrix.Height - filledHeight);
+        container.FillRectangle(PixelBgr24Color.Black, 0, filledHeight, pixelMatrix.Width, pixelMatrix.Height - filledHeight);
     }
 
 }

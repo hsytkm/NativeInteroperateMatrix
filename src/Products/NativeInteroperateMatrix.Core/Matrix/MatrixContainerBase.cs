@@ -17,6 +17,11 @@ public abstract class MatrixContainerBase : NativeMemoryContainerBase, IMatrixCo
     /// </summary>
     public bool IsWriting { get; private set; }
 
+    public int Rows => Matrix.Rows;
+    public int Columns => Matrix.Columns;
+    public int Width => Matrix.Width;
+    public int Height => Matrix.Height;
+
     protected MatrixContainerBase(int rows, int columns, int bytesPerItem, bool initialize)
         : base(rows * columns * bytesPerItem, initialize)
     {

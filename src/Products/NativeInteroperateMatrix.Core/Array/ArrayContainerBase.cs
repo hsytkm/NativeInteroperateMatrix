@@ -17,6 +17,8 @@ public abstract class ArrayContainerBase : NativeMemoryContainerBase, INativeArr
     /// </summary>
     public bool IsWriting { get; private set; }
 
+    public int Length => Array.Length;
+
     protected ArrayContainerBase(int length, int bytesPerItem, bool initialize)
         : base(length * bytesPerItem, initialize)
     {

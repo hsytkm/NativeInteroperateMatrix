@@ -110,8 +110,7 @@ public /*sealed*/ class PixelBgr24MatrixContainer : MatrixContainerBase, IPixelB
     /// </summary>
     public static PixelBgr24MatrixContainer Clone(IPixelBgr24MatrixContainer sourceContainer)
     {
-        using var token = sourceContainer.GetMatrixForRead(out var sourceMatrix);
-        PixelBgr24MatrixContainer newContainer = new(sourceMatrix.Rows, sourceMatrix.Columns, false);
+        PixelBgr24MatrixContainer newContainer = new(sourceContainer.Rows, sourceContainer.Columns, false);
         newContainer.CopyFrom(sourceContainer);
         return newContainer;
     }
@@ -199,8 +198,7 @@ public /*sealed*/ class PixelBgr24MatrixContainer : MatrixContainerBase, IPixelB
     /// <summary>画面全体における各チャンネルの画素平均値を取得します</summary>
     public ColorBgr GetChannelsAverageOfEntire()
     {
-        using var token = GetMatrixForRead(out var matrix);
-        return GetChannelsAverage(0, 0, matrix.Columns, matrix.Rows);
+        return GetChannelsAverage(0, 0, Width, Height);
     }
 
     /// <summary>指定領域の画素を塗りつぶします</summary>

@@ -1,11 +1,11 @@
 ﻿using Nima.Imaging;
 using Xunit;
 
-namespace Nima.Core.Tests.Imaging.Drawing;
+namespace Nima.Core.Tests.Imaging;
 
 public class PixelBgrMatrixTest
 {
-    private const string TempPath = "_temp.bmp";
+    const string TempPath = "_temp.bmp";
 
     public PixelBgrMatrixTest()
     {
@@ -18,10 +18,9 @@ public class PixelBgrMatrixTest
     public void CtorInit(int rows, int columns)
     {
         using var container = new PixelBgr24MatrixContainer(rows, columns, true);
-        var matrix = container.Matrix;
 
         var color = new ColorBgr(0, 0, 0);
-        matrix.GetChannelsAverageOfEntire().Is(color);
+        container.GetChannelsAverageOfEntire().Is(color);
     }
 
     [Theory]
@@ -29,11 +28,10 @@ public class PixelBgrMatrixTest
     public void FillAllPixels(int rows, int columns)
     {
         using var container = new PixelBgr24MatrixContainer(rows, columns, false);
-        var matrix = container.Matrix;
 
         var bgr = PixelBgr24.FromBgr(255, 0, 128);    // teketo-
-        matrix.FillAllPixels(bgr);
-        matrix.GetChannelsAverageOfEntire().Is(new ColorBgr(bgr));
+        container.FillAllPixels(bgr);
+        container.GetChannelsAverageOfEntire().Is(new ColorBgr(bgr));
     }
 
     [Theory]
@@ -41,7 +39,7 @@ public class PixelBgrMatrixTest
     public async Task ReadWrite(string sourcePath)
     {
         using var container = PixelBgr24MatrixContainer.Create(sourcePath);
-        container.Matrix.ToBmpFile(TempPath);
+        container.ToBmpFile(TempPath);
 
         var isMatch = await FileComparator.IsMatchAsync(sourcePath, TempPath);
         isMatch.IsTrue();
@@ -53,8 +51,8 @@ public class PixelBgrMatrixTest
     [ClassData(typeof(ImagePathTestData))]
     public async Task ReadWriteAsync(string sourcePath)
     {
-        using var container = await PixelBgr24MatrixContainer.CreateAsync(sourcePath);
-        await container.Matrix.ToBmpFileAsync(TempPath);
+        using var container = PixelBgr24MatrixContainer.Create(sourcePath);
+        await container.ToBmpFileAsync(TempPath);
 
         var isMatch = await FileComparator.IsMatchAsync(sourcePath, TempPath);
         isMatch.IsTrue();

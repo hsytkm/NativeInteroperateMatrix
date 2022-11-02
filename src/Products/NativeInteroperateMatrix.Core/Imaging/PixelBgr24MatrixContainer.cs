@@ -261,6 +261,7 @@ public /*sealed*/ class PixelBgr24MatrixContainer : MatrixContainerBase, IPixelB
         }
     }
 
+    /// <summary>指定色で塗り潰します</summary>
     public unsafe void FillAllPixels(PixelBgr24 pixel)
     {
         using var token = GetMatrixForWrite(out var matrix);
@@ -280,4 +281,69 @@ public /*sealed*/ class PixelBgr24MatrixContainer : MatrixContainerBase, IPixelB
         }
     }
 
+    /// <summary>画像をbmpファイルに保存します</summary>
+    public void ToBmpFile(string savePath)
+    {
+        using var ms = ToBitmapMemoryStream(savePath);
+        using var fs = new FileStream(savePath, FileMode.Create);
+        fs.Seek(0, SeekOrigin.Begin);
+
+        ms.WriteTo(fs);
+    }
+
+    /// <summary>画像をbmpファイルに保存します</summary>
+    public async Task ToBmpFileAsync(string savePath, CancellationToken token = default)
+    {
+        using var ms = ToBitmapMemoryStream(savePath);
+        using var fs = new FileStream(savePath, FileMode.Create);
+        fs.Seek(0, SeekOrigin.Begin);
+
+        await ms.CopyToAsync(fs, token);
+    }
+
+    /// <summary>画像をbmpファイルに保存します</summary>
+    MemoryStream ToBitmapMemoryStream(string savePath)
+    {
+        // Bitmapのバイナリ配列を取得します
+        static byte[] getBitmapBinary(in NativeMatrix matrix)
+        {
+            var height = matrix.Rows;
+            var srcStride = matrix.Stride;
+            var destHeader = new BitmapHeader(matrix.Columns, height, matrix.BitsPerItem);
+            var destBuffer = new byte[destHeader.FileSize];     // さずがにデカすぎるのでbyte[]
+
+            // bufferにheaderを書き込む
+            UnsafeUtils.CopyStructToArray(destHeader, destBuffer);
+
+            // 画素は左下から右上に向かって記録する
+            unsafe
+            {
+                var srcHead = (byte*)matrix.Pointer;
+                fixed (byte* pointer = destBuffer)
+                {
+                    var destHead = pointer + destHeader.OffsetBytes;
+                    var destStride = destHeader.ImageStride;
+                    System.Diagnostics.Debug.Assert(srcStride <= destStride);
+
+                    for (var y = 0; y < height; ++y)
+                    {
+                        var src = srcHead + (height - 1 - y) * srcStride;
+                        var dest = destHead + y * destStride;
+                        UnsafeUtils.MemCopy(dest, src, srcStride);
+                    }
+                }
+            }
+            return destBuffer;
+        }
+
+        using var token = GetMatrixForRead(out var matrix);
+
+        if (!matrix.IsValid) throw new ArgumentException("Invalid image.");
+        if (File.Exists(savePath)) throw new SystemException("File is exists.");
+
+        var bitmapBytes = getBitmapBinary(matrix);
+        var ms = new MemoryStream(bitmapBytes);
+        ms.Seek(0, SeekOrigin.Begin);
+        return ms;
+    }
 }

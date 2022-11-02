@@ -7,61 +7,63 @@ namespace NativeInteroperateMatrix.Core.Tests.Natives;
 
 internal static class NativeMatrixMethods
 {
-    private const string DllName = "NativeInteroperateMatrix.Tests.Natives.Core.dll";
+    const string DLL_NAME = "NativeInteroperateMatrix.Tests.Natives.Core.dll";
 
     // Byte
-    [DllImport(DllName, EntryPoint = "SumByteMatrix")]
-    public static extern long Sum(in ByteMatrix matrix);
-    [DllImport(DllName, EntryPoint = "ClearByteMatrix")]
-    public static extern void Clear(in ByteMatrix matrix);
-
-    // Int8
-    [DllImport(DllName, EntryPoint = "SumInt8Matrix")]
-    public static extern long Sum(in Int8Matrix matrix);
-    [DllImport(DllName, EntryPoint = "ClearInt8Matrix")]
-    public static extern void Clear(in Int8Matrix matrix);
+    [DllImport(DLL_NAME, EntryPoint = "SumByteMatrix")]
+    public static extern long SumByte(in NativeMatrix matrix);
+    [DllImport(DLL_NAME, EntryPoint = "ClearByteMatrix")]
+    public static extern void ClearByte(in NativeMatrix matrix);
 
     // Int16
-    [DllImport(DllName, EntryPoint = "SumInt16Matrix")]
-    public static extern long Sum(in Int16Matrix matrix);
-    [DllImport(DllName, EntryPoint = "ClearInt16Matrix")]
-    public static extern void Clear(in Int16Matrix matrix);
+    [DllImport(DLL_NAME, EntryPoint = "SumInt16Matrix")]
+    public static extern long SumInt16(in NativeMatrix matrix);
+    [DllImport(DLL_NAME, EntryPoint = "ClearInt16Matrix")]
+    public static extern void ClearInt16(in NativeMatrix matrix);
 
     // Int32
-    [DllImport(DllName, EntryPoint = "SumInt32Matrix")]
-    public static extern long Sum(in Int32Matrix matrix);
-    [DllImport(DllName, EntryPoint = "ClearInt32Matrix")]
-    public static extern void Clear(in Int32Matrix matrix);
+    [DllImport(DLL_NAME, EntryPoint = "SumInt32Matrix")]
+    public static extern long SumInt32(in NativeMatrix matrix);
+    [DllImport(DLL_NAME, EntryPoint = "ClearInt32Matrix")]
+    public static extern void ClearInt32(in NativeMatrix matrix);
 
     // Int64
-    [DllImport(DllName, EntryPoint = "SumInt64Matrix")]
-    public static extern long Sum(in Int64Matrix matrix);
-    [DllImport(DllName, EntryPoint = "ClearInt64Matrix")]
-    public static extern void Clear(in Int64Matrix matrix);
+    [DllImport(DLL_NAME, EntryPoint = "SumInt64Matrix")]
+    public static extern long SumInt64(in NativeMatrix matrix);
+    [DllImport(DLL_NAME, EntryPoint = "ClearInt64Matrix")]
+    public static extern void ClearInt64(in NativeMatrix matrix);
 
     // Single
-    [DllImport(DllName, EntryPoint = "SumSingleMatrix")]
-    public static extern double Sum(in SingleMatrix matrix);
-    [DllImport(DllName, EntryPoint = "ClearSingleMatrix")]
-    public static extern void Clear(in SingleMatrix matrix);
+    [DllImport(DLL_NAME, EntryPoint = "SumSingleMatrix")]
+    public static extern double SumSingle(in NativeMatrix matrix);
+    [DllImport(DLL_NAME, EntryPoint = "ClearSingleMatrix")]
+    public static extern void ClearSingle(in NativeMatrix matrix);
 
     // Double
-    [DllImport(DllName, EntryPoint = "SumDoubleMatrix")]
-    public static extern double Sum(in DoubleMatrix matrix);
-    [DllImport(DllName, EntryPoint = "ClearDoubleMatrix")]
-    public static extern void Clear(in DoubleMatrix matrix);
+    [DllImport(DLL_NAME, EntryPoint = "SumDoubleMatrix")]
+    public static extern double SumDouble(in NativeMatrix matrix);
+    [DllImport(DLL_NAME, EntryPoint = "ClearDoubleMatrix")]
+    public static extern void ClearDouble(in NativeMatrix matrix);
 }
 
 public class NativeMatrixMethodsTest
 {
-    private static long GetMaxValue<T>(long count)
+    static long GetMaxValue<T>(long count)
     {
         var type = typeof(T);
         long max = 0;
-        if (type == typeof(byte)) max = byte.MaxValue;
-        else if (type == typeof(short)) max = short.MaxValue;
-        else if (type == typeof(int)) max = int.MaxValue;
-        else if (type == typeof(long)) max = long.MaxValue;
+
+        if (type == typeof(byte))
+            max = byte.MaxValue;
+
+        if (type == typeof(short))
+            max = short.MaxValue;
+
+        if (type == typeof(int))
+            max = int.MaxValue;
+
+        if (type == typeof(long))
+            max = long.MaxValue;
 
         var value = max / count;
         return Math.Clamp(value, 1, max);
@@ -69,17 +71,23 @@ public class NativeMatrixMethodsTest
 
     [Theory]
     [ClassData(typeof(RowColPairTestData))]
-    public void SumInt8Matrix(int rows, int columns)
+    public void SumByteMatrix(int rows, int columns)
     {
         var max = GetMaxValue<byte>(rows * columns);
-        var items = Enumerable.Range(0, rows * columns).Select(x => (sbyte)(x % max)).ToArray();
-        using var container = new Int8MatrixContainer(rows, columns, items.AsSpan());
+        var items = Enumerable.Range(0, rows * columns).Select(x => (byte)(x % max)).ToArray();
+        using var container = new ByteMatrixContainer(rows, columns, items.AsSpan());
 
         var expected = items.Select(x => (long)x).Sum();
-        NativeMatrixMethods.Sum(container.Matrix).Is(expected);
+        using (var token = container.GetMatrixForRead(out var matrix))
+        {
+            NativeMatrixMethods.SumByte(matrix).Is(expected);
+        }
 
-        NativeMatrixMethods.Clear(container.Matrix);
-        NativeMatrixMethods.Sum(container.Matrix).Is(0);
+        using (var token = container.GetMatrixForWrite(out var matrix))
+        {
+            NativeMatrixMethods.ClearByte(matrix);
+            NativeMatrixMethods.SumByte(matrix).Is(0);
+        }
     }
 
     [Theory]
@@ -91,10 +99,19 @@ public class NativeMatrixMethodsTest
         using var container = new Int16MatrixContainer(rows, columns, items.AsSpan());
 
         var expected = items.Select(x => (long)x).Sum();
-        NativeMatrixMethods.Sum(container.Matrix).Is(expected);
+        using (var token = container.GetMatrixForRead(out var matrix))
+        {
+            var bs1 = matrix.AsSpan<byte>().ToArray();
+            var bs2 = matrix.AsSpan<short>().ToArray();
 
-        NativeMatrixMethods.Clear(container.Matrix);
-        NativeMatrixMethods.Sum(container.Matrix).Is(0);
+            NativeMatrixMethods.SumInt16(matrix).Is(expected);
+        }
+
+        using (var token = container.GetMatrixForWrite(out var matrix))
+        {
+            NativeMatrixMethods.ClearInt16(matrix);
+            NativeMatrixMethods.SumInt16(matrix).Is(0);
+        }
     }
 
     [Theory]
@@ -106,10 +123,16 @@ public class NativeMatrixMethodsTest
         using var container = new Int32MatrixContainer(rows, columns, items.AsSpan());
 
         var expected = items.Select(x => (long)x).Sum();
-        NativeMatrixMethods.Sum(container.Matrix).Is(expected);
+        using (var token = container.GetMatrixForRead(out var matrix))
+        {
+            NativeMatrixMethods.SumInt32(matrix).Is(expected);
+        }
 
-        NativeMatrixMethods.Clear(container.Matrix);
-        NativeMatrixMethods.Sum(container.Matrix).Is(0);
+        using (var token = container.GetMatrixForWrite(out var matrix))
+        {
+            NativeMatrixMethods.ClearInt32(matrix);
+            NativeMatrixMethods.SumInt32(matrix).Is(0);
+        }
     }
 
     [Theory]
@@ -121,10 +144,16 @@ public class NativeMatrixMethodsTest
         using var container = new Int64MatrixContainer(rows, columns, items.AsSpan());
 
         var expected = items.Select(x => (long)x).Sum();
-        NativeMatrixMethods.Sum(container.Matrix).Is(expected);
+        using (var token = container.GetMatrixForRead(out var matrix))
+        {
+            NativeMatrixMethods.SumInt64(matrix).Is(expected);
+        }
 
-        NativeMatrixMethods.Clear(container.Matrix);
-        NativeMatrixMethods.Sum(container.Matrix).Is(0);
+        using (var token = container.GetMatrixForWrite(out var matrix))
+        {
+            NativeMatrixMethods.ClearInt64(matrix);
+            NativeMatrixMethods.SumInt64(matrix).Is(0);
+        }
     }
 
     [Theory]
@@ -137,10 +166,16 @@ public class NativeMatrixMethodsTest
         using var container = new SingleMatrixContainer(rows, columns, items.AsSpan());
 
         var expected = items.Select(x => (double)x).Sum();
-        NativeMatrixMethods.Sum(container.Matrix).Is(expected);
+        using (var token = container.GetMatrixForRead(out var matrix))
+        {
+            NativeMatrixMethods.SumSingle(matrix).Is(expected);
+        }
 
-        NativeMatrixMethods.Clear(container.Matrix);
-        NativeMatrixMethods.Sum(container.Matrix).Is(0);
+        using (var token = container.GetMatrixForWrite(out var matrix))
+        {
+            NativeMatrixMethods.ClearSingle(matrix);
+            NativeMatrixMethods.SumSingle(matrix).Is(0);
+        }
     }
 
     [Theory]
@@ -153,10 +188,16 @@ public class NativeMatrixMethodsTest
         using var container = new DoubleMatrixContainer(rows, columns, items.AsSpan());
 
         var expected = items.Select(x => (double)x).Sum();
-        NativeMatrixMethods.Sum(container.Matrix).Is(expected);
+        using (var token = container.GetMatrixForRead(out var matrix))
+        {
+            NativeMatrixMethods.SumDouble(matrix).Is(expected);
+        }
 
-        NativeMatrixMethods.Clear(container.Matrix);
-        NativeMatrixMethods.Sum(container.Matrix).Is(0);
+        using (var token = container.GetMatrixForWrite(out var matrix))
+        {
+            NativeMatrixMethods.ClearDouble(matrix);
+            NativeMatrixMethods.SumDouble(matrix).Is(0);
+        }
     }
 
     //[Theory]

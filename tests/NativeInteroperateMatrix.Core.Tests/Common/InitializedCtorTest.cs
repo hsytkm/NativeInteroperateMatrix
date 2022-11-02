@@ -25,13 +25,14 @@ public class InitializedCtorTest
     {
         var array = CreateByteArray(rows * columns);
         using var container = new ByteMatrixContainer(rows, columns, array);
-        var matrix = container.Matrix;
+        using var token = container.GetMatrixForWrite(out var matrix);
 
         for (var r = 0; r < matrix.Rows; r++)
         {
+            var rowSpan = matrix.AsRowSpan<byte>(r);
             for (var c = 0; c < matrix.Columns; c++)
             {
-                matrix[r, c].Is(array[(r * columns) + c]);
+                rowSpan[c].Is(array[(r * columns) + c]);
             }
         }
 

@@ -24,7 +24,7 @@
     <ClInclude Include="Matrixes.h">
       <Filter>Matrix</Filter>
     </ClInclude>
-    <ClInclude Include="PixelBgr.h">
+    <ClInclude Include="PixelBgr24.h">
       <Filter>Matrix</Filter>
     </ClInclude>
   </ItemGroup>

@@ -11,16 +11,16 @@ namespace NimaNativeCore {
         int32_t allocSize_;
         int32_t rows_;          // _rows=Height
         int32_t columns_;       // _columns=Width
-        int32_t bytesPerData_;
+        int32_t bytesPerItem_;
         int32_t stride_;
 
         bool is_valid() const
         {
             if (pointer_ == nullptr) return false;
             if (columns_ <= 0 || rows_ <= 0) return false;
-            if (bytesPerData_ <= 0) return false;
-            if (stride_ < columns_ * bytesPerData_) return false;
-            if (stride_ % bytesPerData_ != 0) return false;
+            if (bytesPerItem_ <= 0) return false;
+            if (stride_ < columns_ * bytesPerItem_) return false;
+            if (stride_ % bytesPerItem_ != 0) return false;
             return true;    //valid
         }
 
@@ -57,7 +57,7 @@ namespace NimaNativeCore {
             if (pointer_ == dest_matrix.pointer_) return -1;
 
             if (rows_ != dest_matrix.rows_ || columns_ != dest_matrix.columns_
-                || bytesPerData_ != dest_matrix.bytesPerData_ || stride_ != dest_matrix.stride_)
+                || bytesPerItem_ != dest_matrix.bytesPerItem_ || stride_ != dest_matrix.stride_)
             {
                 return -2;
             }
@@ -65,9 +65,9 @@ namespace NimaNativeCore {
             auto src = (const uint8_t*)pointer_;
             auto dest = (uint8_t*)dest_matrix.pointer_;
             int row_offset = rows_ * stride_;
-            int col_offset = columns_ * bytesPerData_;
+            int col_offset = columns_ * bytesPerItem_;
             for (size_t row = 0; row < row_offset; row += stride_) {
-                for (size_t offset = row; offset < row + col_offset; offset += bytesPerData_) {
+                for (size_t offset = row; offset < row + col_offset; offset += bytesPerItem_) {
                     *((T*)(dest + offset)) = *((T*)(src + offset));
                 }
             }

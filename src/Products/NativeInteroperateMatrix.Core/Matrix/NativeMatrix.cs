@@ -93,6 +93,12 @@ public readonly record struct NativeMatrix : INativeMatrix
 
     public ReadOnlySpan<T> AsRowReadOnlySpan<T>(int row) where T : struct => AsRowSpan<T>(row);
 
+    public T GetValue<T>(int row, int column) where T : struct
+    {
+        IntPtr ptr = Pointer + (row * Stride) + column * BytesPerItem;
+        return Marshal.PtrToStructure<T>(ptr);
+    }
+
     /// <summary>引数から値をコピーします</summary>
     public void CopyFrom(IntPtr intPtr, int rows, int columns, int stride)
     {
@@ -122,7 +128,6 @@ public readonly record struct NativeMatrix : INativeMatrix
     /// <summary>引数から値をコピーします</summary>
     public void CopyFrom(NativeMatrix src) =>
         CopyFrom(src.Pointer, src.Rows, src.Columns, src.Stride);
-
 
     /// <summary>引数に値をコピーします</summary>
     public void CopyTo(NativeMatrix destMatrix)

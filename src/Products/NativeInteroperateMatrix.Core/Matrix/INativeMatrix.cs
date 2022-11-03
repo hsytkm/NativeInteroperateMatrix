@@ -40,4 +40,5 @@ public interface INativeMatrix : INativeMemory
 
     ReadOnlySpan<T> AsRowReadOnlySpan<T>(int row) where T : struct;
 
+    T GetValue<T>(int row, int column) where T : struct;
 }

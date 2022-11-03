@@ -25,7 +25,7 @@ public static class PixelMatrixDrawingBitmapExtension
     }
 
     /// <summary>PixelBgrMatrixContainer を作成して返します</summary>
-    public static IPixelBgr24MatrixContainer ToPixelBgr24MatrixContainer(this Bitmap bitmap, bool isDisposeBitmap = false)
+    public static PixelBgr24MatrixContainer ToPixelBgr24MatrixContainer(this Bitmap bitmap, bool isDisposeBitmap = false)
     {
         if (bitmap.IsInvalid()) throw new ArgumentException("Invalid Image");
 

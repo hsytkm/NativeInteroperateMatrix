@@ -7,7 +7,7 @@ namespace Nima.Core.Tests.Imaging.Drawing;
 
 public class DrawingTest
 {
-    private const string TempPath = "_temp.bmp";
+    const string TempPath = "_temp.bmp";
 
     public DrawingTest()
     {
@@ -24,7 +24,7 @@ public class DrawingTest
             using var drawing = new Bitmap(sourcePath);
             using var container = drawing.ToPixelBgr24MatrixContainer();
 
-            await container.Matrix.ToBmpFileAsync(TempPath);
+            await container.ToBmpFileAsync(TempPath);
             var isMatch = await FileComparator.IsMatchAsync(sourcePath, TempPath);
             isMatch.IsTrue();
         }

@@ -9,7 +9,7 @@ namespace NativeInteroperateMatrix.Imaging.Wpf.Tests;
 
 public class BitmapSourceTest : ImagePathTestData
 {
-    private const string TempPath = "_temp.bmp";
+    const string TempPath = "_temp.bmp";
 
     public BitmapSourceTest()
     {
@@ -36,7 +36,6 @@ public class BitmapSourceTest : ImagePathTestData
 
         using var stream = File.Open(imagePath, FileMode.Open, FileAccess.Read, FileShare.Read);
         return ToBitmapImage(stream);
-
     }
 
     [Theory]
@@ -45,10 +44,10 @@ public class BitmapSourceTest : ImagePathTestData
     {
         try
         {
-            var bitmap = Create(sourcePath);
+            BitmapSource bitmap = Create(sourcePath);
             using var container = bitmap.ToPixelBgr24MatrixContainer();
 
-            await container.Matrix.ToBmpFileAsync(TempPath);
+            await container.ToBmpFileAsync(TempPath);
             var isMatch = await FileComparator.IsMatchAsync(sourcePath, TempPath);
             isMatch.IsTrue();
         }

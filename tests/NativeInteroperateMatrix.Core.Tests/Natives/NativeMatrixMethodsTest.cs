@@ -48,7 +48,7 @@ internal static class NativeMatrixMethods
 
 public class NativeMatrixMethodsTest
 {
-    static long GetMaxValue<T>(long count)
+    static long GetMaxValue<T>(long denominator)
     {
         var type = typeof(T);
         long max = 0;
@@ -65,7 +65,7 @@ public class NativeMatrixMethodsTest
         if (type == typeof(long))
             max = long.MaxValue;
 
-        var value = max / count;
+        var value = max / denominator;
         return Math.Clamp(value, 1, max);
     }
 

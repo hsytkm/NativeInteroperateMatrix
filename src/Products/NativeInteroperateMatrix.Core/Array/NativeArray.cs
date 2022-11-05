@@ -67,13 +67,15 @@ public readonly record struct NativeArray : INativeArray
         }
     }
 
-    public unsafe Span<T> AsSpan<T>() where T : struct
-    {
-        int length = Length / Unsafe.SizeOf<T>();
-        return new(Pointer.ToPointer(), length);
-    }
+    public unsafe Span<T> AsSpan<T>() where T : struct => new(Pointer.ToPointer(), Length);
 
-    public unsafe Span<T> AsReadOnlySpan<T>() where T : struct => AsSpan<T>();
+    public ReadOnlySpan<T> AsReadOnlySpan<T>() where T : struct => AsSpan<T>();
+
+    public T GetValue<T>(int index) where T : struct
+    {
+        IntPtr ptr = Pointer + index * BytesPerItem;
+        return Marshal.PtrToStructure<T>(ptr);
+    }
 
     public NativeArray GetRearrangedArray(int bytesPerItem) => new(Pointer, AllocateSize, bytesPerItem);
 

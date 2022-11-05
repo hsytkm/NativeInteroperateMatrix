@@ -14,6 +14,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="Array\ArrayContainerTemplate.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>ArrayContainerTemplate.tt</DependentUpon>
+    </Compile>
     <Compile Update="Matrix\MatrixContainerTemplate.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
@@ -22,6 +27,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="Array\ArrayContainerTemplate.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>ArrayContainerTemplate.cs</LastGenOutput>
+    </None>
     <None Update="Matrix\MatrixContainerTemplate.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>MatrixContainerTemplate.cs</LastGenOutput>

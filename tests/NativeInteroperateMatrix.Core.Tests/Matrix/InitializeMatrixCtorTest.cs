@@ -1,21 +1,17 @@
 ﻿using Xunit;
 
-namespace Nima.Core.Tests.Common;
+namespace Nima.Core.Tests.Matrix;
 
 /// <summary>
 /// 初期値あり ctor のテスト（代表して byte 型のみ）
 /// </summary>
-public class InitializedCtorTest
+public class InitializeMatrixCtorTest
 {
-    private static IReadOnlyList<byte> CreateByteArray(int count)
+    static IReadOnlyList<byte> CreateTestByteArray(int count)
     {
         var array = new byte[count];
-        byte data = 0;
-        for (var i = 0; i < count; i++)
-        {
-            array[i] = data;
-            data = (data >= 0xff) ? (byte)0 : data++;
-        }
+        for (var i = 0; i < array.Length; i++)
+            array[i] = (byte)(i & 0xff);
         return array;
     }
 
@@ -23,28 +19,27 @@ public class InitializedCtorTest
     [ClassData(typeof(RowColPairTestData))]
     public void CtorItems(int rows, int columns)
     {
-        var array = CreateByteArray(rows * columns);
+        var array = CreateTestByteArray(rows * columns);
         using var container = new ByteMatrixContainer(rows, columns, array);
-        using var token = container.GetMatrixForWrite(out var matrix);
+        using var token = container.GetMatrixForWrite(out NativeMatrix matrix);
 
         for (var r = 0; r < matrix.Rows; r++)
         {
-            var rowSpan = matrix.AsRowSpan<byte>(r);
             for (var c = 0; c < matrix.Columns; c++)
             {
-                rowSpan[c].Is(array[(r * columns) + c]);
+                matrix.GetValue<byte>(r, c).Is(array[(r * columns) + c]);
             }
         }
 
         Assert.Throws<ArgumentException>(() =>
         {
-            var overArray = CreateByteArray(rows * columns + 1);
+            var overArray = CreateTestByteArray(rows * columns + 1);
             using var container = new ByteMatrixContainer(rows, columns, overArray);
         });
 
         Assert.Throws<ArgumentException>(() =>
         {
-            var shortArray = CreateByteArray(rows * columns - 1);
+            var shortArray = CreateTestByteArray(rows * columns - 1);
             using var container = new ByteMatrixContainer(rows, columns, shortArray);
         });
     }

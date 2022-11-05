@@ -1,6 +1,6 @@
 ﻿namespace Nima.Imaging;
 
-public interface IPixelBgr24MatrixContainer : IMatrixContainer
+public interface IPixelBgr24MatrixContainer : INativeMatrixContainer
 {
     /// <summary>
     /// 確保済メモリを変更せずに小さい画像サイズに変更します

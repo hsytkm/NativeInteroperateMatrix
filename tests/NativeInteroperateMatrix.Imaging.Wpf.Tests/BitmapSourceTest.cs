@@ -17,7 +17,7 @@ public class BitmapSourceTest : ImagePathTestData
             File.Delete(TempPath);
     }
 
-    static BitmapSource Create(string imagePath)
+    static BitmapImage Create(string imagePath)
     {
         static BitmapImage ToBitmapImage(Stream stream)
         {
@@ -25,12 +25,15 @@ public class BitmapSourceTest : ImagePathTestData
 
             var bi = new BitmapImage();
             bi.BeginInit();
+            bi.CreateOptions = BitmapCreateOptions.IgnoreColorProfile;  // カメラ撮って出しjpg画素値がbmpとjpgずれる対策!!
             bi.CacheOption = BitmapCacheOption.OnLoad;
             bi.StreamSource = stream;
             bi.EndInit();
             bi.Freeze();
 
-            if (bi.Width == 1 && bi.Height == 1) throw new OutOfMemoryException();
+            if (bi.Width == 1 && bi.Height == 1)
+                throw new OutOfMemoryException();
+
             return bi;
         }
 

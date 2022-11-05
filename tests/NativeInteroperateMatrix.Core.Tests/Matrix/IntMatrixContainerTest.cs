@@ -1,13 +1,12 @@
-﻿
-using Xunit;
+﻿using Xunit;
 
-namespace Nima.Core.Tests.BuiltIn;
+namespace Nima.Core.Tests.Matrix;
 
 /// <summary>
 /// 空の Container インスタンス作成（整数専用）
 /// </summary>
-public abstract class IntegerMatrixContainerTestBase<TContainer, TType>
-    where TContainer : notnull, IMatrixContainer
+public abstract class IntMatrixContainerTest<TContainer, TType>
+    where TContainer : notnull, INativeMatrixContainer, IDisposable
     where TType : struct
 {
     protected abstract TType WriteValue { get; }
@@ -26,10 +25,10 @@ public abstract class IntegerMatrixContainerTestBase<TContainer, TType>
         (var centerRow, var centerCol) = ((rows - 1) / 2, (columns - 1) / 2);
         var rc = new (int row, int col)[]
         {
-                (centerRow, centerCol),
-                (centerRow, centerCol + 1),
-                (centerRow + 1, centerCol),
-                (centerRow + 1, centerCol + 1)
+            (centerRow, centerCol),
+            (centerRow, centerCol + 1),
+            (centerRow + 1, centerCol),
+            (centerRow + 1, centerCol + 1)
         };
 
         var writeValue = WriteValue;
@@ -58,7 +57,7 @@ public abstract class IntegerMatrixContainerTestBase<TContainer, TType>
     }
 }
 
-public class ByteMatrixContainerTest : IntegerMatrixContainerTestBase<ByteMatrixContainer, byte>
+public class ByteMatrixContainerTest : IntMatrixContainerTest<ByteMatrixContainer, byte>
 {
     protected override byte WriteValue { get; } = byte.MaxValue;
 
@@ -66,7 +65,7 @@ public class ByteMatrixContainerTest : IntegerMatrixContainerTestBase<ByteMatrix
         new(rows, columns, initialize);
 }
 
-public class Int16MatrixContainerTest : IntegerMatrixContainerTestBase<Int16MatrixContainer, short>
+public class Int16MatrixContainerTest : IntMatrixContainerTest<Int16MatrixContainer, short>
 {
     protected override short WriteValue { get; } = short.MaxValue;
 
@@ -74,7 +73,7 @@ public class Int16MatrixContainerTest : IntegerMatrixContainerTestBase<Int16Matr
         new(rows, columns, initialize);
 }
 
-public class Int32MatrixContainerTest : IntegerMatrixContainerTestBase<Int32MatrixContainer, int>
+public class Int32MatrixContainerTest : IntMatrixContainerTest<Int32MatrixContainer, int>
 {
     protected override int WriteValue { get; } = int.MaxValue;
 
@@ -82,7 +81,7 @@ public class Int32MatrixContainerTest : IntegerMatrixContainerTestBase<Int32Matr
         new(rows, columns, initialize);
 }
 
-public class Int64MatrixContainerTest : IntegerMatrixContainerTestBase<Int64MatrixContainer, long>
+public class Int64MatrixContainerTest : IntMatrixContainerTest<Int64MatrixContainer, long>
 {
     protected override long WriteValue { get; } = long.MaxValue / 64;   // overflow 対策
 

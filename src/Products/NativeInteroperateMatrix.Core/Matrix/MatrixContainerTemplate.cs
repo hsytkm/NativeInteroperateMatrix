@@ -24,8 +24,7 @@ public /*sealed*/ class ByteMatrixContainer : MatrixContainerBase
             if (column >= columns)
             {
                 column = 0;
-                row++;
-                span = Matrix.AsRowSpan<Byte>(row);
+                span = Matrix.AsRowSpan<Byte>(row++);
             }
             span[column++] = item;
 
@@ -36,32 +35,68 @@ public /*sealed*/ class ByteMatrixContainer : MatrixContainerBase
         if (!(row == rows - 1 && column == columns))
             throw new ArgumentException("Items is small.", nameof(items));
     }
-
-    public ByteMatrixContainer(int rows, int columns, ReadOnlySpan<Byte> items)
+    
+    public ByteMatrixContainer(int rows, int columns, ICollection<Byte> items)
         : this(rows, columns, false)
     {
-        int length = rows * columns;
-        int written = 0;
+        if (rows * columns != items.Count)
+            throw new ArgumentException("Items is different length.", nameof(items));
+
         int row = 0;
-        int column = 0;
-        var span = Matrix.AsRowSpan<Byte>(0);
+        int column = int.MaxValue;
+        var span = Span<Byte>.Empty;
 
         foreach (var item in items)
         {
             if (column >= columns)
             {
                 column = 0;
-                row++;
-                span = Matrix.AsRowSpan<Byte>(row);
+                span = Matrix.AsRowSpan<Byte>(row++);
             }
             span[column++] = item;
-
-            if (++written > length)
-                throw new ArgumentException("Items is large.", nameof(items));
         }
+    }
+    
+    public ByteMatrixContainer(int rows, int columns, IReadOnlyCollection<Byte> items)
+        : this(rows, columns, false)
+    {
+        if (rows * columns != items.Count)
+            throw new ArgumentException("Items is different length.", nameof(items));
 
-        if (!(row == rows - 1 && column == columns))
-            throw new ArgumentException("Items is small.", nameof(items));
+        int row = 0;
+        int column = int.MaxValue;
+        var span = Span<Byte>.Empty;
+
+        foreach (var item in items)
+        {
+            if (column >= columns)
+            {
+                column = 0;
+                span = Matrix.AsRowSpan<Byte>(row++);
+            }
+            span[column++] = item;
+        }
+    }
+
+    public ByteMatrixContainer(int rows, int columns, ReadOnlySpan<Byte> items)
+        : this(rows, columns, false)
+    {
+        if (rows * columns != items.Length)
+            throw new ArgumentException("Items is different length.", nameof(items));
+
+        int row = 0;
+        int column = int.MaxValue;
+        var span = Span<Byte>.Empty;
+
+        foreach (var item in items)
+        {
+            if (column >= columns)
+            {
+                column = 0;
+                span = Matrix.AsRowSpan<Byte>(row++);
+            }
+            span[column++] = item;
+        }
     }
 }
 
@@ -85,8 +120,7 @@ public /*sealed*/ class Int16MatrixContainer : MatrixContainerBase
             if (column >= columns)
             {
                 column = 0;
-                row++;
-                span = Matrix.AsRowSpan<Int16>(row);
+                span = Matrix.AsRowSpan<Int16>(row++);
             }
             span[column++] = item;
 
@@ -97,32 +131,68 @@ public /*sealed*/ class Int16MatrixContainer : MatrixContainerBase
         if (!(row == rows - 1 && column == columns))
             throw new ArgumentException("Items is small.", nameof(items));
     }
-
-    public Int16MatrixContainer(int rows, int columns, ReadOnlySpan<Int16> items)
+    
+    public Int16MatrixContainer(int rows, int columns, ICollection<Int16> items)
         : this(rows, columns, false)
     {
-        int length = rows * columns;
-        int written = 0;
+        if (rows * columns != items.Count)
+            throw new ArgumentException("Items is different length.", nameof(items));
+
         int row = 0;
-        int column = 0;
-        var span = Matrix.AsRowSpan<Int16>(0);
+        int column = int.MaxValue;
+        var span = Span<Int16>.Empty;
 
         foreach (var item in items)
         {
             if (column >= columns)
             {
                 column = 0;
-                row++;
-                span = Matrix.AsRowSpan<Int16>(row);
+                span = Matrix.AsRowSpan<Int16>(row++);
             }
             span[column++] = item;
-
-            if (++written > length)
-                throw new ArgumentException("Items is large.", nameof(items));
         }
+    }
+    
+    public Int16MatrixContainer(int rows, int columns, IReadOnlyCollection<Int16> items)
+        : this(rows, columns, false)
+    {
+        if (rows * columns != items.Count)
+            throw new ArgumentException("Items is different length.", nameof(items));
 
-        if (!(row == rows - 1 && column == columns))
-            throw new ArgumentException("Items is small.", nameof(items));
+        int row = 0;
+        int column = int.MaxValue;
+        var span = Span<Int16>.Empty;
+
+        foreach (var item in items)
+        {
+            if (column >= columns)
+            {
+                column = 0;
+                span = Matrix.AsRowSpan<Int16>(row++);
+            }
+            span[column++] = item;
+        }
+    }
+
+    public Int16MatrixContainer(int rows, int columns, ReadOnlySpan<Int16> items)
+        : this(rows, columns, false)
+    {
+        if (rows * columns != items.Length)
+            throw new ArgumentException("Items is different length.", nameof(items));
+
+        int row = 0;
+        int column = int.MaxValue;
+        var span = Span<Int16>.Empty;
+
+        foreach (var item in items)
+        {
+            if (column >= columns)
+            {
+                column = 0;
+                span = Matrix.AsRowSpan<Int16>(row++);
+            }
+            span[column++] = item;
+        }
     }
 }
 
@@ -146,8 +216,7 @@ public /*sealed*/ class Int32MatrixContainer : MatrixContainerBase
             if (column >= columns)
             {
                 column = 0;
-                row++;
-                span = Matrix.AsRowSpan<Int32>(row);
+                span = Matrix.AsRowSpan<Int32>(row++);
             }
             span[column++] = item;
 
@@ -158,32 +227,68 @@ public /*sealed*/ class Int32MatrixContainer : MatrixContainerBase
         if (!(row == rows - 1 && column == columns))
             throw new ArgumentException("Items is small.", nameof(items));
     }
-
-    public Int32MatrixContainer(int rows, int columns, ReadOnlySpan<Int32> items)
+    
+    public Int32MatrixContainer(int rows, int columns, ICollection<Int32> items)
         : this(rows, columns, false)
     {
-        int length = rows * columns;
-        int written = 0;
+        if (rows * columns != items.Count)
+            throw new ArgumentException("Items is different length.", nameof(items));
+
         int row = 0;
-        int column = 0;
-        var span = Matrix.AsRowSpan<Int32>(0);
+        int column = int.MaxValue;
+        var span = Span<Int32>.Empty;
 
         foreach (var item in items)
         {
             if (column >= columns)
             {
                 column = 0;
-                row++;
-                span = Matrix.AsRowSpan<Int32>(row);
+                span = Matrix.AsRowSpan<Int32>(row++);
             }
             span[column++] = item;
-
-            if (++written > length)
-                throw new ArgumentException("Items is large.", nameof(items));
         }
+    }
+    
+    public Int32MatrixContainer(int rows, int columns, IReadOnlyCollection<Int32> items)
+        : this(rows, columns, false)
+    {
+        if (rows * columns != items.Count)
+            throw new ArgumentException("Items is different length.", nameof(items));
 
-        if (!(row == rows - 1 && column == columns))
-            throw new ArgumentException("Items is small.", nameof(items));
+        int row = 0;
+        int column = int.MaxValue;
+        var span = Span<Int32>.Empty;
+
+        foreach (var item in items)
+        {
+            if (column >= columns)
+            {
+                column = 0;
+                span = Matrix.AsRowSpan<Int32>(row++);
+            }
+            span[column++] = item;
+        }
+    }
+
+    public Int32MatrixContainer(int rows, int columns, ReadOnlySpan<Int32> items)
+        : this(rows, columns, false)
+    {
+        if (rows * columns != items.Length)
+            throw new ArgumentException("Items is different length.", nameof(items));
+
+        int row = 0;
+        int column = int.MaxValue;
+        var span = Span<Int32>.Empty;
+
+        foreach (var item in items)
+        {
+            if (column >= columns)
+            {
+                column = 0;
+                span = Matrix.AsRowSpan<Int32>(row++);
+            }
+            span[column++] = item;
+        }
     }
 }
 
@@ -207,8 +312,7 @@ public /*sealed*/ class Int64MatrixContainer : MatrixContainerBase
             if (column >= columns)
             {
                 column = 0;
-                row++;
-                span = Matrix.AsRowSpan<Int64>(row);
+                span = Matrix.AsRowSpan<Int64>(row++);
             }
             span[column++] = item;
 
@@ -219,32 +323,68 @@ public /*sealed*/ class Int64MatrixContainer : MatrixContainerBase
         if (!(row == rows - 1 && column == columns))
             throw new ArgumentException("Items is small.", nameof(items));
     }
-
-    public Int64MatrixContainer(int rows, int columns, ReadOnlySpan<Int64> items)
+    
+    public Int64MatrixContainer(int rows, int columns, ICollection<Int64> items)
         : this(rows, columns, false)
     {
-        int length = rows * columns;
-        int written = 0;
+        if (rows * columns != items.Count)
+            throw new ArgumentException("Items is different length.", nameof(items));
+
         int row = 0;
-        int column = 0;
-        var span = Matrix.AsRowSpan<Int64>(0);
+        int column = int.MaxValue;
+        var span = Span<Int64>.Empty;
 
         foreach (var item in items)
         {
             if (column >= columns)
             {
                 column = 0;
-                row++;
-                span = Matrix.AsRowSpan<Int64>(row);
+                span = Matrix.AsRowSpan<Int64>(row++);
             }
             span[column++] = item;
-
-            if (++written > length)
-                throw new ArgumentException("Items is large.", nameof(items));
         }
+    }
+    
+    public Int64MatrixContainer(int rows, int columns, IReadOnlyCollection<Int64> items)
+        : this(rows, columns, false)
+    {
+        if (rows * columns != items.Count)
+            throw new ArgumentException("Items is different length.", nameof(items));
 
-        if (!(row == rows - 1 && column == columns))
-            throw new ArgumentException("Items is small.", nameof(items));
+        int row = 0;
+        int column = int.MaxValue;
+        var span = Span<Int64>.Empty;
+
+        foreach (var item in items)
+        {
+            if (column >= columns)
+            {
+                column = 0;
+                span = Matrix.AsRowSpan<Int64>(row++);
+            }
+            span[column++] = item;
+        }
+    }
+
+    public Int64MatrixContainer(int rows, int columns, ReadOnlySpan<Int64> items)
+        : this(rows, columns, false)
+    {
+        if (rows * columns != items.Length)
+            throw new ArgumentException("Items is different length.", nameof(items));
+
+        int row = 0;
+        int column = int.MaxValue;
+        var span = Span<Int64>.Empty;
+
+        foreach (var item in items)
+        {
+            if (column >= columns)
+            {
+                column = 0;
+                span = Matrix.AsRowSpan<Int64>(row++);
+            }
+            span[column++] = item;
+        }
     }
 }
 
@@ -268,8 +408,7 @@ public /*sealed*/ class SingleMatrixContainer : MatrixContainerBase
             if (column >= columns)
             {
                 column = 0;
-                row++;
-                span = Matrix.AsRowSpan<Single>(row);
+                span = Matrix.AsRowSpan<Single>(row++);
             }
             span[column++] = item;
 
@@ -280,32 +419,68 @@ public /*sealed*/ class SingleMatrixContainer : MatrixContainerBase
         if (!(row == rows - 1 && column == columns))
             throw new ArgumentException("Items is small.", nameof(items));
     }
-
-    public SingleMatrixContainer(int rows, int columns, ReadOnlySpan<Single> items)
+    
+    public SingleMatrixContainer(int rows, int columns, ICollection<Single> items)
         : this(rows, columns, false)
     {
-        int length = rows * columns;
-        int written = 0;
+        if (rows * columns != items.Count)
+            throw new ArgumentException("Items is different length.", nameof(items));
+
         int row = 0;
-        int column = 0;
-        var span = Matrix.AsRowSpan<Single>(0);
+        int column = int.MaxValue;
+        var span = Span<Single>.Empty;
 
         foreach (var item in items)
         {
             if (column >= columns)
             {
                 column = 0;
-                row++;
-                span = Matrix.AsRowSpan<Single>(row);
+                span = Matrix.AsRowSpan<Single>(row++);
             }
             span[column++] = item;
-
-            if (++written > length)
-                throw new ArgumentException("Items is large.", nameof(items));
         }
+    }
+    
+    public SingleMatrixContainer(int rows, int columns, IReadOnlyCollection<Single> items)
+        : this(rows, columns, false)
+    {
+        if (rows * columns != items.Count)
+            throw new ArgumentException("Items is different length.", nameof(items));
 
-        if (!(row == rows - 1 && column == columns))
-            throw new ArgumentException("Items is small.", nameof(items));
+        int row = 0;
+        int column = int.MaxValue;
+        var span = Span<Single>.Empty;
+
+        foreach (var item in items)
+        {
+            if (column >= columns)
+            {
+                column = 0;
+                span = Matrix.AsRowSpan<Single>(row++);
+            }
+            span[column++] = item;
+        }
+    }
+
+    public SingleMatrixContainer(int rows, int columns, ReadOnlySpan<Single> items)
+        : this(rows, columns, false)
+    {
+        if (rows * columns != items.Length)
+            throw new ArgumentException("Items is different length.", nameof(items));
+
+        int row = 0;
+        int column = int.MaxValue;
+        var span = Span<Single>.Empty;
+
+        foreach (var item in items)
+        {
+            if (column >= columns)
+            {
+                column = 0;
+                span = Matrix.AsRowSpan<Single>(row++);
+            }
+            span[column++] = item;
+        }
     }
 }
 
@@ -329,8 +504,7 @@ public /*sealed*/ class DoubleMatrixContainer : MatrixContainerBase
             if (column >= columns)
             {
                 column = 0;
-                row++;
-                span = Matrix.AsRowSpan<Double>(row);
+                span = Matrix.AsRowSpan<Double>(row++);
             }
             span[column++] = item;
 
@@ -341,32 +515,68 @@ public /*sealed*/ class DoubleMatrixContainer : MatrixContainerBase
         if (!(row == rows - 1 && column == columns))
             throw new ArgumentException("Items is small.", nameof(items));
     }
-
-    public DoubleMatrixContainer(int rows, int columns, ReadOnlySpan<Double> items)
+    
+    public DoubleMatrixContainer(int rows, int columns, ICollection<Double> items)
         : this(rows, columns, false)
     {
-        int length = rows * columns;
-        int written = 0;
+        if (rows * columns != items.Count)
+            throw new ArgumentException("Items is different length.", nameof(items));
+
         int row = 0;
-        int column = 0;
-        var span = Matrix.AsRowSpan<Double>(0);
+        int column = int.MaxValue;
+        var span = Span<Double>.Empty;
 
         foreach (var item in items)
         {
             if (column >= columns)
             {
                 column = 0;
-                row++;
-                span = Matrix.AsRowSpan<Double>(row);
+                span = Matrix.AsRowSpan<Double>(row++);
             }
             span[column++] = item;
-
-            if (++written > length)
-                throw new ArgumentException("Items is large.", nameof(items));
         }
+    }
+    
+    public DoubleMatrixContainer(int rows, int columns, IReadOnlyCollection<Double> items)
+        : this(rows, columns, false)
+    {
+        if (rows * columns != items.Count)
+            throw new ArgumentException("Items is different length.", nameof(items));
 
-        if (!(row == rows - 1 && column == columns))
-            throw new ArgumentException("Items is small.", nameof(items));
+        int row = 0;
+        int column = int.MaxValue;
+        var span = Span<Double>.Empty;
+
+        foreach (var item in items)
+        {
+            if (column >= columns)
+            {
+                column = 0;
+                span = Matrix.AsRowSpan<Double>(row++);
+            }
+            span[column++] = item;
+        }
+    }
+
+    public DoubleMatrixContainer(int rows, int columns, ReadOnlySpan<Double> items)
+        : this(rows, columns, false)
+    {
+        if (rows * columns != items.Length)
+            throw new ArgumentException("Items is different length.", nameof(items));
+
+        int row = 0;
+        int column = int.MaxValue;
+        var span = Span<Double>.Empty;
+
+        foreach (var item in items)
+        {
+            if (column >= columns)
+            {
+                column = 0;
+                span = Matrix.AsRowSpan<Double>(row++);
+            }
+            span[column++] = item;
+        }
     }
 }
 

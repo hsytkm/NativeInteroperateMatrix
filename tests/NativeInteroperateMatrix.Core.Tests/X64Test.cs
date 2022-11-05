@@ -1,7 +1,7 @@
 ﻿using System.Runtime.CompilerServices;
 using Xunit;
 
-namespace Nima.Core.Tests.Common;
+namespace Nima.Core.Tests;
 
 /// <summary>
 /// 初期値あり ctor のテスト（代表して byte 型のみ）

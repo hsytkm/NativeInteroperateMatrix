@@ -1,6 +1,6 @@
 ﻿namespace Nima;
 
-public abstract class MatrixContainerBase : NativeMemoryContainerBase, IMatrixContainer
+public abstract class MatrixContainerBase : NativeMemoryContainerBase, INativeMatrixContainer
 {
     /// <summary>
     /// 外部公開用の2次元配列(NativeMemoryをWrapしています)

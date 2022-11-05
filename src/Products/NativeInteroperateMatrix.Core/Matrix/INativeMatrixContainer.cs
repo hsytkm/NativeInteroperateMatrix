@@ -1,6 +1,6 @@
 ﻿namespace Nima;
 
-public interface IMatrixContainer : IDisposable
+public interface INativeMatrixContainer
 {
     int Rows { get; }
     int Columns { get; }

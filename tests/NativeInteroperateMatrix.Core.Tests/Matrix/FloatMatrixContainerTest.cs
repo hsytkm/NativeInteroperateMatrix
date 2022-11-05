@@ -1,12 +1,12 @@
 ﻿using Xunit;
 
-namespace Nima.Core.Tests.BuiltIn;
+namespace Nima.Core.Tests.Matrix;
 
 /// <summary>
 /// 空の Container インスタンス作成（小数専用）
 /// </summary>
-public abstract class FloatMatrixContainerTestBase<TContainer, TType>
-    where TContainer : notnull, IMatrixContainer
+public abstract class FloatMatrixContainerTest<TContainer, TType>
+    where TContainer : notnull, INativeMatrixContainer, IDisposable
     where TType : struct
 {
     protected abstract TType WriteValue { get; }
@@ -56,7 +56,7 @@ public abstract class FloatMatrixContainerTestBase<TContainer, TType>
     }
 }
 
-public class SingleMatrixContainerTest : FloatMatrixContainerTestBase<SingleMatrixContainer, float>
+public class SingleMatrixContainerTest : FloatMatrixContainerTest<SingleMatrixContainer, float>
 {
     protected override float WriteValue { get; } = float.MaxValue / 128f;  // overflow 対策
 
@@ -64,7 +64,7 @@ public class SingleMatrixContainerTest : FloatMatrixContainerTestBase<SingleMatr
         new(rows, columns, initialize);
 }
 
-public class DoubleMatrixContainerTest : FloatMatrixContainerTestBase<DoubleMatrixContainer, double>
+public class DoubleMatrixContainerTest : FloatMatrixContainerTest<DoubleMatrixContainer, double>
 {
     protected override double WriteValue { get; } = double.MaxValue / 128d;  // overflow 対策
 

@@ -4,7 +4,7 @@
 [StructLayout(LayoutKind.Sequential, Pack = 1, Size = 8 + (2 * sizeof(int)))]
 public readonly record struct NativeArray : INativeArray
 {
-    public static NativeArray Zero = new(IntPtr.Zero, 0, 0);
+    public static readonly NativeArray Zero = new(IntPtr.Zero, 0, 0);
 
     readonly IntPtr _pointer;
     readonly int _allocateSize;
@@ -26,8 +26,10 @@ public readonly record struct NativeArray : INativeArray
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     void ThrowInvalidLength(int index)
     {
-        if (index < 0 || Length - 1 < index)
+        if (index < 0)
             throw new ArgumentException($"Invalid length={index}.");
+        if (Length - 1 < index)
+            throw new IndexOutOfRangeException($"Invalid length={index}.");
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]

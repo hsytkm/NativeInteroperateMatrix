@@ -27,44 +27,32 @@ public /*sealed*/ class <#= typeName #>ArrayContainer : ArrayContainerBase
         int index = 0;
         var span = Array.AsSpan<<#= typeName #>>();
 
-        foreach (var item in items)
+#if NET6_0_OR_GREATER
+        if (items.TryGetNonEnumeratedCount(out var count))
         {
-            span[index++] = item;
+            if (length < count)
+            {
+                throw new IndexOutOfRangeException("Items is large.");
+            }
+            else if (length > count)
+            {
+                throw new ArgumentException("Items is small.", nameof(items));
+            }
 
-            if (index > length)
-                throw new ArgumentException("Items is large.", nameof(items));
+            foreach (var item in items)
+                span[index++] = item;
         }
+        else
+#endif
+        {
+            foreach (var item in items)
+                span[index++] = item;
 
-        if (index != length - 1)
-            throw new ArgumentException("Items is small.", nameof(items));
+            if (index != length)
+                throw new ArgumentException("Items is small.", nameof(items));
+        }
     }
     
-    public <#= typeName #>ArrayContainer(int length, ICollection<<#= typeName #>> items)
-        : this(length, false)
-    {
-        if (length != items.Count)
-            throw new ArgumentException("Items is different length.", nameof(items));
-
-        int index = 0;
-        var span = Array.AsSpan<<#= typeName #>>();
-
-        foreach (var item in items)
-            span[index++] = item;
-    }
-
-    public <#= typeName #>ArrayContainer(int length, IReadOnlyCollection<<#= typeName #>> items)
-        : this(length, false)
-    {
-        if (length != items.Count)
-            throw new ArgumentException("Items is different length.", nameof(items));
-
-        int index = 0;
-        var span = Array.AsSpan<<#= typeName #>>();
-
-        foreach (var item in items)
-            span[index++] = item;
-    }
-
     public <#= typeName #>ArrayContainer(int length, ReadOnlySpan<<#= typeName #>> items)
         : this(length, false)
     {
@@ -77,7 +65,6 @@ public /*sealed*/ class <#= typeName #>ArrayContainer : ArrayContainerBase
         foreach (var item in items)
             span[index++] = item;
     }
-
 }
 
 <# } #>

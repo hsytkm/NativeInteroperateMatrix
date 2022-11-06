@@ -21,14 +21,14 @@ public abstract class FloatMatrixContainerTest<TContainer, TType>
         using var token = container.GetMatrixForWrite(out NativeMatrix matrix);
         GetSum<TType>(matrix).Is(0);
 
-        (var centerRow, var centerCol) = ((rows - 1) / 2, (columns - 1) / 2);
-        var rc = new (int row, int col)[]
+        var rc = new List<(int row, int col)>();
         {
-            (centerRow, centerCol),
-            (centerRow, centerCol + 1),
-            (centerRow + 1, centerCol),
-            (centerRow + 1, centerCol + 1)
-        };
+            (var centerRow, var centerCol) = ((rows - 1) / 2, (columns - 1) / 2);
+            rc.Add((centerRow, centerCol));
+            if (rows > 1) rc.Add((centerRow + 1, centerCol));
+            if (columns > 1) rc.Add((centerRow, centerCol + 1));
+            if (rows > 1 && columns > 1) rc.Add((centerRow + 1, centerCol + 1));
+        }
 
         var writeValue = WriteValue;
         foreach (var (row, col) in rc)
@@ -38,7 +38,7 @@ public abstract class FloatMatrixContainerTest<TContainer, TType>
             rowSpan[col].Is(writeValue);
         }
 
-        var expected = (double)(dynamic)writeValue * rc.Length;
+        var expected = (double)(dynamic)writeValue * rc.Count;
         GetSum<TType>(matrix).Is(expected);
     }
 

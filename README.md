@@ -18,18 +18,15 @@ Interoperate 2-dimensional array with natives.
 
 プリミティブ型のサイズに応じた Matrix (struct) を用意しています。
 
-1バイトのみ 符号有無（`byte` と `sbyte`）を用意していますが、特に深い意味はありません。
-
-| PrimitiveType | ItemSize (byte) |      Matrix      |
-| :-----------: | :-------------: | :--------------: |
-|     byte      |        1        |    ByteMatrix    |
-|     sbyte     |        1        |    Int8Matrix    |
-|     short     |        2        |   Int16Matrix    |
-|      int      |        4        |   Int32Matrix    |
-|     long      |        8        |   Int64Matrix    |
-|     float     |        4        |   SingleMatrix   |
-|    double     |        8        |   DoubleMatrix   |
-|  PixelBgr24   |        3        | PixelBgr24Matrix |
+| PrimitiveType | Size (byte) |      Matrix      |
+| :-----------: | :---------: | :--------------: |
+|     byte      |      1      |    ByteMatrix    |
+|     short     |      2      |   Int16Matrix    |
+|      int      |      4      |   Int32Matrix    |
+|     long      |      8      |   Int64Matrix    |
+|     float     |      4      |   SingleMatrix   |
+|    double     |      8      |   DoubleMatrix   |
+|  PixelBgr24   |      3      | PixelBgr24Matrix |
 
 **Matrixの構造体サイズ**
 
@@ -42,6 +39,7 @@ Matrix (struct) のサイズは プリミティブ型 に関わらず **24Byte�
 |    Member    |  Type  |      Size       |
 | :----------: | :----: | :-------------: |
 |   Pointer    | IntPtr | **8 (for x64)** |
+| AllocateSize |  int   |        4        |
 |     Rows     |  int   |        4        |
 |   Columns    |  int   |        4        |
 | BytesPerItem |  int   |        4        |
@@ -85,6 +83,6 @@ var container2 = new ByteMatrixContainer(2, 3, values);
 
 **コンテナの破棄**
 
-`*MatrixContainer` は `IDisposable` を継承しています。 アンマネージドメモリを破棄するため、必ず `Dispose()` をコールして下さい。
+`MatrixContainer` は `IDisposable` を継承しています。 アンマネージドメモリを破棄するため、必ず `Dispose()` をコールして下さい。
 
 EOF

@@ -16,44 +16,32 @@ public /*sealed*/ class ByteArrayContainer : ArrayContainerBase
         int index = 0;
         var span = Array.AsSpan<Byte>();
 
-        foreach (var item in items)
+#if NET6_0_OR_GREATER
+        if (items.TryGetNonEnumeratedCount(out var count))
         {
-            span[index++] = item;
+            if (length < count)
+            {
+                throw new IndexOutOfRangeException("Items is large.");
+            }
+            else if (length > count)
+            {
+                throw new ArgumentException("Items is small.", nameof(items));
+            }
 
-            if (index > length)
-                throw new ArgumentException("Items is large.", nameof(items));
+            foreach (var item in items)
+                span[index++] = item;
         }
+        else
+#endif
+        {
+            foreach (var item in items)
+                span[index++] = item;
 
-        if (index != length - 1)
-            throw new ArgumentException("Items is small.", nameof(items));
+            if (index != length)
+                throw new ArgumentException("Items is small.", nameof(items));
+        }
     }
     
-    public ByteArrayContainer(int length, ICollection<Byte> items)
-        : this(length, false)
-    {
-        if (length != items.Count)
-            throw new ArgumentException("Items is different length.", nameof(items));
-
-        int index = 0;
-        var span = Array.AsSpan<Byte>();
-
-        foreach (var item in items)
-            span[index++] = item;
-    }
-
-    public ByteArrayContainer(int length, IReadOnlyCollection<Byte> items)
-        : this(length, false)
-    {
-        if (length != items.Count)
-            throw new ArgumentException("Items is different length.", nameof(items));
-
-        int index = 0;
-        var span = Array.AsSpan<Byte>();
-
-        foreach (var item in items)
-            span[index++] = item;
-    }
-
     public ByteArrayContainer(int length, ReadOnlySpan<Byte> items)
         : this(length, false)
     {
@@ -66,7 +54,6 @@ public /*sealed*/ class ByteArrayContainer : ArrayContainerBase
         foreach (var item in items)
             span[index++] = item;
     }
-
 }
 
 public /*sealed*/ class Int16ArrayContainer : ArrayContainerBase
@@ -81,44 +68,32 @@ public /*sealed*/ class Int16ArrayContainer : ArrayContainerBase
         int index = 0;
         var span = Array.AsSpan<Int16>();
 
-        foreach (var item in items)
+#if NET6_0_OR_GREATER
+        if (items.TryGetNonEnumeratedCount(out var count))
         {
-            span[index++] = item;
+            if (length < count)
+            {
+                throw new IndexOutOfRangeException("Items is large.");
+            }
+            else if (length > count)
+            {
+                throw new ArgumentException("Items is small.", nameof(items));
+            }
 
-            if (index > length)
-                throw new ArgumentException("Items is large.", nameof(items));
+            foreach (var item in items)
+                span[index++] = item;
         }
+        else
+#endif
+        {
+            foreach (var item in items)
+                span[index++] = item;
 
-        if (index != length - 1)
-            throw new ArgumentException("Items is small.", nameof(items));
+            if (index != length)
+                throw new ArgumentException("Items is small.", nameof(items));
+        }
     }
     
-    public Int16ArrayContainer(int length, ICollection<Int16> items)
-        : this(length, false)
-    {
-        if (length != items.Count)
-            throw new ArgumentException("Items is different length.", nameof(items));
-
-        int index = 0;
-        var span = Array.AsSpan<Int16>();
-
-        foreach (var item in items)
-            span[index++] = item;
-    }
-
-    public Int16ArrayContainer(int length, IReadOnlyCollection<Int16> items)
-        : this(length, false)
-    {
-        if (length != items.Count)
-            throw new ArgumentException("Items is different length.", nameof(items));
-
-        int index = 0;
-        var span = Array.AsSpan<Int16>();
-
-        foreach (var item in items)
-            span[index++] = item;
-    }
-
     public Int16ArrayContainer(int length, ReadOnlySpan<Int16> items)
         : this(length, false)
     {
@@ -131,7 +106,6 @@ public /*sealed*/ class Int16ArrayContainer : ArrayContainerBase
         foreach (var item in items)
             span[index++] = item;
     }
-
 }
 
 public /*sealed*/ class Int32ArrayContainer : ArrayContainerBase
@@ -146,44 +120,32 @@ public /*sealed*/ class Int32ArrayContainer : ArrayContainerBase
         int index = 0;
         var span = Array.AsSpan<Int32>();
 
-        foreach (var item in items)
+#if NET6_0_OR_GREATER
+        if (items.TryGetNonEnumeratedCount(out var count))
         {
-            span[index++] = item;
+            if (length < count)
+            {
+                throw new IndexOutOfRangeException("Items is large.");
+            }
+            else if (length > count)
+            {
+                throw new ArgumentException("Items is small.", nameof(items));
+            }
 
-            if (index > length)
-                throw new ArgumentException("Items is large.", nameof(items));
+            foreach (var item in items)
+                span[index++] = item;
         }
+        else
+#endif
+        {
+            foreach (var item in items)
+                span[index++] = item;
 
-        if (index != length - 1)
-            throw new ArgumentException("Items is small.", nameof(items));
+            if (index != length)
+                throw new ArgumentException("Items is small.", nameof(items));
+        }
     }
     
-    public Int32ArrayContainer(int length, ICollection<Int32> items)
-        : this(length, false)
-    {
-        if (length != items.Count)
-            throw new ArgumentException("Items is different length.", nameof(items));
-
-        int index = 0;
-        var span = Array.AsSpan<Int32>();
-
-        foreach (var item in items)
-            span[index++] = item;
-    }
-
-    public Int32ArrayContainer(int length, IReadOnlyCollection<Int32> items)
-        : this(length, false)
-    {
-        if (length != items.Count)
-            throw new ArgumentException("Items is different length.", nameof(items));
-
-        int index = 0;
-        var span = Array.AsSpan<Int32>();
-
-        foreach (var item in items)
-            span[index++] = item;
-    }
-
     public Int32ArrayContainer(int length, ReadOnlySpan<Int32> items)
         : this(length, false)
     {
@@ -196,7 +158,6 @@ public /*sealed*/ class Int32ArrayContainer : ArrayContainerBase
         foreach (var item in items)
             span[index++] = item;
     }
-
 }
 
 public /*sealed*/ class Int64ArrayContainer : ArrayContainerBase
@@ -211,44 +172,32 @@ public /*sealed*/ class Int64ArrayContainer : ArrayContainerBase
         int index = 0;
         var span = Array.AsSpan<Int64>();
 
-        foreach (var item in items)
+#if NET6_0_OR_GREATER
+        if (items.TryGetNonEnumeratedCount(out var count))
         {
-            span[index++] = item;
+            if (length < count)
+            {
+                throw new IndexOutOfRangeException("Items is large.");
+            }
+            else if (length > count)
+            {
+                throw new ArgumentException("Items is small.", nameof(items));
+            }
 
-            if (index > length)
-                throw new ArgumentException("Items is large.", nameof(items));
+            foreach (var item in items)
+                span[index++] = item;
         }
+        else
+#endif
+        {
+            foreach (var item in items)
+                span[index++] = item;
 
-        if (index != length - 1)
-            throw new ArgumentException("Items is small.", nameof(items));
+            if (index != length)
+                throw new ArgumentException("Items is small.", nameof(items));
+        }
     }
     
-    public Int64ArrayContainer(int length, ICollection<Int64> items)
-        : this(length, false)
-    {
-        if (length != items.Count)
-            throw new ArgumentException("Items is different length.", nameof(items));
-
-        int index = 0;
-        var span = Array.AsSpan<Int64>();
-
-        foreach (var item in items)
-            span[index++] = item;
-    }
-
-    public Int64ArrayContainer(int length, IReadOnlyCollection<Int64> items)
-        : this(length, false)
-    {
-        if (length != items.Count)
-            throw new ArgumentException("Items is different length.", nameof(items));
-
-        int index = 0;
-        var span = Array.AsSpan<Int64>();
-
-        foreach (var item in items)
-            span[index++] = item;
-    }
-
     public Int64ArrayContainer(int length, ReadOnlySpan<Int64> items)
         : this(length, false)
     {
@@ -261,7 +210,6 @@ public /*sealed*/ class Int64ArrayContainer : ArrayContainerBase
         foreach (var item in items)
             span[index++] = item;
     }
-
 }
 
 public /*sealed*/ class SingleArrayContainer : ArrayContainerBase
@@ -276,44 +224,32 @@ public /*sealed*/ class SingleArrayContainer : ArrayContainerBase
         int index = 0;
         var span = Array.AsSpan<Single>();
 
-        foreach (var item in items)
+#if NET6_0_OR_GREATER
+        if (items.TryGetNonEnumeratedCount(out var count))
         {
-            span[index++] = item;
+            if (length < count)
+            {
+                throw new IndexOutOfRangeException("Items is large.");
+            }
+            else if (length > count)
+            {
+                throw new ArgumentException("Items is small.", nameof(items));
+            }
 
-            if (index > length)
-                throw new ArgumentException("Items is large.", nameof(items));
+            foreach (var item in items)
+                span[index++] = item;
         }
+        else
+#endif
+        {
+            foreach (var item in items)
+                span[index++] = item;
 
-        if (index != length - 1)
-            throw new ArgumentException("Items is small.", nameof(items));
+            if (index != length)
+                throw new ArgumentException("Items is small.", nameof(items));
+        }
     }
     
-    public SingleArrayContainer(int length, ICollection<Single> items)
-        : this(length, false)
-    {
-        if (length != items.Count)
-            throw new ArgumentException("Items is different length.", nameof(items));
-
-        int index = 0;
-        var span = Array.AsSpan<Single>();
-
-        foreach (var item in items)
-            span[index++] = item;
-    }
-
-    public SingleArrayContainer(int length, IReadOnlyCollection<Single> items)
-        : this(length, false)
-    {
-        if (length != items.Count)
-            throw new ArgumentException("Items is different length.", nameof(items));
-
-        int index = 0;
-        var span = Array.AsSpan<Single>();
-
-        foreach (var item in items)
-            span[index++] = item;
-    }
-
     public SingleArrayContainer(int length, ReadOnlySpan<Single> items)
         : this(length, false)
     {
@@ -326,7 +262,6 @@ public /*sealed*/ class SingleArrayContainer : ArrayContainerBase
         foreach (var item in items)
             span[index++] = item;
     }
-
 }
 
 public /*sealed*/ class DoubleArrayContainer : ArrayContainerBase
@@ -341,44 +276,32 @@ public /*sealed*/ class DoubleArrayContainer : ArrayContainerBase
         int index = 0;
         var span = Array.AsSpan<Double>();
 
-        foreach (var item in items)
+#if NET6_0_OR_GREATER
+        if (items.TryGetNonEnumeratedCount(out var count))
         {
-            span[index++] = item;
+            if (length < count)
+            {
+                throw new IndexOutOfRangeException("Items is large.");
+            }
+            else if (length > count)
+            {
+                throw new ArgumentException("Items is small.", nameof(items));
+            }
 
-            if (index > length)
-                throw new ArgumentException("Items is large.", nameof(items));
+            foreach (var item in items)
+                span[index++] = item;
         }
+        else
+#endif
+        {
+            foreach (var item in items)
+                span[index++] = item;
 
-        if (index != length - 1)
-            throw new ArgumentException("Items is small.", nameof(items));
+            if (index != length)
+                throw new ArgumentException("Items is small.", nameof(items));
+        }
     }
     
-    public DoubleArrayContainer(int length, ICollection<Double> items)
-        : this(length, false)
-    {
-        if (length != items.Count)
-            throw new ArgumentException("Items is different length.", nameof(items));
-
-        int index = 0;
-        var span = Array.AsSpan<Double>();
-
-        foreach (var item in items)
-            span[index++] = item;
-    }
-
-    public DoubleArrayContainer(int length, IReadOnlyCollection<Double> items)
-        : this(length, false)
-    {
-        if (length != items.Count)
-            throw new ArgumentException("Items is different length.", nameof(items));
-
-        int index = 0;
-        var span = Array.AsSpan<Double>();
-
-        foreach (var item in items)
-            span[index++] = item;
-    }
-
     public DoubleArrayContainer(int length, ReadOnlySpan<Double> items)
         : this(length, false)
     {
@@ -391,6 +314,5 @@ public /*sealed*/ class DoubleArrayContainer : ArrayContainerBase
         foreach (var item in items)
             span[index++] = item;
     }
-
 }
 

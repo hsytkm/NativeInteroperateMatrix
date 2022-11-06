@@ -4,6 +4,8 @@
 [StructLayout(LayoutKind.Sequential, Pack = 1, Size = 8 + (5 * sizeof(int)))]
 public readonly record struct NativeMatrix : INativeMatrix
 {
+    public static readonly NativeMatrix Zero = new(IntPtr.Zero, 0, 0, 0, 0, 0);
+
     readonly IntPtr _pointer;
     readonly int _allocateSize;
     readonly int _rows;         // height
@@ -30,15 +32,19 @@ public readonly record struct NativeMatrix : INativeMatrix
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     void ThrowInvalidRow(int row)
     {
-        if (row < 0 || Rows - 1 < row)
+        if (row < 0)
             throw new ArgumentException($"Invalid row={row}");
+        if (Rows - 1 < row)
+            throw new IndexOutOfRangeException($"Invalid row={row}");
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     void ThrowInvalidColumn(int column)
     {
-        if (column < 0 || Columns - 1 < column)
+        if (column < 0)
             throw new ArgumentException($"Invalid column={column}");
+        if (Columns - 1 < column)
+            throw new IndexOutOfRangeException($"Invalid column={column}");
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -69,8 +75,8 @@ public readonly record struct NativeMatrix : INativeMatrix
     // IMatrix
     public int Rows => _rows;
     public int Columns => _columns;
-    public int Width => Columns;
-    public int Height => Rows;
+    public int Width => _columns;
+    public int Height => _rows;
     public int Stride => _stride;
     public bool IsContinuous => (Columns * BytesPerItem) == Stride;
 
@@ -132,8 +138,6 @@ public readonly record struct NativeMatrix : INativeMatrix
     /// <summary>引数に値をコピーします</summary>
     public void CopyTo(NativeMatrix destMatrix)
     {
-        throw new NotImplementedException("♪未確認です");
-
         // 画素値のコピー（サイズチェックなし）
         static void copyToCore(NativeMatrix srcMatrix, NativeMatrix destMatrix)
         {

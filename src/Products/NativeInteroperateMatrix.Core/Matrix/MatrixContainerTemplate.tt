@@ -25,67 +25,51 @@ public /*sealed*/ class <#= typeName #>MatrixContainer : MatrixContainerBase
         : this(rows, columns, false)
     {
         int length = rows * columns;
-        int written = 0;
-        int row = 0;
-        int column = 0;
-        var span = Matrix.AsRowSpan<<#= typeName #>>(0);
-
-        foreach (var item in items)
-        {
-            if (column >= columns)
-            {
-                column = 0;
-                span = Matrix.AsRowSpan<<#= typeName #>>(row++);
-            }
-            span[column++] = item;
-
-            if (++written > length)
-                throw new ArgumentException("Items is large.", nameof(items));
-        }
-
-        if (!(row == rows - 1 && column == columns))
-            throw new ArgumentException("Items is small.", nameof(items));
-    }
-    
-    public <#= typeName #>MatrixContainer(int rows, int columns, ICollection<<#= typeName #>> items)
-        : this(rows, columns, false)
-    {
-        if (rows * columns != items.Count)
-            throw new ArgumentException("Items is different length.", nameof(items));
-
         int row = 0;
         int column = int.MaxValue;
         var span = Span<<#= typeName #>>.Empty;
 
-        foreach (var item in items)
+#if NET6_0_OR_GREATER
+        if (items.TryGetNonEnumeratedCount(out var count))
         {
-            if (column >= columns)
+            if (length < count)
             {
-                column = 0;
-                span = Matrix.AsRowSpan<<#= typeName #>>(row++);
+                throw new IndexOutOfRangeException("Items is large.");
             }
-            span[column++] = item;
+            else if (length > count)
+            {
+                throw new ArgumentException("Items is small.", nameof(items));
+            }
+
+            foreach (var item in items)
+            {
+                if (column >= columns)
+                {
+                    column = 0;
+                    span = Matrix.AsRowSpan<<#= typeName #>>(row++);
+                }
+                span[column++] = item;
+            }
         }
-    }
-    
-    public <#= typeName #>MatrixContainer(int rows, int columns, IReadOnlyCollection<<#= typeName #>> items)
-        : this(rows, columns, false)
-    {
-        if (rows * columns != items.Count)
-            throw new ArgumentException("Items is different length.", nameof(items));
-
-        int row = 0;
-        int column = int.MaxValue;
-        var span = Span<<#= typeName #>>.Empty;
-
-        foreach (var item in items)
+        else
+#endif
         {
-            if (column >= columns)
+            int written = 0;
+            foreach (var item in items)
             {
-                column = 0;
-                span = Matrix.AsRowSpan<<#= typeName #>>(row++);
+                if (column >= columns)
+                {
+                    column = 0;
+                    span = Matrix.AsRowSpan<<#= typeName #>>(row++);
+                }
+                span[column++] = item;
+
+                if (++written > length)
+                    throw new IndexOutOfRangeException("Items is large.");
             }
-            span[column++] = item;
+
+            if (!(row == rows && column == columns))
+                throw new ArgumentException("Items is small.", nameof(items));
         }
     }
 

@@ -42,7 +42,7 @@ public abstract class ArrayContainerBase : NativeMemoryContainerBase, INativeArr
             throw new NotSupportedException("Someone is writing.");
 
         if (ReadCounter > 0)
-            throw new NotSupportedException("Someone is reading.");
+            throw new NotSupportedException($"Someone is reading. (Count={ReadCounter})");
 
         IsWriting = true;
         array = Array;

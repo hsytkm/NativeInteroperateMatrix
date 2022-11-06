@@ -23,13 +23,13 @@ public abstract class FloatArrayContainerTest<TContainer, TType>
         using var token = container.GetArrayForWrite(out NativeArray array);
         GetSum<TType>(array).Is(0);
 
-        var centerIndex = length / 2;
-        var indexes = new int[]
+        var indexes = new List<int>();
         {
-            centerIndex - 1,
-            centerIndex,
-            centerIndex + 1,
-        };
+            var centerIndex = length / 2;
+            if (centerIndex > 1) indexes.Add(centerIndex - 1);
+            indexes.Add(centerIndex);
+            if (centerIndex + 1 < length) indexes.Add(centerIndex + 1);
+        }
 
         var writeValue = WriteValue;
         var span = array.AsSpan<TType>();
@@ -39,7 +39,7 @@ public abstract class FloatArrayContainerTest<TContainer, TType>
             span[index].Is(writeValue);
         }
 
-        var expected = (double)(dynamic)writeValue * indexes.Length;
+        var expected = (double)(dynamic)writeValue * indexes.Count;
         GetSum<TType>(array).Is(expected);
     }
 

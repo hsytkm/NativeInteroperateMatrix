@@ -4,7 +4,12 @@
 #nullable enable
 namespace Nima;
 
-public /*sealed*/ class ByteArrayContainer : ArrayContainerBase
+public interface IByteArrayContainer : INativeArrayContainer
+{
+    Byte[] ToArray();
+}
+
+public /*sealed*/ class ByteArrayContainer : ArrayContainerBase, IByteArrayContainer
 {
     public ByteArrayContainer(int length, bool initialize = true)
         : base(length, Unsafe.SizeOf<Byte>(), initialize)
@@ -54,9 +59,21 @@ public /*sealed*/ class ByteArrayContainer : ArrayContainerBase
         foreach (var item in items)
             span[index++] = item;
     }
+
+    public Byte[] ToArray()
+    {
+        using var token = GetArrayForRead(out NativeArray array);
+        return array.AsSpan<Byte>().ToArray();
+    }
 }
 
-public /*sealed*/ class Int16ArrayContainer : ArrayContainerBase
+
+public interface IInt16ArrayContainer : INativeArrayContainer
+{
+    Int16[] ToArray();
+}
+
+public /*sealed*/ class Int16ArrayContainer : ArrayContainerBase, IInt16ArrayContainer
 {
     public Int16ArrayContainer(int length, bool initialize = true)
         : base(length, Unsafe.SizeOf<Int16>(), initialize)
@@ -106,9 +123,21 @@ public /*sealed*/ class Int16ArrayContainer : ArrayContainerBase
         foreach (var item in items)
             span[index++] = item;
     }
+
+    public Int16[] ToArray()
+    {
+        using var token = GetArrayForRead(out NativeArray array);
+        return array.AsSpan<Int16>().ToArray();
+    }
 }
 
-public /*sealed*/ class Int32ArrayContainer : ArrayContainerBase
+
+public interface IInt32ArrayContainer : INativeArrayContainer
+{
+    Int32[] ToArray();
+}
+
+public /*sealed*/ class Int32ArrayContainer : ArrayContainerBase, IInt32ArrayContainer
 {
     public Int32ArrayContainer(int length, bool initialize = true)
         : base(length, Unsafe.SizeOf<Int32>(), initialize)
@@ -158,9 +187,21 @@ public /*sealed*/ class Int32ArrayContainer : ArrayContainerBase
         foreach (var item in items)
             span[index++] = item;
     }
+
+    public Int32[] ToArray()
+    {
+        using var token = GetArrayForRead(out NativeArray array);
+        return array.AsSpan<Int32>().ToArray();
+    }
 }
 
-public /*sealed*/ class Int64ArrayContainer : ArrayContainerBase
+
+public interface IInt64ArrayContainer : INativeArrayContainer
+{
+    Int64[] ToArray();
+}
+
+public /*sealed*/ class Int64ArrayContainer : ArrayContainerBase, IInt64ArrayContainer
 {
     public Int64ArrayContainer(int length, bool initialize = true)
         : base(length, Unsafe.SizeOf<Int64>(), initialize)
@@ -210,9 +251,21 @@ public /*sealed*/ class Int64ArrayContainer : ArrayContainerBase
         foreach (var item in items)
             span[index++] = item;
     }
+
+    public Int64[] ToArray()
+    {
+        using var token = GetArrayForRead(out NativeArray array);
+        return array.AsSpan<Int64>().ToArray();
+    }
 }
 
-public /*sealed*/ class SingleArrayContainer : ArrayContainerBase
+
+public interface ISingleArrayContainer : INativeArrayContainer
+{
+    Single[] ToArray();
+}
+
+public /*sealed*/ class SingleArrayContainer : ArrayContainerBase, ISingleArrayContainer
 {
     public SingleArrayContainer(int length, bool initialize = true)
         : base(length, Unsafe.SizeOf<Single>(), initialize)
@@ -262,9 +315,21 @@ public /*sealed*/ class SingleArrayContainer : ArrayContainerBase
         foreach (var item in items)
             span[index++] = item;
     }
+
+    public Single[] ToArray()
+    {
+        using var token = GetArrayForRead(out NativeArray array);
+        return array.AsSpan<Single>().ToArray();
+    }
 }
 
-public /*sealed*/ class DoubleArrayContainer : ArrayContainerBase
+
+public interface IDoubleArrayContainer : INativeArrayContainer
+{
+    Double[] ToArray();
+}
+
+public /*sealed*/ class DoubleArrayContainer : ArrayContainerBase, IDoubleArrayContainer
 {
     public DoubleArrayContainer(int length, bool initialize = true)
         : base(length, Unsafe.SizeOf<Double>(), initialize)
@@ -314,5 +379,12 @@ public /*sealed*/ class DoubleArrayContainer : ArrayContainerBase
         foreach (var item in items)
             span[index++] = item;
     }
+
+    public Double[] ToArray()
+    {
+        using var token = GetArrayForRead(out NativeArray array);
+        return array.AsSpan<Double>().ToArray();
+    }
 }
+
 

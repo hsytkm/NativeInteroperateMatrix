@@ -4,7 +4,9 @@
 #nullable enable
 namespace Nima;
 
-public /*sealed*/ class ByteMatrixContainer : MatrixContainerBase
+public interface IByteMatrixContainer : INativeMatrixContainer { }
+
+public /*sealed*/ class ByteMatrixContainer : MatrixContainerBase, IByteMatrixContainer
 {
     public ByteMatrixContainer(int rows, int columns, bool initialize = true)
         : base(rows, columns, Unsafe.SizeOf<Byte>(), initialize)
@@ -84,7 +86,10 @@ public /*sealed*/ class ByteMatrixContainer : MatrixContainerBase
     }
 }
 
-public /*sealed*/ class Int16MatrixContainer : MatrixContainerBase
+
+public interface IInt16MatrixContainer : INativeMatrixContainer { }
+
+public /*sealed*/ class Int16MatrixContainer : MatrixContainerBase, IInt16MatrixContainer
 {
     public Int16MatrixContainer(int rows, int columns, bool initialize = true)
         : base(rows, columns, Unsafe.SizeOf<Int16>(), initialize)
@@ -164,7 +169,10 @@ public /*sealed*/ class Int16MatrixContainer : MatrixContainerBase
     }
 }
 
-public /*sealed*/ class Int32MatrixContainer : MatrixContainerBase
+
+public interface IInt32MatrixContainer : INativeMatrixContainer { }
+
+public /*sealed*/ class Int32MatrixContainer : MatrixContainerBase, IInt32MatrixContainer
 {
     public Int32MatrixContainer(int rows, int columns, bool initialize = true)
         : base(rows, columns, Unsafe.SizeOf<Int32>(), initialize)
@@ -244,7 +252,10 @@ public /*sealed*/ class Int32MatrixContainer : MatrixContainerBase
     }
 }
 
-public /*sealed*/ class Int64MatrixContainer : MatrixContainerBase
+
+public interface IInt64MatrixContainer : INativeMatrixContainer { }
+
+public /*sealed*/ class Int64MatrixContainer : MatrixContainerBase, IInt64MatrixContainer
 {
     public Int64MatrixContainer(int rows, int columns, bool initialize = true)
         : base(rows, columns, Unsafe.SizeOf<Int64>(), initialize)
@@ -324,7 +335,10 @@ public /*sealed*/ class Int64MatrixContainer : MatrixContainerBase
     }
 }
 
-public /*sealed*/ class SingleMatrixContainer : MatrixContainerBase
+
+public interface ISingleMatrixContainer : INativeMatrixContainer { }
+
+public /*sealed*/ class SingleMatrixContainer : MatrixContainerBase, ISingleMatrixContainer
 {
     public SingleMatrixContainer(int rows, int columns, bool initialize = true)
         : base(rows, columns, Unsafe.SizeOf<Single>(), initialize)
@@ -404,7 +418,10 @@ public /*sealed*/ class SingleMatrixContainer : MatrixContainerBase
     }
 }
 
-public /*sealed*/ class DoubleMatrixContainer : MatrixContainerBase
+
+public interface IDoubleMatrixContainer : INativeMatrixContainer { }
+
+public /*sealed*/ class DoubleMatrixContainer : MatrixContainerBase, IDoubleMatrixContainer
 {
     public DoubleMatrixContainer(int rows, int columns, bool initialize = true)
         : base(rows, columns, Unsafe.SizeOf<Double>(), initialize)
@@ -483,4 +500,5 @@ public /*sealed*/ class DoubleMatrixContainer : MatrixContainerBase
         }
     }
 }
+
 

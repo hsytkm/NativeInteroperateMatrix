@@ -6,6 +6,10 @@ public /*sealed*/ class PixelBgr24MatrixContainer : MatrixContainerBase, IPixelB
         : base(rows, columns, Unsafe.SizeOf<PixelBgr24>(), initialize)
     { }
 
+    private protected PixelBgr24MatrixContainer(in NativeMatrix matrix)
+        : base(matrix)
+    { }
+
     /// <summary>Bitmapファイルから PixelBgrMatrixContainer を生成します</summary>
     /// <param name="filePath">File path of Bitmap</param>
     /// <returns></returns>
@@ -108,23 +112,29 @@ public /*sealed*/ class PixelBgr24MatrixContainer : MatrixContainerBase, IPixelB
     /// <summary>
     /// 指定と同じ画像のコンテナを新規に作成します
     /// </summary>
-    public static PixelBgr24MatrixContainer Clone(IPixelBgr24MatrixContainer sourceContainer)
+    public PixelBgr24MatrixContainer Clone()
     {
-        PixelBgr24MatrixContainer newContainer = new(sourceContainer.Rows, sourceContainer.Columns, false);
-        newContainer.CopyFrom(sourceContainer);
+        PixelBgr24MatrixContainer newContainer = new(Rows, Columns, false);
+        newContainer.CopyFrom(this);
         return newContainer;
     }
 
     /// <summary>
     /// 確保済メモリを変更せずに小さい画像サイズに変更します
     /// </summary>
-    public PixelBgr24MatrixContainer ShrinkToNewMatrix(int newRows, int newColumns, int newBytesPerPixel, int newStride)
+    public PixelBgr24MatrixContainer Rearrange(int newRows, int newColumns, int newStride)
     {
-        if (newStride * newRows > Matrix.AllocateSize)
-            throw new NotSupportedException();
+        var allocSize = Matrix.AllocateSize;
+        var bytesPerItem = Matrix.BytesPerItem;
 
-        var newMatrix = new NativeMatrix(Matrix.Pointer, Matrix.AllocateSize, newRows, newColumns, newBytesPerPixel, newStride);
-        return new(newMatrix.Rows, newMatrix.Columns, false);
+        if (newStride * newRows > allocSize)
+            throw new InvalidOperationException("Allocated size is small.");
+
+        if (newColumns * bytesPerItem > newStride)
+            throw new InvalidOperationException("NewStride is small.");
+
+        var newMatrix = new NativeMatrix(Matrix.Pointer, allocSize, bytesPerItem, newRows, newColumns, newStride);
+        return new(newMatrix);
     }
 
     /// <summary>
@@ -153,7 +163,9 @@ public /*sealed*/ class PixelBgr24MatrixContainer : MatrixContainerBase, IPixelB
         self.CopyFrom(source.Pointer, source.Rows, source.Columns, source.Stride);
     }
 
-    /// <summary>指定領域における各チャンネルの画素平均値を取得します</summary>
+    /// <summary>
+    /// 指定領域における各チャンネルの画素平均値を取得します
+    /// </summary>
     public ColorBgr GetChannelsAverage(int x, int y, int width, int height)
     {
         using var token = GetMatrixForRead(out var matrix);
@@ -195,14 +207,15 @@ public /*sealed*/ class PixelBgr24MatrixContainer : MatrixContainerBase, IPixelB
         return new ColorBgr(aveChannels);
     }
 
-    /// <summary>画面全体における各チャンネルの画素平均値を取得します</summary>
-    public ColorBgr GetChannelsAverageOfEntire()
-    {
-        return GetChannelsAverage(0, 0, Width, Height);
-    }
+    /// <summary>
+    /// 画面全体における各チャンネルの画素平均値を取得します
+    /// </summary>
+    public ColorBgr GetChannelsAverageOfEntire() => GetChannelsAverage(0, 0, Width, Height);
 
-    /// <summary>指定領域の画素を塗りつぶします</summary>
-    public void FillRectangle(PixelBgr24 pixelBgr, int x, int y, int width, int height)
+    /// <summary>
+    /// 指定領域の画素を塗りつぶします
+    /// </summary>
+    public void FillRectangle(PixelBgr24 pixel, int x, int y, int width, int height)
     {
         using var token = GetMatrixForWrite(out var matrix);
 
@@ -219,12 +232,14 @@ public /*sealed*/ class PixelBgr24MatrixContainer : MatrixContainerBase, IPixelB
             for (var linePtr = lineHeadPtr; linePtr < lineTailPtr; linePtr += stride)
             {
                 for (var p = (PixelBgr24*)linePtr; p < linePtr + widthOffset; p++)
-                    *p = pixelBgr;
+                    *p = pixel;
             }
         }
     }
 
-    /// <summary>指定枠を描画します</summary>
+    /// <summary>
+    /// 指定枠を描画します
+    /// </summary>
     public void DrawRectangle(PixelBgr24 pixel, int x, int y, int width, int height)
     {
         using var token = GetMatrixForWrite(out var matrix);
@@ -261,7 +276,9 @@ public /*sealed*/ class PixelBgr24MatrixContainer : MatrixContainerBase, IPixelB
         }
     }
 
-    /// <summary>指定色で塗り潰します</summary>
+    /// <summary>
+    /// 指定色で塗り潰します
+    /// </summary>
     public unsafe void FillAllPixels(PixelBgr24 pixel)
     {
         using var token = GetMatrixForWrite(out var matrix);
@@ -281,7 +298,9 @@ public /*sealed*/ class PixelBgr24MatrixContainer : MatrixContainerBase, IPixelB
         }
     }
 
-    /// <summary>画像をbmpファイルに保存します</summary>
+    /// <summary>
+    /// 画像をbmpファイルに保存します
+    /// </summary>
     public void ToBmpFile(string savePath)
     {
         using var ms = ToBitmapMemoryStream(savePath);
@@ -291,7 +310,9 @@ public /*sealed*/ class PixelBgr24MatrixContainer : MatrixContainerBase, IPixelB
         ms.WriteTo(fs);
     }
 
-    /// <summary>画像をbmpファイルに保存します</summary>
+    /// <summary>
+    /// 画像をbmpファイルに保存します
+    /// </summary>
     public async Task ToBmpFileAsync(string savePath, CancellationToken token = default)
     {
         using var ms = ToBitmapMemoryStream(savePath);
@@ -301,7 +322,7 @@ public /*sealed*/ class PixelBgr24MatrixContainer : MatrixContainerBase, IPixelB
         await ms.CopyToAsync(fs, token);
     }
 
-    /// <summary>画像をbmpファイルに保存します</summary>
+    // 画像をbmpファイルに保存します<
     MemoryStream ToBitmapMemoryStream(string savePath)
     {
         // Bitmapのバイナリ配列を取得します
@@ -346,4 +367,5 @@ public /*sealed*/ class PixelBgr24MatrixContainer : MatrixContainerBase, IPixelB
         ms.Seek(0, SeekOrigin.Begin);
         return ms;
     }
+
 }

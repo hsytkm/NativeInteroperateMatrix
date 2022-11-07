@@ -15,7 +15,9 @@ var typeNames = new string[] {
 };
 #>
 <# foreach (var typeName in typeNames) {#>
-public /*sealed*/ class <#= typeName #>MatrixContainer : MatrixContainerBase
+public interface I<#= typeName #>MatrixContainer : INativeMatrixContainer { }
+
+public /*sealed*/ class <#= typeName #>MatrixContainer : MatrixContainerBase, I<#= typeName #>MatrixContainer
 {
     public <#= typeName #>MatrixContainer(int rows, int columns, bool initialize = true)
         : base(rows, columns, Unsafe.SizeOf<<#= typeName #>>(), initialize)
@@ -94,5 +96,6 @@ public /*sealed*/ class <#= typeName #>MatrixContainer : MatrixContainerBase
         }
     }
 }
+
 
 <# } #>

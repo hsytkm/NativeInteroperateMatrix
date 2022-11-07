@@ -15,7 +15,12 @@ var typeNames = new string[] {
 };
 #>
 <# foreach (var typeName in typeNames) {#>
-public /*sealed*/ class <#= typeName #>ArrayContainer : ArrayContainerBase
+public interface I<#= typeName #>ArrayContainer : INativeArrayContainer
+{
+    <#= typeName #>[] ToArray();
+}
+
+public /*sealed*/ class <#= typeName #>ArrayContainer : ArrayContainerBase, I<#= typeName #>ArrayContainer
 {
     public <#= typeName #>ArrayContainer(int length, bool initialize = true)
         : base(length, Unsafe.SizeOf<<#= typeName #>>(), initialize)
@@ -65,6 +70,13 @@ public /*sealed*/ class <#= typeName #>ArrayContainer : ArrayContainerBase
         foreach (var item in items)
             span[index++] = item;
     }
+
+    public <#= typeName #>[] ToArray()
+    {
+        using var token = GetArrayForRead(out NativeArray array);
+        return array.AsSpan<<#= typeName #>>().ToArray();
+    }
 }
+
 
 <# } #>

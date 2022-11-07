@@ -30,6 +30,12 @@ public abstract class MatrixContainerBase : NativeMemoryContainerBase, INativeMa
         Matrix = new NativeMatrix(AllocatedMemory.Pointer, allocateSize, bytesPerItem, rows, columns, stride);
     }
 
+    private protected MatrixContainerBase(in NativeMatrix matrix)
+        : base(new NativePointerSizePair(matrix.Pointer, matrix.AllocateSize))
+    {
+        Matrix = matrix;
+    }
+
     public IDisposable GetMatrixForRead(out NativeMatrix matrix)
     {
         if (IsWriting)

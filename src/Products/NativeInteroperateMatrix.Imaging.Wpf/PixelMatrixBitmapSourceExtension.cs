@@ -53,9 +53,9 @@ public static class PixelMatrixBitmapSourceExtension
             {
                 var destHead = (byte*)matrix.Pointer;
 
-                fixed (byte* head = bufferArray)
+                fixed (byte* srcHead = bufferArray)
                 {
-                    var tail = head + bufferSize;
+                    var srcTail = srcHead + bufferSize;
 
                     for (var y = 0; y < bitmap.PixelHeight; ++y)
                     {
@@ -63,7 +63,7 @@ public static class PixelMatrixBitmapSourceExtension
                         bitmap.CopyPixels(rect1Line, bufferArray, bufferSize, 0);
 
                         var dest = (PixelBgr24*)(destHead + y * matrix.Stride);
-                        for (var ptr = head; ptr < tail; ptr += bytesPerPixel)
+                        for (var ptr = srcHead; ptr < srcTail; ptr += bytesPerPixel)
                         {
                             *(dest++) = *((PixelBgr24*)ptr);
                         }

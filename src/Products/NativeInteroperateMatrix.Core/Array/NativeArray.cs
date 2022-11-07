@@ -10,7 +10,7 @@ public readonly record struct NativeArray : INativeArray
     readonly int _allocateSize;
     readonly int _bytesPerItem;
 
-    public NativeArray(IntPtr pointer, int allocateSize, int bytesPerItem)
+    internal NativeArray(IntPtr pointer, int allocateSize, int bytesPerItem)
     {
         if (IntPtr.Size != 8)
             throw new NotSupportedException("Must be x64.");

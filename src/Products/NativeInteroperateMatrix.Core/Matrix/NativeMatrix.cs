@@ -13,7 +13,7 @@ public readonly record struct NativeMatrix : INativeMatrix
     readonly int _bytesPerItem;
     readonly int _stride;
 
-    public NativeMatrix(IntPtr pointer, int allocateSize, int bytesPerItem, int rows, int columns, int stride)
+    internal NativeMatrix(IntPtr pointer, int allocateSize, int bytesPerItem, int rows, int columns, int stride)
     {
         if (IntPtr.Size != 8)
             throw new NotSupportedException("Must be x64.");

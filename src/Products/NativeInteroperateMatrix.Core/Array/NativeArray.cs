@@ -44,42 +44,28 @@ public readonly record struct NativeArray : INativeArray
     public int AllocateSize => _allocateSize;
     public int BytesPerItem => _bytesPerItem;
     public int BitsPerItem => _bytesPerItem * 8;
-    public bool IsValid
-    {
-        get
-        {
-            if (Pointer == IntPtr.Zero) return false;
-            if (Length <= 0) return false;
-            if (BytesPerItem <= 0) return false;
-            if (AllocateSize < Length * BytesPerItem) return false;
-            return true;    //valid
-        }
-    }
+    public bool IsValid => INativeArrayEx.IsValid(this);
 
-    // IArray
+    // INativeArray
     public int Length => AllocateSize / BytesPerItem;
 
-    // IMatrix<T>
-    public unsafe ref Byte this[int index]
-    {
-        get
-        {
-            IntPtr ptr = GetIntPtr(index);
-            return ref Unsafe.AsRef<Byte>(ptr.ToPointer());
-        }
-    }
-
-    public unsafe Span<T> AsSpan<T>() where T : struct => new(Pointer.ToPointer(), Length);
+    public unsafe Span<T> AsSpan<T>() where T : struct => INativeArrayEx.AsSpan<NativeArray, T>(this);
 
     public ReadOnlySpan<T> AsReadOnlySpan<T>() where T : struct => AsSpan<T>();
 
     public T GetValue<T>(int index) where T : struct
     {
-        IntPtr ptr = Pointer + index * BytesPerItem;
-        return Marshal.PtrToStructure<T>(ptr);
+        ThrowInvalidLength(index);
+        return INativeArrayEx.GetValue<NativeArray, T>(this, index);
     }
 
-    public NativeArray GetRearrangedArray(int bytesPerItem) => new(Pointer, AllocateSize, bytesPerItem);
+    public NativeArray GetRearrangedArray(int bytesPerItem)
+    {
+        if (AllocateSize < bytesPerItem)
+            throw new InvalidOperationException("Allocate size is small.");
+
+        return new(Pointer, AllocateSize, bytesPerItem);
+    }
 
     public override string ToString() => $"Length={Length}, Pointer=0x{Pointer:x16}";
 }

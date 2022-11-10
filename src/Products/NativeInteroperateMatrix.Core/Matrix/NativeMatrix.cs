@@ -2,7 +2,7 @@
 
 // Do not change the order of the struct because it is the same as C++
 [StructLayout(LayoutKind.Sequential, Pack = 1, Size = 8 + (5 * sizeof(int)))]
-public readonly record struct NativeMatrix : INativeMatrix
+public readonly record struct NativeMatrix : INativeMatrix, IEnumerable<NativeArray>
 {
     public static readonly NativeMatrix Zero = new(IntPtr.Zero, 0, 0, 0, 0, 0);
 
@@ -60,19 +60,9 @@ public readonly record struct NativeMatrix : INativeMatrix
     public int AllocateSize => _allocateSize;
     public int BytesPerItem => _bytesPerItem;
     public int BitsPerItem => _bytesPerItem * 8;
-    public bool IsValid
-    {
-        get
-        {
-            if (Pointer == IntPtr.Zero) return false;
-            if (Columns <= 0 || Rows <= 0) return false;
-            if (BytesPerItem <= 0) return false;
-            if (Stride < Columns * BytesPerItem) return false;
-            return true;    //valid
-        }
-    }
+    public bool IsValid => INativeMatrixEx.IsValid(this);
 
-    // IMatrix
+    // INativeMemory
     public int Rows => _rows;
     public int Columns => _columns;
     public int Width => _columns;
@@ -80,105 +70,44 @@ public readonly record struct NativeMatrix : INativeMatrix
     public int Stride => _stride;
     public bool IsContinuous => (Columns * BytesPerItem) == Stride;
 
-    public unsafe Span<T> AsSpan<T>() where T : struct
-    {
-        int length = AllocateSize / Unsafe.SizeOf<T>();
-        return new(Pointer.ToPointer(), length);
-    }
+    public unsafe Span<T> AsSpan<T>() where T : struct => INativeMatrixEx.AsSpan<NativeMatrix, T>(this);
 
     public ReadOnlySpan<T> AsReadOnlySpan<T>() where T : struct => AsSpan<T>();
 
     public unsafe Span<T> AsRowSpan<T>(int row) where T : struct
     {
         ThrowInvalidRow(row);
-
-        IntPtr ptr = Pointer + (row * Stride);
-        int length = Columns * BytesPerItem / Unsafe.SizeOf<T>();
-        return new(ptr.ToPointer(), length);
+        return INativeMatrixEx.AsRowSpan<NativeMatrix, T>(this, row);
     }
 
     public ReadOnlySpan<T> AsRowReadOnlySpan<T>(int row) where T : struct => AsRowSpan<T>(row);
 
-    public T GetValue<T>(int row, int column) where T : struct
-    {
-        IntPtr ptr = Pointer + (row * Stride) + column * BytesPerItem;
-        return Marshal.PtrToStructure<T>(ptr);
-    }
+    public T GetValue<T>(int row, int column) where T : struct =>
+        INativeMatrixEx.GetValue<NativeMatrix, T>(this, row, column);
 
     /// <summary>引数から値をコピーします</summary>
-    public void CopyFrom(IntPtr intPtr, int rows, int columns, int stride)
-    {
-        int srcSize = rows * stride;
-        if (AllocateSize < srcSize)
-            throw new NotSupportedException("Allocated size is short.");
-
-        int destStride = Stride;
-        if (destStride == stride)
-        {
-            UnsafeUtils.MemCopy(Pointer, intPtr, srcSize);
-        }
-        else
-        {
-            IntPtr destPtr = Pointer;
-            IntPtr srcPtr = intPtr;
-
-            for (int row = 0; row < rows; row++)
-            {
-                UnsafeUtils.MemCopy(destPtr, srcPtr, stride);
-                destPtr += destStride;
-                srcPtr += stride;
-            }
-        }
-    }
+    internal void CopyFrom(IntPtr pointer, int rows, int columns, int stride, int bytesPerItem) =>
+        INativeMatrixEx.CopyFrom(this, pointer, rows, columns, stride, bytesPerItem);
 
     /// <summary>引数から値をコピーします</summary>
-    public void CopyFrom(NativeMatrix src) =>
-        CopyFrom(src.Pointer, src.Rows, src.Columns, src.Stride);
+    internal void CopyFrom(NativeMatrix src) =>
+        CopyFrom(src.Pointer, src.Rows, src.Columns, src.Stride, src.BytesPerItem);
 
     /// <summary>引数に値をコピーします</summary>
-    public void CopyTo(NativeMatrix destMatrix)
-    {
-        // 画素値のコピー（サイズチェックなし）
-        static void copyToCore(NativeMatrix srcMatrix, NativeMatrix destMatrix)
-        {
-            // メモリが連続していれば memcopy
-            if (srcMatrix.AllocateSize == destMatrix.AllocateSize
-                && srcMatrix.IsContinuous && destMatrix.IsContinuous)
-            {
-                UnsafeUtils.MemCopy(destMatrix.Pointer, srcMatrix.Pointer, srcMatrix.AllocateSize);
-                return;
-            }
-
-            unsafe
-            {
-                var (width, height, bytesPerPixel) = (srcMatrix.Columns, srcMatrix.Rows, srcMatrix.BytesPerItem);
-                byte* srcHeadPtr = (byte*)srcMatrix.Pointer;
-                int srcStride = srcMatrix.Stride;
-                byte* dstHeadPtr = (byte*)destMatrix.Pointer;
-                int dstStride = destMatrix.Stride;
-
-                for (int y = 0; y < height; y++)
-                {
-                    byte* src = srcHeadPtr + y * srcStride;
-                    byte* dst = dstHeadPtr + y * dstStride;
-
-                    for (int x = 0; x < width * bytesPerPixel; x += bytesPerPixel)
-                    {
-                        for (int i = x; i < x + bytesPerPixel; i++)
-                            *(dst + i) = *(src + i);
-                    }
-                }
-            }
-        }
-
-        if (Columns != destMatrix.Columns || Rows != destMatrix.Rows)
-            throw new ArgumentException("Size is different.");
-
-        if (Pointer == destMatrix.Pointer)
-            throw new ArgumentException("Same pointer.");
-
-        copyToCore(this, destMatrix);
-    }
+    internal void CopyTo(NativeMatrix dest) => INativeMatrixEx.CopyTo(this, dest);
 
     public override string ToString() => $"Rows={Rows}, Cols={Columns}, Pointer=0x{Pointer:x16}";
+
+    public IEnumerator<NativeArray> GetEnumerator()
+    {
+        IntPtr head = Pointer;
+        var length = Columns * BytesPerItem;
+
+        for (int row = 0; row < Rows; row++)
+        {
+            IntPtr rowHeadPtr = head + (row * Stride);
+            yield return new NativeArray(rowHeadPtr, length, BytesPerItem);
+        }
+    }
+    System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() => GetEnumerator();
 }

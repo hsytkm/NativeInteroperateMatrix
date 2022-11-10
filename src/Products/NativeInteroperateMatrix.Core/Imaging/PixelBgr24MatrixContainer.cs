@@ -160,7 +160,7 @@ public /*sealed*/ class PixelBgr24MatrixContainer : MatrixContainerBase, IPixelB
     {
         using var token1 = sourceContainer.GetMatrixForRead(out var source);
         using var token2 = GetMatrixForWrite(out var self);
-        self.CopyFrom(source.Pointer, source.Rows, source.Columns, source.Stride);
+        self.CopyFrom(source.Pointer, source.Rows, source.Columns, source.Stride, source.BytesPerItem);
     }
 
     /// <summary>

@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-      <TargetFrameworks>netcoreapp3.1;net6.0</TargetFrameworks>
-      <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <TargetFrameworks>netcoreapp3.1;net6.0;net7.0</TargetFrameworks>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Title>Nima.Core</Title>
     <AssemblyName>Nima.Core</AssemblyName>
     <RootNamespace>Nima</RootNamespace>

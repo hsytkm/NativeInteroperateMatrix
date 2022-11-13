@@ -2,8 +2,7 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFrameworks>net6.0-windows</TargetFrameworks>
-    <LangVersion>latest</LangVersion>
+    <TargetFramework>net7.0-windows</TargetFramework>
     <UseWPF>true</UseWPF>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
@@ -11,7 +10,7 @@
 
   <ItemGroup>
     <PackageReference Include="Prism.DryIoc" Version="8.1.97" />
-    <PackageReference Include="ReactiveProperty" Version="8.1.2" />
+    <PackageReference Include="ReactiveProperty" Version="8.2.0" />
   </ItemGroup>
 
   <ItemGroup>

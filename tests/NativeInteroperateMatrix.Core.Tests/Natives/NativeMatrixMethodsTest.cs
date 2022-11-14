@@ -1,50 +1,8 @@
-﻿using System.Runtime.InteropServices;
-using Nima;
+﻿using Nima;
 using Nima.Core.Tests;
 using Xunit;
 
 namespace NativeInteroperateMatrix.Core.Tests.Natives;
-
-internal static class NativeMatrixMethods
-{
-    const string DLL_NAME = "NativeInteroperateMatrix.Tests.Natives.Core.dll";
-
-    // Byte
-    [DllImport(DLL_NAME, EntryPoint = "SumByteMatrix")]
-    public static extern long SumByte(in NativeMatrix matrix);
-    [DllImport(DLL_NAME, EntryPoint = "ClearByteMatrix")]
-    public static extern void ClearByte(in NativeMatrix matrix);
-
-    // Int16
-    [DllImport(DLL_NAME, EntryPoint = "SumInt16Matrix")]
-    public static extern long SumInt16(in NativeMatrix matrix);
-    [DllImport(DLL_NAME, EntryPoint = "ClearInt16Matrix")]
-    public static extern void ClearInt16(in NativeMatrix matrix);
-
-    // Int32
-    [DllImport(DLL_NAME, EntryPoint = "SumInt32Matrix")]
-    public static extern long SumInt32(in NativeMatrix matrix);
-    [DllImport(DLL_NAME, EntryPoint = "ClearInt32Matrix")]
-    public static extern void ClearInt32(in NativeMatrix matrix);
-
-    // Int64
-    [DllImport(DLL_NAME, EntryPoint = "SumInt64Matrix")]
-    public static extern long SumInt64(in NativeMatrix matrix);
-    [DllImport(DLL_NAME, EntryPoint = "ClearInt64Matrix")]
-    public static extern void ClearInt64(in NativeMatrix matrix);
-
-    // Single
-    [DllImport(DLL_NAME, EntryPoint = "SumSingleMatrix")]
-    public static extern double SumSingle(in NativeMatrix matrix);
-    [DllImport(DLL_NAME, EntryPoint = "ClearSingleMatrix")]
-    public static extern void ClearSingle(in NativeMatrix matrix);
-
-    // Double
-    [DllImport(DLL_NAME, EntryPoint = "SumDoubleMatrix")]
-    public static extern double SumDouble(in NativeMatrix matrix);
-    [DllImport(DLL_NAME, EntryPoint = "ClearDoubleMatrix")]
-    public static extern void ClearDouble(in NativeMatrix matrix);
-}
 
 public class NativeMatrixMethodsTest
 {

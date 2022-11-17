@@ -142,8 +142,8 @@ public /*sealed*/ class PixelBgr24MatrixContainer : MatrixContainerBase, IPixelB
     /// </summary>
     public bool CanReuseContainer(IPixelBgr24MatrixContainer sourceContainer)
     {
-        using var token1 = sourceContainer.GetMatrixForRead(out var source);
-        using var token2 = GetMatrixForRead(out var self);
+        using var token1 = sourceContainer.GetMatrixForReading(out var source);
+        using var token2 = GetMatrixForReading(out var self);
 
         if (self.Columns != source.Columns
             || self.Rows != source.Rows
@@ -158,9 +158,18 @@ public /*sealed*/ class PixelBgr24MatrixContainer : MatrixContainerBase, IPixelB
     /// </summary>
     public void CopyFrom(IPixelBgr24MatrixContainer sourceContainer)
     {
-        using var token1 = sourceContainer.GetMatrixForRead(out var source);
-        using var token2 = GetMatrixForWrite(out var self);
+        using var token1 = sourceContainer.GetMatrixForReading(out var source);
+        using var token2 = GetMatrixForWriting(out var self);
         self.CopyFrom(source.Pointer, source.Rows, source.Columns, source.Stride, source.BytesPerItem);
+    }
+
+    /// <summary>
+    /// 引数コンテナの内容をコピーします(コンテナを再作成しません)
+    /// </summary>
+    public void CopyFrom(IntPtr pointer, int rows, int columns, int stride, int bytesPerItem)
+    {
+        using var token = GetMatrixForWriting(out var self);
+        self.CopyFrom(pointer, rows, columns, stride, bytesPerItem);
     }
 
     /// <summary>
@@ -168,7 +177,7 @@ public /*sealed*/ class PixelBgr24MatrixContainer : MatrixContainerBase, IPixelB
     /// </summary>
     public ColorBgr GetChannelsAverage(int x, int y, int width, int height)
     {
-        using var token = GetMatrixForRead(out var matrix);
+        using var token = GetMatrixForReading(out var matrix);
 
         if (!matrix.IsValid) throw new ArgumentException("Invalid image.");
         if (width * height == 0) throw new ArgumentException("Area is zero.");
@@ -217,7 +226,7 @@ public /*sealed*/ class PixelBgr24MatrixContainer : MatrixContainerBase, IPixelB
     /// </summary>
     public void FillRectangle(PixelBgr24 pixel, int x, int y, int width, int height)
     {
-        using var token = GetMatrixForWrite(out var matrix);
+        using var token = GetMatrixForWriting(out var matrix);
 
         if (matrix.Columns < x + width) throw new ArgumentException("vertical direction");
         if (matrix.Rows < y + height) throw new ArgumentException("horizontal direction");
@@ -242,7 +251,7 @@ public /*sealed*/ class PixelBgr24MatrixContainer : MatrixContainerBase, IPixelB
     /// </summary>
     public void DrawRectangle(PixelBgr24 pixel, int x, int y, int width, int height)
     {
-        using var token = GetMatrixForWrite(out var matrix);
+        using var token = GetMatrixForWriting(out var matrix);
 
         if (matrix.Columns < x + width) throw new ArgumentException("vertical direction");
         if (matrix.Rows < y + height) throw new ArgumentException("horizontal direction");
@@ -281,7 +290,7 @@ public /*sealed*/ class PixelBgr24MatrixContainer : MatrixContainerBase, IPixelB
     /// </summary>
     public unsafe void FillAllPixels(PixelBgr24 pixel)
     {
-        using var token = GetMatrixForWrite(out var matrix);
+        using var token = GetMatrixForWriting(out var matrix);
 
         var pixelsHead = (byte*)matrix.Pointer;
         var stride = matrix.Stride;
@@ -357,7 +366,7 @@ public /*sealed*/ class PixelBgr24MatrixContainer : MatrixContainerBase, IPixelB
             return destBuffer;
         }
 
-        using var token = GetMatrixForRead(out var matrix);
+        using var token = GetMatrixForReading(out var matrix);
 
         if (!matrix.IsValid) throw new ArgumentException("Invalid image.");
         if (File.Exists(savePath)) throw new SystemException("File is exists.");

@@ -21,7 +21,7 @@ public class NativeMatrixTest
 
         var array = CreateTestByteArray(rows * columns);
         using var container = new ByteMatrixContainer(rows, columns, array);
-        using var token = container.GetMatrixForWrite(out NativeMatrix matrix);
+        using var token = container.GetMatrixForWriting(out NativeMatrix matrix);
 
         for (var r = 0; r < matrix.Rows; r++)
         {
@@ -50,21 +50,21 @@ public class NativeMatrixTest
         using var container = new ByteMatrixContainer(3, 4);
 
         // Multiple Read
-        using (var token1 = container.GetMatrixForRead(out NativeMatrix nativeMatrix1))
-        using (var token2 = container.GetMatrixForRead(out NativeMatrix nativeMatrix2))
+        using (var token1 = container.GetMatrixForReading(out NativeMatrix nativeMatrix1))
+        using (var token2 = container.GetMatrixForReading(out NativeMatrix nativeMatrix2))
         {
             Assert.Throws<NotSupportedException>(() =>
             {
-                using var token3 = container.GetMatrixForWrite(out NativeMatrix nativeMatrix3);
+                using var token3 = container.GetMatrixForWriting(out NativeMatrix nativeMatrix3);
             });
         }
 
         // Writing
         {
-            using var token1 = container.GetMatrixForWrite(out NativeMatrix nativeMatrix1);
+            using var token1 = container.GetMatrixForWriting(out NativeMatrix nativeMatrix1);
             Assert.Throws<NotSupportedException>(() =>
             {
-                using var token2 = container.GetMatrixForRead(out NativeMatrix nativeMatrix2);
+                using var token2 = container.GetMatrixForReading(out NativeMatrix nativeMatrix2);
             });
         }
     }
@@ -76,19 +76,19 @@ public class NativeMatrixTest
 
         // Multiple Write
         {
-            using var token1 = container.GetMatrixForWrite(out NativeMatrix nativeMatrix1);
+            using var token1 = container.GetMatrixForWriting(out NativeMatrix nativeMatrix1);
             Assert.Throws<NotSupportedException>(() =>
             {
-                using var token2 = container.GetMatrixForWrite(out NativeMatrix nativeMatrix2);
+                using var token2 = container.GetMatrixForWriting(out NativeMatrix nativeMatrix2);
             });
         }
 
         // Reading
         {
-            using var token1 = container.GetMatrixForRead(out NativeMatrix nativeMatrix1);
+            using var token1 = container.GetMatrixForReading(out NativeMatrix nativeMatrix1);
             Assert.Throws<NotSupportedException>(() =>
             {
-                using var token2 = container.GetMatrixForWrite(out NativeMatrix nativeMatrix2);
+                using var token2 = container.GetMatrixForWriting(out NativeMatrix nativeMatrix2);
             });
         }
     }
@@ -102,15 +102,12 @@ public class NativeMatrixTest
         using var destContainer1 = new Int32MatrixContainer(rows, columns, false);
         using var destContainer2 = new Int32MatrixContainer(rows, columns, false);
 
-        using (var token0 = srcContainer.GetMatrixForRead(out var srcMatrix))
-        using (var token1 = destContainer1.GetMatrixForWrite(out var destMatrix1))
-        using (var token2 = destContainer2.GetMatrixForWrite(out var destMatrix2))
+        using (var token0 = srcContainer.GetMatrixForReading(out var srcMatrix))
+        using (var token1 = destContainer1.GetMatrixForWriting(out var destMatrix1))
+        using (var token2 = destContainer2.GetMatrixForWriting(out var destMatrix2))
         {
             srcMatrix.CopyTo(destMatrix1);
             destMatrix1.AsReadOnlySpan<int>().SequenceEqual(srcMatrix.AsReadOnlySpan<int>()).IsTrue();
-
-            destMatrix2.CopyFrom(srcMatrix);
-            destMatrix2.AsReadOnlySpan<int>().SequenceEqual(srcMatrix.AsReadOnlySpan<int>()).IsTrue();
         }
     }
 }

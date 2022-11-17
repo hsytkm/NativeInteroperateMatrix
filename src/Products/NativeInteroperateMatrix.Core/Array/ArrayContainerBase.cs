@@ -26,27 +26,44 @@ public abstract class ArrayContainerBase : NativeMemoryContainerBase, INativeArr
         Array = new NativeArray(AllocatedMemory.Pointer, allocateSize, bytesPerItem);
     }
 
-    public IDisposable GetArrayForRead(out NativeArray array)
+    /// <summary>
+    /// Get native array for reading.
+    /// </summary>
+    /// <param name="array"></param>
+    /// <returns></returns>
+    /// <exception cref="InvalidMemoryAccessException"></exception>
+    public IDisposable GetArrayForReading(out NativeArray array)
     {
         if (IsWriting)
-            throw new NotSupportedException("Someone is writing.");
+            throw new InvalidMemoryAccessException("Someone is writing.");
 
-        ReadCounter++;
         array = Array;
+        ReadCounter++;
         return new DisposableAction(() => ReadCounter--);
     }
 
-    public IDisposable GetArrayForWrite(out NativeArray array)
+    /// <summary>
+    /// Get native array for writing.
+    /// </summary>
+    /// <param name="array"></param>
+    /// <returns></returns>
+    /// <exception cref="InvalidMemoryAccessException"></exception>
+    public IDisposable GetArrayForWriting(out NativeArray array)
     {
         if (IsWriting)
-            throw new NotSupportedException("Someone is writing.");
+            throw new InvalidMemoryAccessException("Someone else is writing.");
 
         if (ReadCounter > 0)
-            throw new NotSupportedException($"Someone is reading. (Count={ReadCounter})");
+            throw new InvalidMemoryAccessException($"Someone is reading. (Count={ReadCounter})");
 
-        IsWriting = true;
         array = Array;
+        IsWriting = true;
         return new DisposableAction(() => IsWriting = false);
     }
 
+    /// <summary>
+    /// Get native array (don't manage memory references)
+    /// </summary>
+    /// <returns>NativeMatrix</returns>
+    public NativeArray DangerousGetNativeArray() => Array;
 }

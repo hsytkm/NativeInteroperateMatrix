@@ -36,27 +36,44 @@ public abstract class MatrixContainerBase : NativeMemoryContainerBase, INativeMa
         Matrix = matrix;
     }
 
-    public IDisposable GetMatrixForRead(out NativeMatrix matrix)
+    /// <summary>
+    /// Get native matrix for reading.
+    /// </summary>
+    /// <param name="matrix"></param>
+    /// <returns></returns>
+    /// <exception cref="InvalidMemoryAccessException"></exception>
+    public IDisposable GetMatrixForReading(out NativeMatrix matrix)
     {
         if (IsWriting)
-            throw new NotSupportedException("Someone is writing.");
+            throw new InvalidMemoryAccessException("Someone is writing.");
 
-        ReadCounter++;
         matrix = Matrix;
+        ReadCounter++;
         return new DisposableAction(() => ReadCounter--);
     }
 
-    public IDisposable GetMatrixForWrite(out NativeMatrix matrix)
+    /// <summary>
+    /// Get native matrix for writing.
+    /// </summary>
+    /// <param name="matrix"></param>
+    /// <returns></returns>
+    /// <exception cref="InvalidMemoryAccessException"></exception>
+    public IDisposable GetMatrixForWriting(out NativeMatrix matrix)
     {
         if (IsWriting)
-            throw new NotSupportedException("Someone is writing.");
+            throw new InvalidMemoryAccessException("Someone else is writing.");
 
         if (ReadCounter > 0)
-            throw new NotSupportedException($"Someone is reading. (Count={ReadCounter})");
+            throw new InvalidMemoryAccessException($"Someone is reading. (Count={ReadCounter})");
 
-        IsWriting = true;
         matrix = Matrix;
+        IsWriting = true;
         return new DisposableAction(() => IsWriting = false);
     }
 
+    /// <summary>
+    /// Get native matrix (don't manage memory references)
+    /// </summary>
+    /// <returns>NativeMatrix</returns>
+    public NativeMatrix DangerousGetNativeMatrix() => Matrix;
 }

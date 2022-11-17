@@ -8,6 +8,7 @@ public interface INativeMatrixContainer
     int Width { get; }
     int Height { get; }
 
-    IDisposable GetMatrixForRead(out NativeMatrix matrix);
-    IDisposable GetMatrixForWrite(out NativeMatrix matrix);
+    IDisposable GetMatrixForReading(out NativeMatrix matrix);
+    IDisposable GetMatrixForWriting(out NativeMatrix matrix);
+    NativeMatrix DangerousGetNativeMatrix();
 }

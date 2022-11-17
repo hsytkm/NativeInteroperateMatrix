@@ -8,7 +8,7 @@ public static class PixelMatrixExtension
     /// <summary>System.Windows.Media.Imaging.BitmapSource に変換します</summary>
     public static System.Windows.Media.Imaging.BitmapSource ToBitmapSource(this IPixelBgr24MatrixContainer container, bool isFreeze = true)
     {
-        using var token = container.GetMatrixForRead(out NativeMatrix matrix);
+        using var token = container.GetMatrixForReading(out NativeMatrix matrix);
 
         if (!matrix.IsValid) throw new ArgumentException("Invalid ImagePixels");
         if (matrix.BytesPerItem != PixelBgr24.Size) throw new NotSupportedException("Invalid BytesPerPixel");
@@ -25,7 +25,7 @@ public static class PixelMatrixExtension
     /// <summary>System.Windows.Media.Imaging.WriteableBitmap の画素値を更新します(遅いです)</summary>
     public static void CopyFrom(this System.Windows.Media.Imaging.WriteableBitmap writeableBitmap, IPixelBgr24MatrixContainer container, bool isFreeze = false)
     {
-        using var token = container.GetMatrixForRead(out NativeMatrix matrix);
+        using var token = container.GetMatrixForReading(out NativeMatrix matrix);
 
         if (!matrix.IsValid) throw new ArgumentException("Invalid Image");
 
@@ -45,7 +45,7 @@ public static class PixelMatrixExtension
     /// <summary>System.Windows.Media.Imaging.WriteableBitmap に変換します</summary>
     public static System.Windows.Media.Imaging.WriteableBitmap ToWriteableBitmap(this IPixelBgr24MatrixContainer container, bool isFreeze = false)
     {
-        using var token = container.GetMatrixForRead(out NativeMatrix matrix);
+        using var token = container.GetMatrixForReading(out NativeMatrix matrix);
 
         if (!matrix.IsValid) throw new ArgumentException("Invalid ImagePixels");
         if (matrix.BytesPerItem != PixelBgr24.Size) throw new NotSupportedException("Invalid BytesPerPixel");

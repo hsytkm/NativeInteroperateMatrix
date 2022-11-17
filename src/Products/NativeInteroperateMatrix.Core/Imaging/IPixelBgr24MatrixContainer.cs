@@ -23,6 +23,11 @@ public interface IPixelBgr24MatrixContainer : INativeMatrixContainer
     void CopyFrom(IPixelBgr24MatrixContainer sourceContainer);
 
     /// <summary>
+    /// 引数コンテナの内容をコピーします(コンテナを再作成しません)
+    /// </summary>
+    void CopyFrom(IntPtr pointer, int rows, int columns, int stride, int bytesPerItem);
+
+    /// <summary>
     /// 指定領域における各チャンネルの画素平均値を取得します
     /// </summary>
     ColorBgr GetChannelsAverage(int x, int y, int width, int height);

@@ -36,12 +36,12 @@ public class NativeMatrixMethodsTest
         using var container = new ByteMatrixContainer(rows, columns, items.AsSpan());
 
         var expected = items.Select(x => (long)x).Sum();
-        using (var token = container.GetMatrixForRead(out var matrix))
+        using (var token = container.GetMatrixForReading(out var matrix))
         {
             NativeMatrixMethods.SumByte(matrix).Is(expected);
         }
 
-        using (var token = container.GetMatrixForWrite(out var matrix))
+        using (var token = container.GetMatrixForWriting(out var matrix))
         {
             NativeMatrixMethods.ClearByte(matrix);
             NativeMatrixMethods.SumByte(matrix).Is(0);
@@ -57,7 +57,7 @@ public class NativeMatrixMethodsTest
         using var container = new Int16MatrixContainer(rows, columns, items.AsSpan());
 
         var expected = items.Select(x => (long)x).Sum();
-        using (var token = container.GetMatrixForRead(out var matrix))
+        using (var token = container.GetMatrixForReading(out var matrix))
         {
             var bs1 = matrix.AsSpan<byte>().ToArray();
             var bs2 = matrix.AsSpan<short>().ToArray();
@@ -65,7 +65,7 @@ public class NativeMatrixMethodsTest
             NativeMatrixMethods.SumInt16(matrix).Is(expected);
         }
 
-        using (var token = container.GetMatrixForWrite(out var matrix))
+        using (var token = container.GetMatrixForWriting(out var matrix))
         {
             NativeMatrixMethods.ClearInt16(matrix);
             NativeMatrixMethods.SumInt16(matrix).Is(0);
@@ -81,12 +81,12 @@ public class NativeMatrixMethodsTest
         using var container = new Int32MatrixContainer(rows, columns, items.AsSpan());
 
         var expected = items.Select(x => (long)x).Sum();
-        using (var token = container.GetMatrixForRead(out var matrix))
+        using (var token = container.GetMatrixForReading(out var matrix))
         {
             NativeMatrixMethods.SumInt32(matrix).Is(expected);
         }
 
-        using (var token = container.GetMatrixForWrite(out var matrix))
+        using (var token = container.GetMatrixForWriting(out var matrix))
         {
             NativeMatrixMethods.ClearInt32(matrix);
             NativeMatrixMethods.SumInt32(matrix).Is(0);
@@ -102,12 +102,12 @@ public class NativeMatrixMethodsTest
         using var container = new Int64MatrixContainer(rows, columns, items.AsSpan());
 
         var expected = items.Select(x => (long)x).Sum();
-        using (var token = container.GetMatrixForRead(out var matrix))
+        using (var token = container.GetMatrixForReading(out var matrix))
         {
             NativeMatrixMethods.SumInt64(matrix).Is(expected);
         }
 
-        using (var token = container.GetMatrixForWrite(out var matrix))
+        using (var token = container.GetMatrixForWriting(out var matrix))
         {
             NativeMatrixMethods.ClearInt64(matrix);
             NativeMatrixMethods.SumInt64(matrix).Is(0);
@@ -124,12 +124,12 @@ public class NativeMatrixMethodsTest
         using var container = new SingleMatrixContainer(rows, columns, items.AsSpan());
 
         var expected = items.Select(x => (double)x).Sum();
-        using (var token = container.GetMatrixForRead(out var matrix))
+        using (var token = container.GetMatrixForReading(out var matrix))
         {
             NativeMatrixMethods.SumSingle(matrix).Is(expected);
         }
 
-        using (var token = container.GetMatrixForWrite(out var matrix))
+        using (var token = container.GetMatrixForWriting(out var matrix))
         {
             NativeMatrixMethods.ClearSingle(matrix);
             NativeMatrixMethods.SumSingle(matrix).Is(0);
@@ -146,12 +146,12 @@ public class NativeMatrixMethodsTest
         using var container = new DoubleMatrixContainer(rows, columns, items.AsSpan());
 
         var expected = items.Select(x => (double)x).Sum();
-        using (var token = container.GetMatrixForRead(out var matrix))
+        using (var token = container.GetMatrixForReading(out var matrix))
         {
             NativeMatrixMethods.SumDouble(matrix).Is(expected);
         }
 
-        using (var token = container.GetMatrixForWrite(out var matrix))
+        using (var token = container.GetMatrixForWriting(out var matrix))
         {
             NativeMatrixMethods.ClearDouble(matrix);
             NativeMatrixMethods.SumDouble(matrix).Is(0);

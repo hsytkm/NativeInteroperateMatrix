@@ -20,7 +20,7 @@ public abstract class FloatArrayContainerTest<TContainer, TType>
         var length = rows * columns;
         using var container = CreateContainer(length, initialize: true);
 
-        using var token = container.GetArrayForWrite(out NativeArray array);
+        using var token = container.GetArrayForWriting(out NativeArray array);
         GetSum<TType>(array).Is(0);
 
         var indexes = new List<int>();

@@ -89,10 +89,6 @@ public readonly record struct NativeMatrix : INativeMatrix, IEnumerable<NativeAr
     internal void CopyFrom(IntPtr pointer, int rows, int columns, int stride, int bytesPerItem) =>
         INativeMatrixEx.CopyFrom(this, pointer, rows, columns, stride, bytesPerItem);
 
-    /// <summary>引数から値をコピーします</summary>
-    internal void CopyFrom(NativeMatrix src) =>
-        CopyFrom(src.Pointer, src.Rows, src.Columns, src.Stride, src.BytesPerItem);
-
     /// <summary>引数に値をコピーします</summary>
     internal void CopyTo(NativeMatrix dest) => INativeMatrixEx.CopyTo(this, dest);
 

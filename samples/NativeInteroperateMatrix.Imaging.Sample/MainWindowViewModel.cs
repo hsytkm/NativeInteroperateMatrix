@@ -52,7 +52,7 @@ class MainWindowViewModel : BindableBase
     // 三角領域を単色で塗り(WriteValueのテスト)
     static void FillTriangle(PixelBgr24MatrixContainer container)
     {
-        using var token = container.GetMatrixForRead(out var pixelMatrix);
+        using var token = container.GetMatrixForReading(out var pixelMatrix);
 
         int baseX = 100, baseY = 200, height = 100;
         var color = PixelBgr24.FromBgr(0, 0xff, 0);
@@ -69,7 +69,7 @@ class MainWindowViewModel : BindableBase
     // 垂直方向で階調が変化するグレー塗り
     static void FillGrayScaleVertical(PixelBgr24MatrixContainer container)
     {
-        using var token = container.GetMatrixForRead(out var pixelMatrix);
+        using var token = container.GetMatrixForReading(out var pixelMatrix);
 
         const int range = 256;
         var length = pixelMatrix.Height / range;

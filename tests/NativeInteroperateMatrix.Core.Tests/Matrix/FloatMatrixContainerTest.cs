@@ -18,7 +18,7 @@ public abstract class FloatMatrixContainerTest<TContainer, TType>
     {
         using var container = CreateContainer(rows, columns, initialize: true);
 
-        using var token = container.GetMatrixForWrite(out NativeMatrix matrix);
+        using var token = container.GetMatrixForWriting(out NativeMatrix matrix);
         GetSum<TType>(matrix).Is(0);
 
         var rc = new List<(int row, int col)>();

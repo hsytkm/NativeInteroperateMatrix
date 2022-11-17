@@ -62,7 +62,7 @@ public /*sealed*/ class ByteArrayContainer : ArrayContainerBase, IByteArrayConta
 
     public Byte[] ToArray()
     {
-        using var token = GetArrayForRead(out NativeArray array);
+        using var token = GetArrayForReading(out NativeArray array);
         return array.AsSpan<Byte>().ToArray();
     }
 }
@@ -126,7 +126,7 @@ public /*sealed*/ class Int16ArrayContainer : ArrayContainerBase, IInt16ArrayCon
 
     public Int16[] ToArray()
     {
-        using var token = GetArrayForRead(out NativeArray array);
+        using var token = GetArrayForReading(out NativeArray array);
         return array.AsSpan<Int16>().ToArray();
     }
 }
@@ -190,7 +190,7 @@ public /*sealed*/ class Int32ArrayContainer : ArrayContainerBase, IInt32ArrayCon
 
     public Int32[] ToArray()
     {
-        using var token = GetArrayForRead(out NativeArray array);
+        using var token = GetArrayForReading(out NativeArray array);
         return array.AsSpan<Int32>().ToArray();
     }
 }
@@ -254,7 +254,7 @@ public /*sealed*/ class Int64ArrayContainer : ArrayContainerBase, IInt64ArrayCon
 
     public Int64[] ToArray()
     {
-        using var token = GetArrayForRead(out NativeArray array);
+        using var token = GetArrayForReading(out NativeArray array);
         return array.AsSpan<Int64>().ToArray();
     }
 }
@@ -318,7 +318,7 @@ public /*sealed*/ class SingleArrayContainer : ArrayContainerBase, ISingleArrayC
 
     public Single[] ToArray()
     {
-        using var token = GetArrayForRead(out NativeArray array);
+        using var token = GetArrayForReading(out NativeArray array);
         return array.AsSpan<Single>().ToArray();
     }
 }
@@ -382,7 +382,7 @@ public /*sealed*/ class DoubleArrayContainer : ArrayContainerBase, IDoubleArrayC
 
     public Double[] ToArray()
     {
-        using var token = GetArrayForRead(out NativeArray array);
+        using var token = GetArrayForReading(out NativeArray array);
         return array.AsSpan<Double>().ToArray();
     }
 }

@@ -22,7 +22,7 @@ public class NativeArrayTest
         var length = rows * columns;
         var sourceArray = CreateTestByteArray(length);
         using var container = new ByteArrayContainer(length, sourceArray);
-        using var token = container.GetArrayForWrite(out NativeArray nativeArray);
+        using var token = container.GetArrayForWriting(out NativeArray nativeArray);
 
         for (var i = 0; i < nativeArray.Length; i++)
         {
@@ -48,21 +48,21 @@ public class NativeArrayTest
         using var container = new ByteArrayContainer(10);
 
         // Multiple Read
-        using (var token1 = container.GetArrayForRead(out NativeArray nativeArray1))
-        using (var token2 = container.GetArrayForRead(out NativeArray nativeArray2))
+        using (var token1 = container.GetArrayForReading(out NativeArray nativeArray1))
+        using (var token2 = container.GetArrayForReading(out NativeArray nativeArray2))
         {
             Assert.Throws<NotSupportedException>(() =>
             {
-                using var token3 = container.GetArrayForWrite(out NativeArray nativeArray3);
+                using var token3 = container.GetArrayForWriting(out NativeArray nativeArray3);
             });
         }
 
         // Writing
         {
-            using var token1 = container.GetArrayForWrite(out NativeArray nativeArray1);
+            using var token1 = container.GetArrayForWriting(out NativeArray nativeArray1);
             Assert.Throws<NotSupportedException>(() =>
             {
-                using var token2 = container.GetArrayForRead(out NativeArray nativeArray2);
+                using var token2 = container.GetArrayForReading(out NativeArray nativeArray2);
             });
         }
     }
@@ -74,19 +74,19 @@ public class NativeArrayTest
 
         // Multiple Write
         {
-            using var token1 = container.GetArrayForWrite(out NativeArray nativeArray1);
+            using var token1 = container.GetArrayForWriting(out NativeArray nativeArray1);
             Assert.Throws<NotSupportedException>(() =>
             {
-                using var token2 = container.GetArrayForWrite(out NativeArray nativeArray2);
+                using var token2 = container.GetArrayForWriting(out NativeArray nativeArray2);
             });
         }
 
         // Reading
         {
-            using var token1 = container.GetArrayForRead(out NativeArray nativeArray1);
+            using var token1 = container.GetArrayForReading(out NativeArray nativeArray1);
             Assert.Throws<NotSupportedException>(() =>
             {
-                using var token2 = container.GetArrayForWrite(out NativeArray nativeArray2);
+                using var token2 = container.GetArrayForWriting(out NativeArray nativeArray2);
             });
         }
     }

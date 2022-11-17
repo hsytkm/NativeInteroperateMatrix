@@ -32,7 +32,7 @@ public static class PixelMatrixBitmapSourceExtension
     /// <summary>BitmapSource から PixelBgr24Matrix に画素値をコピーします</summary>
     public static void CopyFrom(this IPixelBgr24MatrixContainer container, BitmapSource bitmap)
     {
-        using var token = container.GetMatrixForRead(out var matrix);
+        using var token = container.GetMatrixForReading(out var matrix);
 
         if (bitmap.IsInvalid()) throw new ArgumentException("Invalid Bitmap");
         if (!matrix.IsValid) throw new ArgumentException("Invalid Pixels");

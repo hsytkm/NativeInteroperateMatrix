@@ -2,6 +2,10 @@
 
 public abstract class MatrixContainerBase : NativeMemoryContainerBase, INativeMatrixContainer
 {
+    readonly object _lockObject = new();
+    Action _readLockReleaseAction;
+    Action _writeLockReleaseAction;
+
     /// <summary>
     /// 外部公開用の2次元配列(NativeMemoryをWrapしています)
     /// </summary>
@@ -28,12 +32,33 @@ public abstract class MatrixContainerBase : NativeMemoryContainerBase, INativeMa
         int stride = columns * bytesPerItem;
         int allocateSize = rows * stride;
         Matrix = new NativeMatrix(AllocatedMemory.Pointer, allocateSize, bytesPerItem, rows, columns, stride);
+        SetLockReleaseAction();
     }
 
     private protected MatrixContainerBase(in NativeMatrix matrix)
         : base(new NativePointerSizePair(matrix.Pointer, matrix.AllocateSize))
     {
         Matrix = matrix;
+        SetLockReleaseAction();
+    }
+
+    [System.Diagnostics.CodeAnalysis.MemberNotNull(nameof(_readLockReleaseAction), nameof(_writeLockReleaseAction))]
+    void SetLockReleaseAction()
+    {
+        _readLockReleaseAction = new(() =>
+        {
+            lock (_lockObject)
+            {
+                ReadCounter--;
+            }
+        });
+        _writeLockReleaseAction = new(() =>
+        {
+            lock (_lockObject)
+            {
+                IsWriting = false;
+            }
+        });
     }
 
     /// <summary>
@@ -48,8 +73,12 @@ public abstract class MatrixContainerBase : NativeMemoryContainerBase, INativeMa
             throw new InvalidMemoryAccessException("Someone is writing.");
 
         matrix = Matrix;
-        ReadCounter++;
-        return new DisposableAction(() => ReadCounter--);
+
+        lock (_lockObject)
+        {
+            ReadCounter++;
+        }
+        return new DisposableAction(_readLockReleaseAction);
     }
 
     /// <summary>
@@ -61,14 +90,18 @@ public abstract class MatrixContainerBase : NativeMemoryContainerBase, INativeMa
     public IDisposable GetMatrixForWriting(out NativeMatrix matrix)
     {
         if (IsWriting)
-            throw new InvalidMemoryAccessException("Someone else is writing.");
+            throw new InvalidMemoryAccessException("Someone is writing.");
 
         if (ReadCounter > 0)
             throw new InvalidMemoryAccessException($"Someone is reading. (Count={ReadCounter})");
 
         matrix = Matrix;
-        IsWriting = true;
-        return new DisposableAction(() => IsWriting = false);
+
+        lock (_lockObject)
+        {
+            IsWriting = true;
+        }
+        return new DisposableAction(_writeLockReleaseAction);
     }
 
     /// <summary>

@@ -51,7 +51,7 @@ public class NativeArrayTest
         using (var token1 = container.GetArrayForReading(out NativeArray nativeArray1))
         using (var token2 = container.GetArrayForReading(out NativeArray nativeArray2))
         {
-            Assert.Throws<NotSupportedException>(() =>
+            Assert.Throws<InvalidMemoryAccessException>(() =>
             {
                 using var token3 = container.GetArrayForWriting(out NativeArray nativeArray3);
             });
@@ -60,7 +60,7 @@ public class NativeArrayTest
         // Writing
         {
             using var token1 = container.GetArrayForWriting(out NativeArray nativeArray1);
-            Assert.Throws<NotSupportedException>(() =>
+            Assert.Throws<InvalidMemoryAccessException>(() =>
             {
                 using var token2 = container.GetArrayForReading(out NativeArray nativeArray2);
             });
@@ -75,7 +75,7 @@ public class NativeArrayTest
         // Multiple Write
         {
             using var token1 = container.GetArrayForWriting(out NativeArray nativeArray1);
-            Assert.Throws<NotSupportedException>(() =>
+            Assert.Throws<InvalidMemoryAccessException>(() =>
             {
                 using var token2 = container.GetArrayForWriting(out NativeArray nativeArray2);
             });
@@ -84,7 +84,7 @@ public class NativeArrayTest
         // Reading
         {
             using var token1 = container.GetArrayForReading(out NativeArray nativeArray1);
-            Assert.Throws<NotSupportedException>(() =>
+            Assert.Throws<InvalidMemoryAccessException>(() =>
             {
                 using var token2 = container.GetArrayForWriting(out NativeArray nativeArray2);
             });

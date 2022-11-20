@@ -53,7 +53,7 @@ public class NativeMatrixTest
         using (var token1 = container.GetMatrixForReading(out NativeMatrix nativeMatrix1))
         using (var token2 = container.GetMatrixForReading(out NativeMatrix nativeMatrix2))
         {
-            Assert.Throws<NotSupportedException>(() =>
+            Assert.Throws<InvalidMemoryAccessException>(() =>
             {
                 using var token3 = container.GetMatrixForWriting(out NativeMatrix nativeMatrix3);
             });
@@ -62,7 +62,7 @@ public class NativeMatrixTest
         // Writing
         {
             using var token1 = container.GetMatrixForWriting(out NativeMatrix nativeMatrix1);
-            Assert.Throws<NotSupportedException>(() =>
+            Assert.Throws<InvalidMemoryAccessException>(() =>
             {
                 using var token2 = container.GetMatrixForReading(out NativeMatrix nativeMatrix2);
             });
@@ -77,7 +77,7 @@ public class NativeMatrixTest
         // Multiple Write
         {
             using var token1 = container.GetMatrixForWriting(out NativeMatrix nativeMatrix1);
-            Assert.Throws<NotSupportedException>(() =>
+            Assert.Throws<InvalidMemoryAccessException>(() =>
             {
                 using var token2 = container.GetMatrixForWriting(out NativeMatrix nativeMatrix2);
             });
@@ -86,7 +86,7 @@ public class NativeMatrixTest
         // Reading
         {
             using var token1 = container.GetMatrixForReading(out NativeMatrix nativeMatrix1);
-            Assert.Throws<NotSupportedException>(() =>
+            Assert.Throws<InvalidMemoryAccessException>(() =>
             {
                 using var token2 = container.GetMatrixForWriting(out NativeMatrix nativeMatrix2);
             });

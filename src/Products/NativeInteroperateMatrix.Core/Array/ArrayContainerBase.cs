@@ -2,6 +2,10 @@
 
 public abstract class ArrayContainerBase : NativeMemoryContainerBase, INativeArrayContainer
 {
+    readonly object _lockObject = new();
+    readonly Action _readLockReleaseAction;
+    readonly Action _writeLockReleaseAction;
+
     /// <summary>
     /// 外部公開用の1次元配列(NativeMemoryをWrapしています)
     /// </summary>
@@ -24,6 +28,21 @@ public abstract class ArrayContainerBase : NativeMemoryContainerBase, INativeArr
     {
         int allocateSize = length * bytesPerItem;
         Array = new NativeArray(AllocatedMemory.Pointer, allocateSize, bytesPerItem);
+
+        _readLockReleaseAction = new(() =>
+        {
+            lock (_lockObject)
+            {
+                ReadCounter--;
+            }
+        });
+        _writeLockReleaseAction = new(() =>
+        {
+            lock (_lockObject)
+            {
+                IsWriting = false;
+            }
+        });
     }
 
     /// <summary>
@@ -38,8 +57,12 @@ public abstract class ArrayContainerBase : NativeMemoryContainerBase, INativeArr
             throw new InvalidMemoryAccessException("Someone is writing.");
 
         array = Array;
-        ReadCounter++;
-        return new DisposableAction(() => ReadCounter--);
+
+        lock (_lockObject)
+        {
+            ReadCounter++;
+        }
+        return new DisposableAction(_readLockReleaseAction);
     }
 
     /// <summary>
@@ -51,14 +74,18 @@ public abstract class ArrayContainerBase : NativeMemoryContainerBase, INativeArr
     public IDisposable GetArrayForWriting(out NativeArray array)
     {
         if (IsWriting)
-            throw new InvalidMemoryAccessException("Someone else is writing.");
+            throw new InvalidMemoryAccessException("Someone is writing.");
 
         if (ReadCounter > 0)
             throw new InvalidMemoryAccessException($"Someone is reading. (Count={ReadCounter})");
 
         array = Array;
-        IsWriting = true;
-        return new DisposableAction(() => IsWriting = false);
+
+        lock (_lockObject)
+        {
+            IsWriting = true;
+        }
+        return new DisposableAction(_writeLockReleaseAction);
     }
 
     /// <summary>

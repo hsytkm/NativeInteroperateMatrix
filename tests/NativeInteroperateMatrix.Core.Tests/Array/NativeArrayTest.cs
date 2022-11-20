@@ -65,6 +65,15 @@ public class NativeArrayTest
                 using var token2 = container.GetArrayForReading(out NativeArray nativeArray2);
             });
         }
+
+        // Exception
+        {
+            container.Dispose();
+            Assert.Throws<ObjectDisposedException>(() =>
+            {
+                using var token1 = container.GetArrayForReading(out NativeArray nativeArray1);
+            });
+        }
     }
 
     [Fact]
@@ -89,6 +98,14 @@ public class NativeArrayTest
                 using var token2 = container.GetArrayForWriting(out NativeArray nativeArray2);
             });
         }
-    }
 
+        // Exception
+        {
+            container.Dispose();
+            Assert.Throws<ObjectDisposedException>(() =>
+            {
+                using var token1 = container.GetArrayForWriting(out NativeArray nativeArray1);
+            });
+        }
+    }
 }

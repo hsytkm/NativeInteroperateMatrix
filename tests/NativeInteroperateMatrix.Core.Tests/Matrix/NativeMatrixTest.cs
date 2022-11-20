@@ -67,6 +67,15 @@ public class NativeMatrixTest
                 using var token2 = container.GetMatrixForReading(out NativeMatrix nativeMatrix2);
             });
         }
+
+        // Exception
+        {
+            container.Dispose();
+            Assert.Throws<ObjectDisposedException>(() =>
+            {
+                using var token1 = container.GetMatrixForReading(out NativeMatrix nativeMatrix1);
+            });
+        }
     }
 
     [Fact]
@@ -89,6 +98,15 @@ public class NativeMatrixTest
             Assert.Throws<InvalidMemoryAccessException>(() =>
             {
                 using var token2 = container.GetMatrixForWriting(out NativeMatrix nativeMatrix2);
+            });
+        }
+
+        // Exception
+        {
+            container.Dispose();
+            Assert.Throws<ObjectDisposedException>(() =>
+            {
+                using var token1 = container.GetMatrixForWriting(out NativeMatrix nativeMatrix1);
             });
         }
     }

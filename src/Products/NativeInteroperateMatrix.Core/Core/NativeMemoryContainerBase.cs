@@ -13,10 +13,16 @@ public abstract class NativeMemoryContainerBase : IDisposable
         : this(NativePointerSizePair.Alloc(allocateSize, initialize))
     { }
 
-    bool _disposedValue;
-    public void Dispose(bool disposing)
+    protected void ThrowObjectDisposedException()
     {
-        if (_disposedValue)
+        if (_disposed)
+            throw new ObjectDisposedException(nameof(AllocatedMemory));
+    }
+
+    bool _disposed;
+    protected virtual void Dispose(bool disposing)
+    {
+        if (_disposed)
             return;
 
         if (disposing)
@@ -30,7 +36,7 @@ public abstract class NativeMemoryContainerBase : IDisposable
             AllocatedMemory.Free();
             AllocatedMemory = NativePointerSizePair.Zero;
         }
-        _disposedValue = true;
+        _disposed = true;
     }
 
     // Do not return memory in deconstructor. Because memory may be inserted from the outside.

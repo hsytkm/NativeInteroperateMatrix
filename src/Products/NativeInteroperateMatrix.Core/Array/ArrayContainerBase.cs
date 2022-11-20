@@ -53,6 +53,8 @@ public abstract class ArrayContainerBase : NativeMemoryContainerBase, INativeArr
     /// <exception cref="InvalidMemoryAccessException"></exception>
     public IDisposable GetArrayForReading(out NativeArray array)
     {
+        ThrowObjectDisposedException();
+
         if (IsWriting)
             throw new InvalidMemoryAccessException("Someone is writing.");
 
@@ -73,6 +75,8 @@ public abstract class ArrayContainerBase : NativeMemoryContainerBase, INativeArr
     /// <exception cref="InvalidMemoryAccessException"></exception>
     public IDisposable GetArrayForWriting(out NativeArray array)
     {
+        ThrowObjectDisposedException();
+
         if (IsWriting)
             throw new InvalidMemoryAccessException("Someone is writing.");
 
@@ -91,6 +95,10 @@ public abstract class ArrayContainerBase : NativeMemoryContainerBase, INativeArr
     /// <summary>
     /// Get native array (don't manage memory references)
     /// </summary>
-    /// <returns>NativeMatrix</returns>
-    public NativeArray DangerousGetNativeArray() => Array;
+    /// <returns>NativeArray</returns>
+    public NativeArray DangerousGetNativeArray()
+    {
+        ThrowObjectDisposedException();
+        return Array;
+    }
 }

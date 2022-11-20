@@ -69,6 +69,8 @@ public abstract class MatrixContainerBase : NativeMemoryContainerBase, INativeMa
     /// <exception cref="InvalidMemoryAccessException"></exception>
     public IDisposable GetMatrixForReading(out NativeMatrix matrix)
     {
+        ThrowObjectDisposedException();
+
         if (IsWriting)
             throw new InvalidMemoryAccessException("Someone is writing.");
 
@@ -89,6 +91,8 @@ public abstract class MatrixContainerBase : NativeMemoryContainerBase, INativeMa
     /// <exception cref="InvalidMemoryAccessException"></exception>
     public IDisposable GetMatrixForWriting(out NativeMatrix matrix)
     {
+        ThrowObjectDisposedException();
+
         if (IsWriting)
             throw new InvalidMemoryAccessException("Someone is writing.");
 
@@ -108,5 +112,9 @@ public abstract class MatrixContainerBase : NativeMemoryContainerBase, INativeMa
     /// Get native matrix (don't manage memory references)
     /// </summary>
     /// <returns>NativeMatrix</returns>
-    public NativeMatrix DangerousGetNativeMatrix() => Matrix;
+    public NativeMatrix DangerousGetNativeMatrix()
+    {
+        ThrowObjectDisposedException();
+        return Matrix;
+    }
 }

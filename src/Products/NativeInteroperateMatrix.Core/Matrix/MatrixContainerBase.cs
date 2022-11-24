@@ -2,6 +2,7 @@
 
 namespace Nima;
 
+[DebuggerDisplay("[{Columns}, {Rows}], R={ReadCounter}, W={IsWriting}")]
 public abstract class MatrixContainerBase : NativeMemoryContainerBase, INativeMatrixContainer
 {
     readonly object _lockObject = new();
@@ -23,8 +24,8 @@ public abstract class MatrixContainerBase : NativeMemoryContainerBase, INativeMa
     /// </summary>
     public bool IsWriting { get; private set; }
 
-    public int Rows => Matrix.Rows;
-    public int Columns => Matrix.Columns;
+    public int Rows { get; }    // DebuggerDisplay用に結果を保持します
+    public int Columns { get; } // DebuggerDisplay用に結果を保持します
 
     [DebuggerBrowsable(DebuggerBrowsableState.Never)]
     public int Width => Matrix.Width;
@@ -38,6 +39,7 @@ public abstract class MatrixContainerBase : NativeMemoryContainerBase, INativeMa
         int stride = columns * bytesPerItem;
         int allocateSize = rows * stride;
         Matrix = new NativeMatrix(AllocatedMemory.Pointer, allocateSize, bytesPerItem, rows, columns, stride);
+        (Rows, Columns) = (Matrix.Rows, Matrix.Columns);
         SetLockReleaseAction();
     }
 
@@ -45,6 +47,7 @@ public abstract class MatrixContainerBase : NativeMemoryContainerBase, INativeMa
         : base(new NativePointerSizePair(matrix.Pointer, matrix.AllocateSize))
     {
         Matrix = matrix;
+        (Rows, Columns) = (Matrix.Rows, Matrix.Columns);
         SetLockReleaseAction();
     }
 

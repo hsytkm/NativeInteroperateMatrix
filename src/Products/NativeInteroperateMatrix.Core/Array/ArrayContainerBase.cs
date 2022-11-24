@@ -1,5 +1,8 @@
-﻿namespace Nima;
+﻿using System.Diagnostics;
 
+namespace Nima;
+
+[DebuggerDisplay("[{Length}], R={ReadCounter}, W={IsWriting}")]
 public abstract class ArrayContainerBase : NativeMemoryContainerBase, INativeArrayContainer
 {
     readonly object _lockObject = new();
@@ -21,13 +24,14 @@ public abstract class ArrayContainerBase : NativeMemoryContainerBase, INativeArr
     /// </summary>
     public bool IsWriting { get; private set; }
 
-    public int Length => Array.Length;
+    public int Length { get; }  // DebuggerDisplay用に結果を保持します
 
     protected ArrayContainerBase(int length, int bytesPerItem, bool initialize)
         : base(length * bytesPerItem, initialize)
     {
         int allocateSize = length * bytesPerItem;
         Array = new NativeArray(AllocatedMemory.Pointer, allocateSize, bytesPerItem);
+        Length = Array.Length;
 
         _readLockReleaseAction = new(() =>
         {

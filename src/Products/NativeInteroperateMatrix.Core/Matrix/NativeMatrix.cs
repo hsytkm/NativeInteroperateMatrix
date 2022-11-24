@@ -4,6 +4,7 @@ namespace Nima;
 
 // Do not change the order of the struct because it is the same as C++
 [StructLayout(LayoutKind.Sequential, Pack = 1, Size = 8 + (5 * sizeof(int)))]
+[DebuggerDisplay("[{Columns}, {Rows}], B/I={BytesPerItem}")]
 public readonly record struct NativeMatrix : INativeMatrix
 {
     public static readonly NativeMatrix Zero = new(IntPtr.Zero, 0, 0, 0, 0, 0);

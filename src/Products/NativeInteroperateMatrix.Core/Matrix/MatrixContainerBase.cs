@@ -1,4 +1,6 @@
-﻿namespace Nima;
+﻿using System.Diagnostics;
+
+namespace Nima;
 
 public abstract class MatrixContainerBase : NativeMemoryContainerBase, INativeMatrixContainer
 {
@@ -23,7 +25,11 @@ public abstract class MatrixContainerBase : NativeMemoryContainerBase, INativeMa
 
     public int Rows => Matrix.Rows;
     public int Columns => Matrix.Columns;
+
+    [DebuggerBrowsable(DebuggerBrowsableState.Never)]
     public int Width => Matrix.Width;
+
+    [DebuggerBrowsable(DebuggerBrowsableState.Never)]
     public int Height => Matrix.Height;
 
     protected MatrixContainerBase(int rows, int columns, int bytesPerItem, bool initialize)

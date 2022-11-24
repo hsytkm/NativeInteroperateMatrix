@@ -2,7 +2,7 @@
 
 internal static class INativeArrayEx
 {
-    internal static bool IsValid<TArray>(TArray array)
+    internal static bool Valid<TArray>(TArray array)
         where TArray : struct, INativeArray
     {
         if (array.Pointer == IntPtr.Zero) return false;

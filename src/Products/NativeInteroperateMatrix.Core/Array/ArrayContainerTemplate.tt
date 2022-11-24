@@ -74,7 +74,7 @@ public /*sealed*/ class <#= typeName #>ArrayContainer : ArrayContainerBase, I<#=
     public <#= typeName #>[] ToArray()
     {
         using var token = GetArrayForReading(out NativeArray array);
-        return array.AsSpan<<#= typeName #>>().ToArray();
+        return array.AsReadOnlySpan<<#= typeName #>>().ToArray();
     }
 }
 

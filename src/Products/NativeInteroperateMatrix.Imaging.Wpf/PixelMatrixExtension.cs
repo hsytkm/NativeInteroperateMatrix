@@ -10,7 +10,7 @@ public static class PixelMatrixExtension
     {
         using var token = container.GetMatrixForReading(out NativeMatrix matrix);
 
-        if (!matrix.IsValid) throw new ArgumentException("Invalid ImagePixels");
+        if (!matrix.Valid) throw new ArgumentException("Invalid Matrix");
         if (matrix.BytesPerItem != PixelBgr24.Size) throw new NotSupportedException("Invalid BytesPerPixel");
 
         var bitmapSource = System.Windows.Media.Imaging.BitmapSource.Create(
@@ -27,7 +27,7 @@ public static class PixelMatrixExtension
     {
         using var token = container.GetMatrixForReading(out NativeMatrix matrix);
 
-        if (!matrix.IsValid) throw new ArgumentException("Invalid Image");
+        if (!matrix.Valid) throw new ArgumentException("Invalid Matrix");
 
         if (writeableBitmap.IsFrozen) throw new ArgumentException("WriteableBitmap is frozen");
         if (writeableBitmap.IsInvalid()) throw new ArgumentException("Invalid Image");
@@ -47,7 +47,7 @@ public static class PixelMatrixExtension
     {
         using var token = container.GetMatrixForReading(out NativeMatrix matrix);
 
-        if (!matrix.IsValid) throw new ArgumentException("Invalid ImagePixels");
+        if (!matrix.Valid) throw new ArgumentException("Invalid Matrix");
         if (matrix.BytesPerItem != PixelBgr24.Size) throw new NotSupportedException("Invalid BytesPerPixel");
 
         var writeableBitmap = new System.Windows.Media.Imaging.WriteableBitmap(

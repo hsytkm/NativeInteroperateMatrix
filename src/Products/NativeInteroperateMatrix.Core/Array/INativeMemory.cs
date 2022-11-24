@@ -25,5 +25,5 @@ public interface INativeMemory
     /// <summary>
     /// Validity of allocated memory
     /// </summary>
-    bool IsValid { get; }
+    bool Valid { get; }
 }

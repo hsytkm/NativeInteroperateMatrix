@@ -179,7 +179,7 @@ public /*sealed*/ class PixelBgr24MatrixContainer : MatrixContainerBase, IPixelB
     {
         using var token = GetMatrixForReading(out var matrix);
 
-        if (!matrix.IsValid) throw new ArgumentException("Invalid image.");
+        if (!matrix.Valid) throw new ArgumentException("Invalid Matrix.");
         if (width * height == 0) throw new ArgumentException("Area is zero.");
         if (matrix.Columns < x + width) throw new ArgumentException("Width over.");
         if (matrix.Rows < y + height) throw new ArgumentException("Height over.");
@@ -368,7 +368,7 @@ public /*sealed*/ class PixelBgr24MatrixContainer : MatrixContainerBase, IPixelB
 
         using var token = GetMatrixForReading(out var matrix);
 
-        if (!matrix.IsValid) throw new ArgumentException("Invalid image.");
+        if (!matrix.Valid) throw new ArgumentException("Invalid image.");
         if (File.Exists(savePath)) throw new SystemException("File is exists.");
 
         var bitmapBytes = getBitmapBinary(matrix);

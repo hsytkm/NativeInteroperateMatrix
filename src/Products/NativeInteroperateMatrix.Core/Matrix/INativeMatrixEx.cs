@@ -5,7 +5,7 @@
 /// </summary>
 internal static class INativeMatrixEx
 {
-    internal static bool IsValid<TMatrix>(TMatrix matrix)
+    internal static bool Valid<TMatrix>(TMatrix matrix)
         where TMatrix : struct, INativeMatrix
     {
         if (matrix.Pointer == IntPtr.Zero) return false;

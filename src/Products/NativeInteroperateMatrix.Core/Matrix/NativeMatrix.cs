@@ -1,8 +1,10 @@
-﻿namespace Nima;
+﻿using System.Diagnostics;
+
+namespace Nima;
 
 // Do not change the order of the struct because it is the same as C++
 [StructLayout(LayoutKind.Sequential, Pack = 1, Size = 8 + (5 * sizeof(int)))]
-public readonly record struct NativeMatrix : INativeMatrix, IEnumerable<NativeArray>
+public readonly record struct NativeMatrix : INativeMatrix
 {
     public static readonly NativeMatrix Zero = new(IntPtr.Zero, 0, 0, 0, 0, 0);
 
@@ -25,7 +27,7 @@ public readonly record struct NativeMatrix : INativeMatrix, IEnumerable<NativeAr
         _bytesPerItem = bytesPerItem;
         _stride = stride;
 
-        if (!IsValid)
+        if (!Valid)
             throw new NotSupportedException($"Invalid {nameof(NativeMatrix)} ctor.");
     }
 
@@ -59,13 +61,16 @@ public readonly record struct NativeMatrix : INativeMatrix, IEnumerable<NativeAr
     public IntPtr Pointer => _pointer;
     public int AllocateSize => _allocateSize;
     public int BytesPerItem => _bytesPerItem;
+    [DebuggerBrowsable(DebuggerBrowsableState.Never)]
     public int BitsPerItem => _bytesPerItem * 8;
-    public bool IsValid => INativeMatrixEx.IsValid(this);
+    public bool Valid => INativeMatrixEx.Valid(this);
 
-    // INativeMemory
+    // INativeMatrix
     public int Rows => _rows;
     public int Columns => _columns;
+    [DebuggerBrowsable(DebuggerBrowsableState.Never)]
     public int Width => _columns;
+    [DebuggerBrowsable(DebuggerBrowsableState.Never)]
     public int Height => _rows;
     public int Stride => _stride;
     public bool IsContinuous => (Columns * BytesPerItem) == Stride;
@@ -93,17 +98,4 @@ public readonly record struct NativeMatrix : INativeMatrix, IEnumerable<NativeAr
     internal void CopyTo(NativeMatrix dest) => INativeMatrixEx.CopyTo(this, dest);
 
     public override string ToString() => $"Rows={Rows}, Cols={Columns}, Pointer=0x{Pointer:x16}";
-
-    public IEnumerator<NativeArray> GetEnumerator()
-    {
-        IntPtr head = Pointer;
-        var length = Columns * BytesPerItem;
-
-        for (int row = 0; row < Rows; row++)
-        {
-            IntPtr rowHeadPtr = head + (row * Stride);
-            yield return new NativeArray(rowHeadPtr, length, BytesPerItem);
-        }
-    }
-    System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() => GetEnumerator();
 }

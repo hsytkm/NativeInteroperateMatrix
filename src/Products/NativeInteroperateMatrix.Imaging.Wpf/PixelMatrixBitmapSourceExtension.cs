@@ -35,7 +35,7 @@ public static class PixelMatrixBitmapSourceExtension
         using var token = container.GetMatrixForReading(out var matrix);
 
         if (bitmap.IsInvalid()) throw new ArgumentException("Invalid Bitmap");
-        if (!matrix.IsValid) throw new ArgumentException("Invalid Pixels");
+        if (!matrix.Valid) throw new ArgumentException("Invalid Matrix");
         if (bitmap.PixelWidth != matrix.Width) throw new ArgumentException("Different Width");
         if (bitmap.PixelHeight != matrix.Height) throw new ArgumentException("Different Height");
 

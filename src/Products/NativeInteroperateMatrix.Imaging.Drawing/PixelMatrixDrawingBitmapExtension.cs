@@ -51,7 +51,7 @@ public static class PixelMatrixDrawingBitmapExtension
         using var token = container.GetMatrixForWriting(out NativeMatrix matrix);
 
         if (bitmap.IsInvalid()) throw new ArgumentException("Invalid Bitmap");
-        if (!matrix.IsValid) throw new ArgumentException("Invalid Pixels");
+        if (!matrix.Valid) throw new ArgumentException("Invalid Matrix");
         if (bitmap.Width != matrix.Width) throw new ArgumentException("Different Width");
         if (bitmap.Height != matrix.Height) throw new ArgumentException("Different Height");
 

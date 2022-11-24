@@ -1,4 +1,6 @@
-﻿namespace Nima;
+﻿using System.Diagnostics;
+
+namespace Nima;
 
 // Do not change the order of the struct because it is the same as C++
 [StructLayout(LayoutKind.Sequential, Pack = 1, Size = 8 + (2 * sizeof(int)))]
@@ -19,7 +21,7 @@ public readonly record struct NativeArray : INativeArray
         _allocateSize = allocateSize;
         _bytesPerItem = bytesPerItem;
 
-        if (!IsValid)
+        if (!Valid)
             throw new NotSupportedException($"Invalid {nameof(NativeArray)} ctor.");
     }
 
@@ -43,8 +45,10 @@ public readonly record struct NativeArray : INativeArray
     public IntPtr Pointer => _pointer;
     public int AllocateSize => _allocateSize;
     public int BytesPerItem => _bytesPerItem;
+
+    [DebuggerBrowsable(DebuggerBrowsableState.Never)]
     public int BitsPerItem => _bytesPerItem * 8;
-    public bool IsValid => INativeArrayEx.IsValid(this);
+    public bool Valid => INativeArrayEx.Valid(this);
 
     // INativeArray
     public int Length => AllocateSize / BytesPerItem;

@@ -10,6 +10,12 @@
     <RootNamespace>Nima.Imaging.Wpf</RootNamespace>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <DeterministicSourceRoot>/_/</DeterministicSourceRoot>
+    <RepoRoot>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\..\'))</RepoRoot>
+    <PathMap>$(RepoRoot)=$(DeterministicSourceRoot)</PathMap>
+  </PropertyGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\NativeInteroperateMatrix.Core\NativeInteroperateMatrix.Core.csproj" />
   </ItemGroup>
